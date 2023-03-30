@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqupt.th.supermarket.mapper.MemberMapper">
+
+    <resultMap id="BaseResultMap" type="com.cqupt.th.supermarket.entity.Member">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="cardNumber" column="card_number" jdbcType="CHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="tel" column="tel" jdbcType="CHAR"/>
+            <result property="sex" column="sex" jdbcType="INTEGER"/>
+            <result property="balance" column="balance" jdbcType="DECIMAL"/>
+            <result property="status" column="status" jdbcType="INTEGER"/>
+            <result property="point" column="point" jdbcType="INTEGER"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,card_number,name,
+        tel,sex,balance,
+        status,point,gmt_create,
+        gmt_modified
+    </sql>
+</mapper>
