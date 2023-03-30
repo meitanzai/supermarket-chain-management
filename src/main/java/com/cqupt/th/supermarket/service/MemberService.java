@@ -2,6 +2,8 @@ package com.cqupt.th.supermarket.service;
 
 import com.cqupt.th.supermarket.entity.Member;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cqupt.th.supermarket.query.MemberQuery;
+import com.cqupt.th.supermarket.utils.CommonResult;
 
 /**
 * @author 16075
@@ -10,4 +12,15 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface MemberService extends IService<Member> {
 
+    CommonResult getMemberListByPage(Integer currentPage, Integer size, MemberQuery memberQuery);
+
+    CommonResult getMemberStatusAndSexById(Integer id);
+
+    CommonResult deleteMemberById(Integer id);
+
+    CommonResult deleteMemberByIds(Integer[] ids);
+
+    CommonResult addMember(Member member);
+
+    CommonResult updateMember(Integer id, Member member);
 }
