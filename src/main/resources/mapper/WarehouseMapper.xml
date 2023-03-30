@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqupt.th.supermarket.mapper.WarehouseMapper">
+
+    <resultMap id="BaseResultMap" type="com.cqupt.th.supermarket.entity.Warehouse">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="regionId" column="region_id" jdbcType="INTEGER"/>
+            <result property="manager" column="manager" jdbcType="VARCHAR"/>
+            <result property="tel" column="tel" jdbcType="VARCHAR"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,region_id,
+        manager,tel,gmt_create,
+        gmt_modified
+    </sql>
+</mapper>

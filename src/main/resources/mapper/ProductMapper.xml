@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqupt.th.supermarket.mapper.ProductMapper">
+
+    <resultMap id="BaseResultMap" type="com.cqupt.th.supermarket.entity.Product">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="barcode" column="barcode" jdbcType="CHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="categoryId" column="category_id" jdbcType="INTEGER"/>
+            <result property="brandId" column="brand_id" jdbcType="INTEGER"/>
+            <result property="purchasePrice" column="purchase_price" jdbcType="DECIMAL"/>
+            <result property="sellPrice" column="sell_price" jdbcType="DECIMAL"/>
+            <result property="introduction" column="introduction" jdbcType="VARCHAR"/>
+            <result property="unit" column="unit" jdbcType="VARCHAR"/>
+            <result property="isDisable" column="is_disable" jdbcType="TINYINT"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,barcode,name,
+        category_id,brand_id,purchase_price,
+        sell_price,introduction,unit,
+        is_disable,gmt_create,gmt_modified
+    </sql>
+</mapper>
