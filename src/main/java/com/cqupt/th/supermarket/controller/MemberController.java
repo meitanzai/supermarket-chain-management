@@ -49,4 +49,8 @@ public class MemberController {
     public CommonResult updateMember(@PathVariable("id") Integer id, @RequestBody Member member) {
         return memberService.updateMember(id, member);
     }
+    @GetMapping("list")
+    public CommonResult getMemberList() {
+        return memberService.getMemberList();
+    }
 }

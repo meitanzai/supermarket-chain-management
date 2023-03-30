@@ -35,7 +35,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
             if (StringUtils.hasText(memberQuery.getTel())) {
                 memberQueryWrapper.like("tel", memberQuery.getTel());
             }
-            if (memberQuery.getStatus() != null ) {
+            if (memberQuery.getStatus() != null) {
                 memberQueryWrapper.eq("status", memberQuery.getStatus());
             }
             if (memberQuery.getStartTime() != null) {
@@ -119,6 +119,28 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
             return CommonResult.error().message("更新失败");
         }
         return CommonResult.ok().message("更新成功");
+    }
+
+    @Override
+    public CommonResult getMemberList() {
+
+        List<Member> members = baseMapper.selectList(null);
+        return CommonResult.ok().data("items", members);
+    }
+
+    @Override
+    public boolean updateMemberPoint(Integer memberId, Integer point) {
+
+        Member member = baseMapper.selectById(memberId);
+        if (member == null) {
+            return false;
+        }
+        member.setPoint(point + member.getPoint());
+        int i = baseMapper.updateById(member);
+        if (i == 0) {
+            return false;
+        }
+        return true;
     }
 
 }

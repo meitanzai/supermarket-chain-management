@@ -13,4 +13,15 @@ import com.cqupt.th.supermarket.utils.CommonResult;
 public interface MemberPointService extends IService<MemberPoint> {
 
     CommonResult getMemberPointListPageByMemberId(Integer currentPage, Integer size, Integer memberId, MemberPointQuery memberPointQuery);
+
+    CommonResult getMemberPointListPage(Integer currentPage, Integer size, MemberPointQuery memberPointQuery);
+
+    CommonResult batchDelete(Integer[] ids);
+
+    CommonResult deleteById(Integer id);
+
+    CommonResult addMemberPoint(MemberPoint memberPoint);
+
+    CommonResult updateMemberPoint(Integer id, MemberPoint memberPoint);
+
 }

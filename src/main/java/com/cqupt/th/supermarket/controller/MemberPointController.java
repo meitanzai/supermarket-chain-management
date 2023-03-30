@@ -1,5 +1,6 @@
 package com.cqupt.th.supermarket.controller;
 
+import com.cqupt.th.supermarket.entity.MemberPoint;
 import com.cqupt.th.supermarket.query.MemberPointQuery;
 import com.cqupt.th.supermarket.service.MemberPointService;
 import com.cqupt.th.supermarket.utils.CommonResult;
@@ -22,5 +23,25 @@ public class MemberPointController {
     @PostMapping("getMemberPointListPage/{currentPage}/{size}/{id}")
     public CommonResult getMemberPointListPageByMemberId(@PathVariable("currentPage") Integer currentPage, @PathVariable("size") Integer size, @PathVariable("id") Integer id, @RequestBody(required = false) MemberPointQuery memberPointQuery) {
         return memberPointService.getMemberPointListPageByMemberId(currentPage, size, id, memberPointQuery);
+    }
+    @PostMapping("getMemberPointListPage/{currentPage}/{size}")
+    public CommonResult getMemberPointListPage(@PathVariable("currentPage") Integer currentPage, @PathVariable("size") Integer size, @RequestBody(required = false) MemberPointQuery memberPointQuery) {
+        return memberPointService.getMemberPointListPage(currentPage, size, memberPointQuery);
+    }
+    @DeleteMapping("batch/{ids}")
+    public CommonResult batchDelete(@PathVariable("ids") Integer[] ids) {
+        return memberPointService.batchDelete(ids);
+    }
+    @DeleteMapping("{id}")
+    public CommonResult deleteById(@PathVariable("id") Integer id) {
+        return memberPointService.deleteById(id);
+    }
+    @PostMapping
+    public CommonResult addMemberPoint(@RequestBody MemberPoint memberPoint) {
+        return memberPointService.addMemberPoint(memberPoint);
+    }
+    @PutMapping("{id}")
+    public CommonResult updateMemberPoint(@PathVariable("id") Integer id, @RequestBody MemberPoint memberPoint) {
+        return memberPointService.updateMemberPoint(id, memberPoint);
     }
 }
