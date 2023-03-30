@@ -35,7 +35,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
             if (StringUtils.hasText(memberQuery.getTel())) {
                 memberQueryWrapper.like("tel", memberQuery.getTel());
             }
-            if (memberQuery.getStatus() != null && Character.isDigit(memberQuery.getStatus())) {
+            if (memberQuery.getStatus() != null ) {
                 memberQueryWrapper.eq("status", memberQuery.getStatus());
             }
             if (memberQuery.getStartTime() != null) {

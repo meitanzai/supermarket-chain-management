@@ -24,24 +24,29 @@ public class MemberController {
     public CommonResult getMemberListByPage(@PathVariable("currentPage") Integer currentPage, @PathVariable("size") Integer size, @RequestBody(required = false) MemberQuery memberQuery) {
         return memberService.getMemberListByPage(currentPage, size, memberQuery);
     }
+
     @GetMapping("status/{id}")
-    public CommonResult getMemberStatusAndSexById(@PathVariable("id") Integer id){
+    public CommonResult getMemberStatusAndSexById(@PathVariable("id") Integer id) {
         return memberService.getMemberStatusAndSexById(id);
     }
+
     @DeleteMapping("{id}")
-    public CommonResult deleteMemberById(@PathVariable("id") Integer id){
+    public CommonResult deleteMemberById(@PathVariable("id") Integer id) {
         return memberService.deleteMemberById(id);
     }
+
     @DeleteMapping("batch/{ids}")
-    public CommonResult deleteMemberByIds(@PathVariable("ids") Integer[] ids){
+    public CommonResult deleteMemberByIds(@PathVariable("ids") Integer[] ids) {
         return memberService.deleteMemberByIds(ids);
     }
+
     @PostMapping
-    public CommonResult addMember(@RequestBody Member member){
+    public CommonResult addMember(@RequestBody Member member) {
         return memberService.addMember(member);
     }
+
     @PutMapping("{id}")
-    public CommonResult updateMember(@PathVariable("id") Integer id, @RequestBody Member member){
+    public CommonResult updateMember(@PathVariable("id") Integer id, @RequestBody Member member) {
         return memberService.updateMember(id, member);
     }
 }
