@@ -4,19 +4,17 @@ import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import lombok.Data;
 
 /**
  * 门店表
- *
  * @TableName store
  */
-@TableName(value = "store")
+@TableName(value ="store")
 @Data
 public class Store implements Serializable {
     /**
-     *
+     * 
      */
     @TableId(type = IdType.AUTO)
     private Integer id;
@@ -32,28 +30,28 @@ public class Store implements Serializable {
     private String telephone;
 
     /**
-     *
+     * 
      */
-    private String manager;
+    private Integer managerId;
 
     /**
-     *
+     * 
      */
     private Double area;
 
     /**
-     *
+     * 
      */
     private Integer status;
 
     /**
-     *
+     * 
      */
     @TableField(fill = FieldFill.INSERT)
     private Date gmtCreate;
 
     /**
-     *
+     * 
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date gmtModified;

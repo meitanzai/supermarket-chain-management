@@ -3,10 +3,13 @@ package com.cqupt.th.supermarket.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cqupt.th.supermarket.entity.Employee;
 import com.cqupt.th.supermarket.entity.Region;
 import com.cqupt.th.supermarket.entity.Store;
 import com.cqupt.th.supermarket.entity.Warehouse;
+import com.cqupt.th.supermarket.mapper.EmployeeMapper;
 import com.cqupt.th.supermarket.query.WarehouseQuery;
+import com.cqupt.th.supermarket.service.EmployeeService;
 import com.cqupt.th.supermarket.service.RegionService;
 import com.cqupt.th.supermarket.service.WarehouseService;
 import com.cqupt.th.supermarket.mapper.WarehouseMapper;
@@ -18,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +38,8 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
     @Autowired
     @Qualifier("regionService")
     private RegionService regionService;
+    @Resource
+    private EmployeeMapper employeeMapper;
 
     @Override
     public CommonResult getWarehouseByPage(Integer currentPage, Integer pageSize, WarehouseQuery warehouseQuery) {
@@ -61,8 +67,8 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
             if (warehouseQuery.getName() != null) {
                 warehouseWrapper.like("name", warehouseQuery.getName());
             }
-            if (warehouseQuery.getManager() != null) {
-                warehouseWrapper.like("manager", warehouseQuery.getManager());
+            if (warehouseQuery.getManagerId() != null) {
+                warehouseWrapper.eq("manager_id", warehouseQuery.getManagerId());
             }
             if (warehouseQuery.getTel() != null) {
                 warehouseWrapper.like("tel", warehouseQuery.getTel());
@@ -73,10 +79,15 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
         baseMapper.selectPage(warehousePage, warehouseWrapper);
         List<Warehouse> records = warehousePage.getRecords();
         long total = warehousePage.getTotal();
+        HashMap<Integer, String> employeeHashMap = new HashMap<>();
+        employeeMapper.selectList(new QueryWrapper<Employee>().eq("store_id",0)).stream().forEach(e -> {
+            employeeHashMap.put(e.getId(), e.getName());
+        });
         List<WarehouseVo> collect = records.stream().map(s -> {
             WarehouseVo warehouseVo = new WarehouseVo();
             BeanUtils.copyProperties(s, warehouseVo);
             warehouseVo.setRegionName(regionService.getRegionName(s.getRegionId(), map));
+            warehouseVo.setManagerName(employeeHashMap.get(s.getManagerId()));
             return warehouseVo;
         }).collect(Collectors.toList());
         return CommonResult.ok().data("total", total).data("rows", collect);

@@ -15,6 +15,6 @@ public class WarehouseVo implements Serializable {
     private Integer regionId;
     private String regionName;
     private String tel;
-    private String manager;
-
+    private Integer managerId;
+    private String managerName;
 }

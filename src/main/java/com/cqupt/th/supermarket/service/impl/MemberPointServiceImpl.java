@@ -4,6 +4,7 @@ import ch.qos.logback.core.joran.util.beans.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cqupt.th.supermarket.entity.Member;
 import com.cqupt.th.supermarket.entity.MemberPoint;
 import com.cqupt.th.supermarket.exception.SupermarketException;
 import com.cqupt.th.supermarket.query.MemberPointQuery;
@@ -41,7 +42,7 @@ public class MemberPointServiceImpl extends ServiceImpl<MemberPointMapper, Membe
         }
         QueryWrapper<MemberPoint> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("member_id", memberId);
-        queryWrapper.orderByDesc("gmt_create");
+        queryWrapper.orderByDesc("gmt_modified");
         if (memberPointQuery != null) {
             if (memberPointQuery.getStartTime() != null) {
                 queryWrapper.ge("gmt_create", memberPointQuery.getStartTime());
@@ -49,7 +50,6 @@ public class MemberPointServiceImpl extends ServiceImpl<MemberPointMapper, Membe
             if (memberPointQuery.getEndTime() != null) {
                 queryWrapper.le("gmt_create", memberPointQuery.getEndTime());
             }
-            queryWrapper.orderByDesc("gmt_modified");
         }
         Page<MemberPoint> memberPointPage = new Page<>(currentPage, size);
         baseMapper.selectPage(memberPointPage, queryWrapper);
@@ -80,14 +80,15 @@ public class MemberPointServiceImpl extends ServiceImpl<MemberPointMapper, Membe
         Page<MemberPoint> memberPointPage = new Page<>(currentPage, size);
         baseMapper.selectPage(memberPointPage, queryWrapper);
         List<MemberPoint> memberPointList = memberPointPage.getRecords();
-        HashMap<Integer, String> map = new HashMap<>();
+        HashMap<Integer, Member> map = new HashMap<>();
         memberService.list().forEach(member -> {
-            map.put(member.getId(), member.getName());
+            map.put(member.getId(), member);
         });
         List<MemberPointVo> collect = memberPointList.stream().map(m -> {
             MemberPointVo memberPointVo = new MemberPointVo();
             BeanUtils.copyProperties(m, memberPointVo);
-            memberPointVo.setMemberName(map.get(m.getMemberId()));
+            memberPointVo.setMemberName(map.get(m.getMemberId()).getName());
+            memberPointVo.setMemberStatus(map.get(m.getMemberId()).getStatus());
             return memberPointVo;
         }).collect(Collectors.toList());
         long total = memberPointPage.getTotal();

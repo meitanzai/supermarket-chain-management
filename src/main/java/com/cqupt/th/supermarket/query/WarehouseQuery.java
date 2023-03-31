@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class WarehouseQuery implements Serializable {
     private Integer regionParentId;
     private String tel;
-    private String manager;
+    private Integer managerId;
     private String name;
 
 }

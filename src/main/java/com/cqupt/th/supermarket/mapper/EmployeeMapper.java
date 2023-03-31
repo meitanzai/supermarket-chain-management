@@ -3,6 +3,9 @@ package com.cqupt.th.supermarket.mapper;
 import com.cqupt.th.supermarket.entity.Employee;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.util.HashMap;
+import java.util.List;
+
 /**
 * @author 16075
 * @description 针对表【employee(员工表)】的数据库操作Mapper

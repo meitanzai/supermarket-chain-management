@@ -45,7 +45,7 @@ public class Employee implements Serializable {
      * 所属部门
      */
     private Integer storeId;
-
+    private Integer warehouseId;
     /**
      * 
      */

@@ -8,7 +8,7 @@
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="regionId" column="region_id" jdbcType="INTEGER"/>
             <result property="telephone" column="telephone" jdbcType="VARCHAR"/>
-            <result property="manager" column="manager" jdbcType="VARCHAR"/>
+            <result property="managerId" column="manager_id" jdbcType="INTEGER"/>
             <result property="area" column="area" jdbcType="DOUBLE"/>
             <result property="status" column="status" jdbcType="TINYINT"/>
             <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
@@ -17,7 +17,7 @@
 
     <sql id="Base_Column_List">
         id,region_id,telephone,
-        manager,area,status,
+        manager_id,area,status,
         gmt_create,gmt_modified
     </sql>
 </mapper>

@@ -3,9 +3,13 @@ package com.cqupt.th.supermarket.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cqupt.th.supermarket.entity.Employee;
 import com.cqupt.th.supermarket.entity.Region;
 import com.cqupt.th.supermarket.entity.Store;
+import com.cqupt.th.supermarket.mapper.EmployeeMapper;
 import com.cqupt.th.supermarket.query.StoreQuery;
+import com.cqupt.th.supermarket.service.EmployeeService;
+import com.cqupt.th.supermarket.service.PositionService;
 import com.cqupt.th.supermarket.service.RegionService;
 import com.cqupt.th.supermarket.service.StoreService;
 import com.cqupt.th.supermarket.mapper.StoreMapper;
@@ -16,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,6 +38,8 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
     @Autowired
     @Qualifier("regionService")
     private RegionService regionService;
+    @Resource
+    private EmployeeMapper employeeMapper;
 
 
     @Override
@@ -62,8 +69,8 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
             if (storeQuery.getTelephone() != null) {
                 storeQueryWrapper.like("telephone", storeQuery.getTelephone());
             }
-            if (storeQuery.getManager() != null) {
-                storeQueryWrapper.like("manager", storeQuery.getManager());
+            if (storeQuery.getManagerId() != null) {
+                storeQueryWrapper.eq("manager_id", storeQuery.getManagerId());
             }
             if (storeQuery.getStatus() != null) {
                 storeQueryWrapper.eq("status", storeQuery.getStatus());
@@ -74,10 +81,16 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
         baseMapper.selectPage(storePage, storeQueryWrapper);
         List<Store> records = storePage.getRecords();
         long total = storePage.getTotal();
+        HashMap<Integer, String> employeeHashMap = new HashMap<>();
+        List<Employee> employeeList = employeeMapper.selectList(new QueryWrapper<Employee>().eq("warehouse_id", 0));
+        employeeList.stream().forEach(e -> {
+            employeeHashMap.put(e.getId(), e.getName());
+        });
         List<StoreVo> collect = records.stream().map(s -> {
             StoreVo storeVo = new StoreVo();
             BeanUtils.copyProperties(s, storeVo);
             storeVo.setRegionName(regionService.getRegionName(s.getRegionId(), map));
+            storeVo.setManagerName(employeeHashMap.get(s.getManagerId()));
             return storeVo;
         }).collect(Collectors.toList());
         return CommonResult.ok().data("total", total).data("rows", collect);

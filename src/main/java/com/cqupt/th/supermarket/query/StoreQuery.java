@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class StoreQuery implements Serializable {
     private Integer regionParentId;
     private String telephone;
-    private String manager;
+    private Integer managerId;
     private Double area;
     private Integer status;
 }

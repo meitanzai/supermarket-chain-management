@@ -125,6 +125,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
     @Override
     public CommonResult getMemberList() {
         QueryWrapper<Member> queryWrapper = new QueryWrapper<Member>().orderByDesc("gmt_modified");
+        queryWrapper.eq("status", 1);
         List<Member> members = baseMapper.selectList(queryWrapper);
         return CommonResult.ok().data("items", members);
     }

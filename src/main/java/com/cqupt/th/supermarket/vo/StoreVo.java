@@ -14,7 +14,8 @@ public class StoreVo implements Serializable{
     private Integer regionId;
     private String regionName;
     private String telephone;
-    private String manager;
+    private Integer managerId;
+    private String managerName;
     private Double area;
     private Integer status;
 }

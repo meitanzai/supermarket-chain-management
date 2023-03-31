@@ -14,6 +14,7 @@ public class MemberPointVo implements Serializable {
     private Integer id;
     private Integer memberId;
     private String memberName;
+    private Integer memberStatus;
     private Integer point;
     private String remark;
     private Date gmtCreate;
