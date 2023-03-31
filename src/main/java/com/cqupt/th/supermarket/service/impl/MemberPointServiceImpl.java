@@ -49,6 +49,7 @@ public class MemberPointServiceImpl extends ServiceImpl<MemberPointMapper, Membe
             if (memberPointQuery.getEndTime() != null) {
                 queryWrapper.le("gmt_create", memberPointQuery.getEndTime());
             }
+            queryWrapper.orderByDesc("gmt_modified");
         }
         Page<MemberPoint> memberPointPage = new Page<>(currentPage, size);
         baseMapper.selectPage(memberPointPage, queryWrapper);
@@ -75,6 +76,7 @@ public class MemberPointServiceImpl extends ServiceImpl<MemberPointMapper, Membe
                 queryWrapper.le("gmt_create", memberPointQuery.getEndTime());
             }
         }
+        queryWrapper.orderByDesc("gmt_modified");
         Page<MemberPoint> memberPointPage = new Page<>(currentPage, size);
         baseMapper.selectPage(memberPointPage, queryWrapper);
         List<MemberPoint> memberPointList = memberPointPage.getRecords();

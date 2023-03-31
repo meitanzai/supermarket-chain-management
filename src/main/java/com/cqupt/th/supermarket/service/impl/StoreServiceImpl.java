@@ -69,6 +69,7 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
                 storeQueryWrapper.eq("status", storeQuery.getStatus());
             }
         }
+        storeQueryWrapper.orderByDesc("gmt_modified");
         Page<Store> storePage = new Page<>(currentPage, pageSize);
         baseMapper.selectPage(storePage, storeQueryWrapper);
         List<Store> records = storePage.getRecords();

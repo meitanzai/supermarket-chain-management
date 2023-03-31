@@ -45,6 +45,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
                 memberQueryWrapper.le("gmt_create", memberQuery.getEndTime());
             }
         }
+        memberQueryWrapper.orderByDesc("gmt_modified");
         Page<Member> memberPage = new Page<>(currentPage, size);
         baseMapper.selectPage(memberPage, memberQueryWrapper);
         long total = memberPage.getTotal();
@@ -123,8 +124,8 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
 
     @Override
     public CommonResult getMemberList() {
-
-        List<Member> members = baseMapper.selectList(null);
+        QueryWrapper<Member> queryWrapper = new QueryWrapper<Member>().orderByDesc("gmt_modified");
+        List<Member> members = baseMapper.selectList(queryWrapper);
         return CommonResult.ok().data("items", members);
     }
 

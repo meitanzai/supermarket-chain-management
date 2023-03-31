@@ -40,6 +40,7 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
                 regionQueryWrapper.eq("parent_id", regionQuery.getParentId());
             }
         }
+        regionQueryWrapper.orderByDesc("gmt_modified");
         Page<Region> regionPage = new Page<>(currentPage, size);
         baseMapper.selectPage(regionPage, regionQueryWrapper);
         long total = regionPage.getTotal();

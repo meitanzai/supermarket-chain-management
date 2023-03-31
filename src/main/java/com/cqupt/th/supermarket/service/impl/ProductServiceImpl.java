@@ -57,6 +57,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
                 productQueryWrapper.le("gmt_create", productQuery.getEndTime());
             }
         }
+        productQueryWrapper.orderByDesc("gmt_modified");
         Page<Product> productPage = new Page<>(currentPage, size);
         baseMapper.selectPage(productPage, productQueryWrapper);
         List<Product> records = productPage.getRecords();

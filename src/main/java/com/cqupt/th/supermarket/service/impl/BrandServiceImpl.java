@@ -28,6 +28,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
     public CommonResult getAllBrand() {
         QueryWrapper<Brand> brandQueryWrapper = new QueryWrapper<>();
         brandQueryWrapper.eq("is_show", 1);
+        brandQueryWrapper.orderByDesc("gmt_modified");
         List<Brand> brands = baseMapper.selectList(brandQueryWrapper);
         return CommonResult.ok().data("items", brands);
     }
@@ -49,6 +50,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
                 brandQueryWrapper.le("gmt_create", brandQuery.getEndTime());
             }
         }
+        brandQueryWrapper.orderByDesc("gmt_modified");
         Page<Brand> brandPage = new Page<>(page, size);
         baseMapper.selectPage(brandPage, brandQueryWrapper);
         return CommonResult.ok().data("total", brandPage.getTotal()).data("rows", brandPage.getRecords());

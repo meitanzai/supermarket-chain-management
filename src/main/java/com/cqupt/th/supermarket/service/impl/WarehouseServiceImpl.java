@@ -68,6 +68,7 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
                 warehouseWrapper.like("tel", warehouseQuery.getTel());
             }
         }
+        warehouseWrapper.orderByDesc("gmt_modified");
         Page<Warehouse> warehousePage = new Page<>(currentPage, pageSize);
         baseMapper.selectPage(warehousePage, warehouseWrapper);
         List<Warehouse> records = warehousePage.getRecords();
