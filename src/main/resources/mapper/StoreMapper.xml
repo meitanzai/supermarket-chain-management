@@ -20,4 +20,12 @@
         manager_id,area,status,
         gmt_create,gmt_modified
     </sql>
+    <update id="updateRegionIdByRegionIds">
+        UPDATE store
+        SET region_id = null
+        WHERE region_id IN
+        <foreach collection="regionIds" item="regionId" open="(" separator="," close=")">
+            #{regionId}
+        </foreach>
+    </update>
 </mapper>

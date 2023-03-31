@@ -3,6 +3,8 @@ package com.cqupt.th.supermarket.mapper;
 import com.cqupt.th.supermarket.entity.Category;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.util.List;
+
 /**
 * @author 16075
 * @description 针对表【category】的数据库操作Mapper
@@ -10,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.cqupt.th.supermarket.entity.Category
 */
 public interface CategoryMapper extends BaseMapper<Category> {
+
 
 }
 

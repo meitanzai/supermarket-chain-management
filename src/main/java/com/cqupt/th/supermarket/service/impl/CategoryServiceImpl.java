@@ -1,7 +1,10 @@
 package com.cqupt.th.supermarket.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqupt.th.supermarket.entity.Category;
+import com.cqupt.th.supermarket.entity.Product;
+import com.cqupt.th.supermarket.mapper.ProductMapper;
 import com.cqupt.th.supermarket.service.CategoryService;
 import com.cqupt.th.supermarket.mapper.CategoryMapper;
 import com.cqupt.th.supermarket.utils.CommonResult;
@@ -9,6 +12,7 @@ import com.cqupt.th.supermarket.vo.CategoryVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,7 +24,8 @@ import java.util.stream.Collectors;
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
         implements CategoryService {
-
+    @Resource
+    private ProductMapper productMapper;
 
     /**
      * 得到所有类别
@@ -69,8 +74,13 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
                 }
             }
         }
-        baseMapper.deleteBatchIds(ids);
-        return CommonResult.ok();
+        productMapper.updateCategoryIdByCategoryIds(ids);
+        int result = baseMapper.deleteBatchIds(ids);
+        if (result > 0) {
+            return CommonResult.ok();
+        }
+        return CommonResult.error().message("删除失败");
+
     }
 
     @Override

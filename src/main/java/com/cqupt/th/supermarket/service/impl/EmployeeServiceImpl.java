@@ -101,7 +101,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
         if (one == null) {
             return CommonResult.error().message("超市经理职位不存在");
         }
-        QueryWrapper<Employee> queryWrapper = new QueryWrapper<Employee>().eq("position_id", one.getId()).eq("warehouse_id", 0).eq("status", 1);
+        QueryWrapper<Employee> queryWrapper = new QueryWrapper<Employee>().eq("position_id", one.getId()).eq("warehouse_id", 0);
         List<Employee> managerList = baseMapper.selectList(queryWrapper);
         return CommonResult.ok().data("items", managerList);
     }
@@ -114,7 +114,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
         if (one == null) {
             return CommonResult.error().message("仓库经理职位不存在");
         }
-        QueryWrapper<Employee> queryWrapper = new QueryWrapper<Employee>().eq("position_id", one.getId()).eq("store_id", 0).eq("status", 1);
+        QueryWrapper<Employee> queryWrapper = new QueryWrapper<Employee>().eq("position_id", one.getId()).eq("store_id", 0);
         List<Employee> managerList = baseMapper.selectList(queryWrapper);
         return CommonResult.ok().data("items", managerList);
     }

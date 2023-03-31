@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqupt.th.supermarket.entity.Brand;
+import com.cqupt.th.supermarket.mapper.ProductMapper;
 import com.cqupt.th.supermarket.query.BrandQuery;
 import com.cqupt.th.supermarket.service.BrandService;
 import com.cqupt.th.supermarket.mapper.BrandMapper;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -23,11 +25,12 @@ import java.util.Map;
 @Service("brandService")
 public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
         implements BrandService {
+    @Resource
+    private ProductMapper productMapper;
 
     @Override
     public CommonResult getAllBrand() {
         QueryWrapper<Brand> brandQueryWrapper = new QueryWrapper<>();
-        brandQueryWrapper.eq("is_show", 1);
         brandQueryWrapper.orderByDesc("gmt_modified");
         List<Brand> brands = baseMapper.selectList(brandQueryWrapper);
         return CommonResult.ok().data("items", brands);
@@ -104,12 +107,13 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
         if (id == null) {
             return CommonResult.error().message("id不能为空");
         }
+        productMapper.updateBrandIdByBrandId(id);
         int result = baseMapper.deleteById(id);
-        if (result == 1) {
+        if (result > 0 ) {
             return CommonResult.ok();
-        } else {
-            return CommonResult.error();
         }
+        return CommonResult.error().message("删除失败");
+
     }
 
     @Override
@@ -118,8 +122,10 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
         if (ids == null) {
             return CommonResult.error().message("ids不能为空");
         }
-        int result = baseMapper.deleteBatchIds(Arrays.asList(ids));
-        if (result > 0) {
+        List<Integer> brandIds = Arrays.asList(ids);
+        productMapper.updateBrandIdByBrandIds(brandIds);
+        int result = baseMapper.deleteBatchIds(brandIds);
+        if (result > 0 ) {
             return CommonResult.ok();
         } else {
             return CommonResult.error();
@@ -137,14 +143,6 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
 
     }
 
-    @Override
-    public CommonResult getBrandIsShow(Integer id) {
-        if (id == null) {
-            return CommonResult.error().message("id不能为空");
-        }
-        Brand brand = baseMapper.selectById(id);
-        return CommonResult.ok().data("item", brand.getIsShow());
-    }
 }
 
 

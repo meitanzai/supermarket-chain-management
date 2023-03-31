@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqupt.th.supermarket.entity.Region;
 import com.cqupt.th.supermarket.entity.Store;
+import com.cqupt.th.supermarket.mapper.StoreMapper;
+import com.cqupt.th.supermarket.mapper.WarehouseMapper;
 import com.cqupt.th.supermarket.query.RegionQuery;
 import com.cqupt.th.supermarket.service.RegionService;
 import com.cqupt.th.supermarket.mapper.RegionMapper;
@@ -15,6 +17,7 @@ import com.cqupt.th.supermarket.vo.RegionVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,6 +29,10 @@ import java.util.stream.Collectors;
 @Service("regionService")
 public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
         implements RegionService {
+    @Resource
+    private StoreMapper storeMapper;
+    @Resource
+    private WarehouseMapper warehouseMapper;
 
     @Override
     public CommonResult getRegionByPage(Integer currentPage, Integer size, RegionQuery regionQuery) {
@@ -60,11 +67,20 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
         if (ids.length == 0) {
             return CommonResult.error().message("请选择要删除的数据");
         }
-        int i = baseMapper.deleteBatchIds(Arrays.asList(ids));
-        if (i == 0) {
-            return CommonResult.error().message("删除失败");
+        HashSet<Integer> set = new HashSet<>();
+        //递归获得所有子节点
+        for (Integer id : ids) {
+            Set<Integer> sonIds = getSonIds(id, set);
+            set.addAll(sonIds);
         }
-        return CommonResult.ok().message("删除成功");
+        storeMapper.updateRegionIdByRegionIds(set);
+        warehouseMapper.updateRegionIdByRegionIds(set);
+
+        int i = baseMapper.deleteBatchIds(set);
+        if (i > 0) {
+            return CommonResult.ok().message("删除成功");
+        }
+        return CommonResult.error().message("删除失败");
     }
 
     @Override
@@ -73,11 +89,29 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
         if (id == null) {
             return CommonResult.error().message("请选择要删除的数据");
         }
-        int i = baseMapper.deleteById(id);
-        if (i == 0) {
-            return CommonResult.error().message("删除失败");
+        HashSet<Integer> set = new HashSet<>();
+        //递归获得所有子节点
+        Set<Integer> ids = getSonIds(id, set);
+        storeMapper.updateRegionIdByRegionIds(ids);
+        warehouseMapper.updateRegionIdByRegionIds(ids);
+        int i = baseMapper.deleteBatchIds(ids);
+        if (i > 0) {
+            return CommonResult.ok().message("删除成功");
         }
-        return CommonResult.ok().message("删除成功");
+        return CommonResult.error().message("删除失败");
+
+    }
+
+    private Set<Integer> getSonIds(Integer id, HashSet<Integer> set) {
+        set.add(id);
+        List<Region> regions = baseMapper.selectList(new QueryWrapper<Region>().eq("parent_id", id));
+        if (regions.size() > 0) {
+            regions.stream().forEach(region -> {
+                set.add(region.getId());
+                getSonIds(region.getId(), set);
+            });
+        }
+        return set;
     }
 
     @Override
@@ -123,7 +157,12 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
             return CommonResult.error().message("请选择要添加的数据");
         }
         Region region1 = baseMapper.selectById(region.getParentId());
-        region.setLevel(region1.getLevel() + 1);
+        if (region1 != null) {
+            region.setLevel(region1.getLevel() + 1);
+        } else {
+            region.setLevel(1);
+            region.setParentId(0);
+        }
         int insert = baseMapper.insert(region);
         if (insert == 0) {
             return CommonResult.error().message("添加失败");
@@ -139,7 +178,12 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
         }
         region.setId(id);
         Region region1 = baseMapper.selectById(region.getParentId());
-        region.setLevel(region1.getLevel() + 1);
+        if (region1 == null) {
+            region.setLevel(1);
+            region.setParentId(0);
+        } else {
+            region.setLevel(region1.getLevel() + 1);
+        }
         int i = baseMapper.updateById(region);
         if (i == 0) {
             return CommonResult.error().message("修改失败");

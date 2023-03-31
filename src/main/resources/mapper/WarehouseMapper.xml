@@ -5,18 +5,27 @@
 <mapper namespace="com.cqupt.th.supermarket.mapper.WarehouseMapper">
 
     <resultMap id="BaseResultMap" type="com.cqupt.th.supermarket.entity.Warehouse">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="regionId" column="region_id" jdbcType="INTEGER"/>
-            <result property="managerId" column="manager_id" jdbcType="INTEGER"/>
-            <result property="tel" column="tel" jdbcType="VARCHAR"/>
-            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
-            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="regionId" column="region_id" jdbcType="INTEGER"/>
+        <result property="managerId" column="manager_id" jdbcType="INTEGER"/>
+        <result property="tel" column="tel" jdbcType="VARCHAR"/>
+        <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,name,region_id,
+        id
+        ,name,region_id,
         manager_id,tel,gmt_create,
         gmt_modified
     </sql>
+    <update id="updateRegionIdByRegionIds">
+        UPDATE warehouse
+        SET region_id = null
+        WHERE region_id IN
+        <foreach collection="regionIds" item="regionId" open="(" separator="," close=")">
+            #{regionId}
+        </foreach>
+    </update>
 </mapper>

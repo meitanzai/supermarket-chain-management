@@ -80,15 +80,14 @@ public class MemberPointServiceImpl extends ServiceImpl<MemberPointMapper, Membe
         Page<MemberPoint> memberPointPage = new Page<>(currentPage, size);
         baseMapper.selectPage(memberPointPage, queryWrapper);
         List<MemberPoint> memberPointList = memberPointPage.getRecords();
-        HashMap<Integer, Member> map = new HashMap<>();
+        HashMap<Integer, String> map = new HashMap<>();
         memberService.list().forEach(member -> {
-            map.put(member.getId(), member);
+            map.put(member.getId(), member.getName());
         });
         List<MemberPointVo> collect = memberPointList.stream().map(m -> {
             MemberPointVo memberPointVo = new MemberPointVo();
             BeanUtils.copyProperties(m, memberPointVo);
-            memberPointVo.setMemberName(map.get(m.getMemberId()).getName());
-            memberPointVo.setMemberStatus(map.get(m.getMemberId()).getStatus());
+            memberPointVo.setMemberName(map.get(m.getMemberId()));
             return memberPointVo;
         }).collect(Collectors.toList());
         long total = memberPointPage.getTotal();

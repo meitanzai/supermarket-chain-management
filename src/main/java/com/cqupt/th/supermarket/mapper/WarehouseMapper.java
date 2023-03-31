@@ -2,6 +2,10 @@ package com.cqupt.th.supermarket.mapper;
 
 import com.cqupt.th.supermarket.entity.Warehouse;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Set;
 
 /**
 * @author 16075
@@ -11,6 +15,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface WarehouseMapper extends BaseMapper<Warehouse> {
 
+    void updateRegionIdByRegionIds(@Param("regionIds") Set<Integer> regionIds);
 }
 
 

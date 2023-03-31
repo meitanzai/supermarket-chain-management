@@ -37,11 +37,6 @@ public class StoreController {
         return storeService.deleteStoreById(id);
     }
 
-    @GetMapping("status/{id}")
-    public CommonResult getStoreStatusById(@PathVariable("id") Integer id) {
-        return storeService.getStoreStatusById(id);
-    }
-
     @GetMapping("regionIds/{regionId}")
     public CommonResult getStoreRegionIds(@PathVariable("regionId") Integer regionId) {
         return storeService.getStoreRegionIds(regionId);

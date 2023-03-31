@@ -43,10 +43,6 @@ public class BrandController {
 
     }
 
-    @GetMapping("isShow/{id}")
-    public CommonResult getBrandIsShow(@PathVariable("id") Integer id) {
-        return brandService.getBrandIsShow(id);
-    }
     @PostMapping
     public CommonResult addBrand(@RequestBody Brand brand) {
         return brandService.addBrand(brand);

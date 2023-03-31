@@ -5,24 +5,46 @@
 <mapper namespace="com.cqupt.th.supermarket.mapper.ProductMapper">
 
     <resultMap id="BaseResultMap" type="com.cqupt.th.supermarket.entity.Product">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="barcode" column="barcode" jdbcType="CHAR"/>
-            <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="categoryId" column="category_id" jdbcType="INTEGER"/>
-            <result property="brandId" column="brand_id" jdbcType="INTEGER"/>
-            <result property="purchasePrice" column="purchase_price" jdbcType="DECIMAL"/>
-            <result property="sellPrice" column="sell_price" jdbcType="DECIMAL"/>
-            <result property="introduction" column="introduction" jdbcType="VARCHAR"/>
-            <result property="unit" column="unit" jdbcType="VARCHAR"/>
-            <result property="isDisable" column="is_disable" jdbcType="TINYINT"/>
-            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
-            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="barcode" column="barcode" jdbcType="CHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="categoryId" column="category_id" jdbcType="INTEGER"/>
+        <result property="brandId" column="brand_id" jdbcType="INTEGER"/>
+        <result property="purchasePrice" column="purchase_price" jdbcType="DECIMAL"/>
+        <result property="sellPrice" column="sell_price" jdbcType="DECIMAL"/>
+        <result property="introduction" column="introduction" jdbcType="VARCHAR"/>
+        <result property="unit" column="unit" jdbcType="VARCHAR"/>
+        <result property="isShow" column="is_show" jdbcType="TINYINT"/>
+        <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,barcode,name,
+        id
+        ,barcode,name,
         category_id,brand_id,purchase_price,
         sell_price,introduction,unit,
         is_disable,gmt_create,gmt_modified
     </sql>
+    <update id="updateCategoryIdByCategoryIds">
+        UPDATE product
+        SET category_id = null
+        WHERE category_id IN
+        <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
+            #{categoryId}
+        </foreach>
+    </update>
+    <update id="updateBrandIdByBrandId">
+        UPDATE product
+        SET brand_id = null
+        WHERE brand_id = #{brandId}
+    </update>
+    <update id="updateBrandIdByBrandIds">
+        UPDATE product
+        SET brand_id = null
+        WHERE brand_id IN
+        <foreach collection="brandIds" item="brandId" open="(" separator="," close=")">
+            #{brandId}
+        </foreach>
+    </update>
 </mapper>

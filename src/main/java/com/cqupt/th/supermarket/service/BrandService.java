@@ -30,5 +30,5 @@ public interface BrandService extends IService<Brand> {
 
     Map<Integer, String> getBrandNameById();
 
-    CommonResult getBrandIsShow(Integer id);
+
 }
