@@ -50,6 +50,12 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
             if (productQuery.getBarcode() != null) {
                 productQueryWrapper.eq("barcode", productQuery.getBarcode());
             }
+            if (productQuery.getCategoryId() != null) {
+                productQueryWrapper.eq("category_id", productQuery.getCategoryId());
+            }
+            if (productQuery.getBrandId() != null) {
+                productQueryWrapper.eq("brand_id", productQuery.getBrandId());
+            }
             if (productQuery.getStartTime() != null) {
                 productQueryWrapper.ge("gmt_create", productQuery.getStartTime());
             }

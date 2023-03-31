@@ -19,7 +19,8 @@ public class ProductQuery implements Serializable {
      */
     private String barcode;
 
-
+    private Integer categoryId;
+    private Integer brandId;
     /**
      *
      */
