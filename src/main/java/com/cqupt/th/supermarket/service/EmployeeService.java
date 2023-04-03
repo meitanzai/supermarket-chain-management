@@ -12,9 +12,10 @@ import com.cqupt.th.supermarket.utils.CommonResult;
 */
 public interface EmployeeService extends IService<Employee> {
 
-    CommonResult getEmployeeListPage(Integer currentPage, Integer pageSize, Integer positionId, EmployeeQuery employeeQuery);
+    CommonResult getEmployeeListPageByPositionId(Integer currentPage, Integer pageSize, Integer positionId, EmployeeQuery employeeQuery);
 
     CommonResult getManagerList();
     CommonResult getWarehouseManagerList();
 
+    CommonResult getEmployeeListPage(Integer currentPage, Integer size, EmployeeQuery employeeQuery);
 }

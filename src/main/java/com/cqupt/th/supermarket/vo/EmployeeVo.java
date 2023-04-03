@@ -20,6 +20,7 @@ public class EmployeeVo implements Serializable {
     private Integer storeId;
     private String storeRegion;
     private Integer warehouseId;
+    private String warehouseName;
     private String warehouseRegion;
     private Integer status;
     private Date gmtCreate;

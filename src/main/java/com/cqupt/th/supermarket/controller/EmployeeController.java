@@ -19,12 +19,12 @@ public class EmployeeController {
     @Qualifier("employeeService")
     private EmployeeService employeeService;
 
-    @PostMapping("getEmployeeListPage/{currentPage}/{pageSize}/{positionId}")
-    public CommonResult getEmployeeListPage(@PathVariable("currentPage") Integer currentPage,
-                                            @PathVariable("pageSize") Integer pageSize,
-                                            @PathVariable("positionId") Integer positionId,
-                                            @RequestBody(required = false) EmployeeQuery employeeQuery) {
-        return employeeService.getEmployeeListPage(currentPage, pageSize, positionId, employeeQuery);
+    @PostMapping("getEmployeeListPageByPositionId/{currentPage}/{pageSize}/{positionId}")
+    public CommonResult getEmployeeListPageByPositionId(@PathVariable("currentPage") Integer currentPage,
+                                                        @PathVariable("pageSize") Integer pageSize,
+                                                        @PathVariable("positionId") Integer positionId,
+                                                        @RequestBody(required = false) EmployeeQuery employeeQuery) {
+        return employeeService.getEmployeeListPageByPositionId(currentPage, pageSize, positionId, employeeQuery);
     }
 
     @GetMapping("getManagerList")
@@ -35,5 +35,10 @@ public class EmployeeController {
     @GetMapping("getWarehouseManagerList")
     public CommonResult getWarehouseManagerList() {
         return employeeService.getWarehouseManagerList();
+    }
+
+    @PostMapping("{currentPage}/{size}")
+    public CommonResult getEmployeeListPage(@PathVariable("currentPage") Integer currentPage, @PathVariable("size") Integer size, @RequestBody(required = false) EmployeeQuery employeeQuery) {
+        return employeeService.getEmployeeListPage(currentPage, size, employeeQuery);
     }
 }
