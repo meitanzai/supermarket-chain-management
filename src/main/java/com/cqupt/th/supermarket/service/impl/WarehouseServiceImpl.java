@@ -64,9 +64,6 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
                     return CommonResult.ok().data("total", 0).data("rows", new ArrayList<>());
                 }
             }
-            if (warehouseQuery.getName() != null) {
-                warehouseWrapper.like("name", warehouseQuery.getName());
-            }
             if (warehouseQuery.getManagerId() != null) {
                 warehouseWrapper.eq("manager_id", warehouseQuery.getManagerId());
             }

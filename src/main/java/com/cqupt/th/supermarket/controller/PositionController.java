@@ -24,20 +24,29 @@ public class PositionController {
     public CommonResult getPositionListPage(@PathVariable("currentPage") int currentPage, @PathVariable("pageSize") int pageSize, @RequestBody(required = false) PositionQuery positionQuery) {
         return positionService.getPositionListPage(currentPage, pageSize, positionQuery);
     }
+
     @DeleteMapping("{id}")
     public CommonResult deletePositionById(@PathVariable("id") Integer id) {
         return positionService.deletePositionById(id);
     }
+
     @PutMapping("{id}")
     public CommonResult updatePositionById(@PathVariable("id") Integer id, @RequestBody Position position) {
         return positionService.updatePositionById(id, position);
     }
+
     @DeleteMapping("batch/{ids}")
     public CommonResult deletePositionByIds(@PathVariable("ids") Integer[] ids) {
         return positionService.deletePositionByIds(ids);
     }
+
     @PostMapping
     public CommonResult addPosition(@RequestBody Position position) {
         return positionService.addPosition(position);
+    }
+
+    @GetMapping("all")
+    public CommonResult getPositionList() {
+        return positionService.getPositionList();
     }
 }

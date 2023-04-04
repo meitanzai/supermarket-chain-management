@@ -11,7 +11,6 @@ import java.io.Serializable;
 @Data
 public class WarehouseVo implements Serializable {
     private Integer id;
-    private String name;
     private Integer regionId;
     private String regionName;
     private String tel;

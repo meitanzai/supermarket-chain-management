@@ -158,7 +158,6 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
             employeeVo.setPositionName(positionHashMap.get(employee.getPositionId()).getName());
             if (employee.getStoreId() == 0) {
                 employeeVo.setWarehouseRegion(regionService.getRegionName(warehouseHashMap.get(employee.getWarehouseId()).getRegionId(), regionHashMap));
-                employeeVo.setWarehouseName(warehouseHashMap.get(employee.getWarehouseId()).getName());
             }
             if (employee.getWarehouseId() == 0) {
                 employeeVo.setStoreRegion(regionService.getRegionName(storeHashMap.get(employee.getStoreId()).getRegionId(), regionHashMap));

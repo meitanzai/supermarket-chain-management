@@ -98,6 +98,15 @@ public class PositionServiceImpl extends ServiceImpl<PositionMapper, Position>
         }
         return CommonResult.error().message("添加失败");
     }
+
+    @Override
+    public CommonResult getPositionList() {
+
+        QueryWrapper<Position> positionQueryWrapper = new QueryWrapper<>();
+        positionQueryWrapper.orderByDesc("gmt_modified");
+        List<Position> positionList = baseMapper.selectList(positionQueryWrapper);
+        return CommonResult.ok().data("items", positionList);
+    }
 }
 
 

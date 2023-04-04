@@ -21,4 +21,8 @@ public interface PositionService extends IService<Position> {
     CommonResult deletePositionByIds(Integer[] ids);
 
     CommonResult addPosition(Position position);
+
+    CommonResult getPositionList();
+
+
 }
