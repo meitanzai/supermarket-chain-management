@@ -2,9 +2,7 @@ package com.cqupt.th.supermarket.mapper;
 
 import com.cqupt.th.supermarket.entity.Employee;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
-import java.util.HashMap;
-import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 /**
 * @author 16075
@@ -14,6 +12,11 @@ import java.util.List;
 */
 public interface EmployeeMapper extends BaseMapper<Employee> {
 
+    void updateEmployeeByStoreId(@Param("storeId") Integer storeId);
+
+    void updateEmployeeByStoreIds(@Param("storeIds") Integer[] storeIds);
+
+    void updateEmployeeByWarehouseId(@Param("warehouseId") Integer warehouseId);
 }
 
 

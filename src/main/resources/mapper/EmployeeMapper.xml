@@ -23,5 +23,24 @@
         age,position_id,store_id,warehouse_id,
         status,gmt_create,gmt_modified
     </sql>
+    <update id="updateEmployeeByStoreId">
+        update employee
+        set store_id = null
+        where store_id = #{storeId}
+    </update>
+    <update id="updateEmployeeByStoreIds">
+        update employee
+        set store_id = null
+        where store_id in
+        <foreach collection="storeIds" item="storeId" open="(" separator="," close=")">
+            #{storeId}
+        </foreach>
+    </update>
+    <update id="updateEmployeeByWarehouseId">
+        update employee
+        set warehouse_id = null
+        where warehouse_id = #{warehouseId}
+    </update>
+
 
 </mapper>

@@ -107,6 +107,7 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
         if (id == null) {
             return CommonResult.error().message("参数错误");
         }
+        employeeMapper.updateEmployeeByWarehouseId(id);
         int i = baseMapper.deleteById(id);
         if (i == 0) {
             return CommonResult.error().message("删除失败");

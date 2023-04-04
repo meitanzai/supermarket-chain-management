@@ -101,6 +101,7 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
         if (ids == null || ids.length == 0) {
             return CommonResult.error().message("参数错误");
         }
+        employeeMapper.updateEmployeeByStoreIds(ids);
         int result = baseMapper.deleteBatchIds(Arrays.asList(ids));
         if (result == 0) {
             return CommonResult.error().message("删除失败");
@@ -114,6 +115,7 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
         if (id == null) {
             return CommonResult.error().message("参数错误");
         }
+        employeeMapper.updateEmployeeByStoreId(id);
         int result = baseMapper.deleteById(id);
         if (result == 0) {
             return CommonResult.error().message("删除失败");

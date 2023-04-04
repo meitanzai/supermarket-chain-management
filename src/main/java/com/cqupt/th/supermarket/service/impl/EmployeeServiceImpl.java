@@ -215,10 +215,10 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
             EmployeeVo employeeVo = new EmployeeVo();
             BeanUtils.copyProperties(employee, employeeVo);
             employeeVo.setPositionName(positionHashMap.get(employee.getPositionId()).getName());
-            if (employee.getStoreId() == 0) {
+            if (employee.getWarehouseId() != null && employee.getStoreId() != null && employee.getStoreId() == 0) {
                 employeeVo.setWarehouseRegion(regionService.getRegionName(warehouseHashMap.get(employee.getWarehouseId()).getRegionId(), regionHashMap));
             }
-            if (employee.getWarehouseId() == 0) {
+            if (employee.getStoreId() != null && employee.getWarehouseId() != null && employee.getWarehouseId() == 0) {
                 employeeVo.setStoreRegion(regionService.getRegionName(storeHashMap.get(employee.getStoreId()).getRegionId(), regionHashMap));
             }
 
