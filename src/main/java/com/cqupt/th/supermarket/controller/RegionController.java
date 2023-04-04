@@ -61,4 +61,13 @@ public class RegionController {
     public CommonResult updateRegionById(@PathVariable("id") Integer id, @RequestBody Region region) {
         return regionService.updateRegionById(id, region);
     }
+
+    @GetMapping("storeRegionAll")
+    public CommonResult getStoreRegionAll() {
+        return regionService.getStoreRegionAll();
+    }
+    @GetMapping("warehouseRegionAll")
+    public CommonResult getWarehouseRegionAll() {
+        return regionService.getWarehouseRegionAll();
+    }
 }

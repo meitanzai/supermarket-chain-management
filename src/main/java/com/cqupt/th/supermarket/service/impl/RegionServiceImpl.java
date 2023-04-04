@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqupt.th.supermarket.entity.Region;
 import com.cqupt.th.supermarket.entity.Store;
+import com.cqupt.th.supermarket.entity.Warehouse;
 import com.cqupt.th.supermarket.mapper.StoreMapper;
 import com.cqupt.th.supermarket.mapper.WarehouseMapper;
 import com.cqupt.th.supermarket.query.RegionQuery;
@@ -18,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.sql.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -260,6 +262,76 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
             region = map.get(region.getParentId());
         }
         return stringBuilder.toString();
+    }
+
+    @Override
+    public CommonResult getStoreRegionAll() {
+        List<Store> stores = storeMapper.selectList(null);
+        List<Integer> regionIds = stores.stream().map(store -> store.getRegionId()).collect(Collectors.toList());
+        List<RegionListVo> regionListVos = getRegionAll(regionIds);
+        return CommonResult.ok().data("items", regionListVos);
+
+    }
+
+    @Override
+    public CommonResult getWarehouseRegionAll() {
+        List<Warehouse> warehouses = warehouseMapper.selectList(null);
+        List<Integer> regionIds = warehouses.stream().map(warehouse -> warehouse.getRegionId()).collect(Collectors.toList());
+        List<RegionListVo> regionListVos = getRegionAll(regionIds);
+        return CommonResult.ok().data("items", regionListVos);
+    }
+
+    private List<RegionListVo> getRegionAll(List<Integer> regionIds) {
+        List<Region> regions = baseMapper.selectList(null);
+        Map<Integer, RegionListVo> collect = regions.stream().map(region -> {
+            RegionListVo regionListVo = new RegionListVo();
+            BeanUtils.copyProperties(region, regionListVo);
+            return regionListVo;
+        }).collect(Collectors.toMap(RegionListVo::getId, regionListVo -> regionListVo));
+        HashSet<RegionListVo> set1 = new HashSet<>();
+        HashSet<RegionListVo> set2 = new HashSet<>();
+        HashSet<RegionListVo> set3 = new HashSet<>();
+        HashSet<RegionListVo> set4 = new HashSet<>();
+        HashSet<RegionListVo> set5 = new HashSet<>();
+        for (Integer regionId : regionIds) {
+            Integer[] ids = getAllRegionIds(regionId);
+            for (int j = 0; j < ids.length; j++) {
+                RegionListVo regionListVo = collect.get(ids[j]);
+                if (j == 0) {
+                    set1.add(regionListVo);
+                } else if (j == 1) {
+                    set2.add(regionListVo);
+                } else if (j == 2) {
+                    set3.add(regionListVo);
+                } else if (j == 3) {
+                    set4.add(regionListVo);
+                } else if (j == 4) {
+                    set5.add(regionListVo);
+                }
+            }
+        }
+        List<RegionListVo> regionListVo = new ArrayList<>(set1);
+        for (RegionListVo regionListVo1 : regionListVo) {
+            List<RegionListVo> regionListVos = new ArrayList<>(set2);
+            List<RegionListVo> collect1 = regionListVos.stream().filter(regionListVo2 -> regionListVo2.getParentId().equals(regionListVo1.getId())).collect(Collectors.toList());
+            regionListVo1.setChildren(collect1);
+            for (RegionListVo regionListVo2 : collect1) {
+                List<RegionListVo> regionListVos1 = new ArrayList<>(set3);
+                List<RegionListVo> collect2 = regionListVos1.stream().filter(regionListVo3 -> regionListVo3.getParentId().equals(regionListVo2.getId())).collect(Collectors.toList());
+                regionListVo2.setChildren(collect2);
+                for (RegionListVo regionListVo3 : collect2) {
+                    List<RegionListVo> regionListVos2 = new ArrayList<>(set4);
+                    List<RegionListVo> collect3 = regionListVos2.stream().filter(regionListVo4 -> regionListVo4.getParentId().equals(regionListVo3.getId())).collect(Collectors.toList());
+                    regionListVo3.setChildren(collect3);
+                    for (RegionListVo regionListVo4 : collect3) {
+                        List<RegionListVo> regionListVos3 = new ArrayList<>(set5);
+                        List<RegionListVo> collect4 = regionListVos3.stream().filter(regionListVo5 -> regionListVo5.getParentId().equals(regionListVo4.getId())).collect(Collectors.toList());
+                        regionListVo4.setChildren(collect4);
+                    }
+                }
+            }
+        }
+        return regionListVo;
     }
 }
 

@@ -34,5 +34,8 @@ public interface RegionService extends IService<Region> {
 
     String getRegionName(Integer id, HashMap<Integer, Region> map);
 
+    CommonResult getStoreRegionAll();
+
+    CommonResult getWarehouseRegionAll();
 
 }
