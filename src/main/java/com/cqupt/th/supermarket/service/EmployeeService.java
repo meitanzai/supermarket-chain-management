@@ -27,4 +27,8 @@ public interface EmployeeService extends IService<Employee> {
     CommonResult updateEmployee(Integer id, Employee employee);
 
     CommonResult addEmployee(Employee employee);
+
+    CommonResult getEmployeeListPageByStoreId(Integer currentPage, Integer pageSize, Integer storeId, EmployeeQuery employeeQuery);
+
+    CommonResult getEmployeeListPageByWarehouseId(Integer currentPage, Integer pageSize, Integer warehouseId, EmployeeQuery employeeQuery);
 }

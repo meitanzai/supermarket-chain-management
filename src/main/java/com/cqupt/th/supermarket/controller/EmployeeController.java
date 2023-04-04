@@ -28,6 +28,22 @@ public class EmployeeController {
         return employeeService.getEmployeeListPageByPositionId(currentPage, pageSize, positionId, employeeQuery);
     }
 
+    @PostMapping("getEmployeeListPageByStoreId/{currentPage}/{pageSize}/{storeId}")
+    public CommonResult getEmployeeListPageByStoreId(@PathVariable("currentPage") Integer currentPage,
+                                                     @PathVariable("pageSize") Integer pageSize,
+                                                     @PathVariable("storeId") Integer storeId,
+                                                     @RequestBody(required = false) EmployeeQuery employeeQuery) {
+        return employeeService.getEmployeeListPageByStoreId(currentPage, pageSize, storeId, employeeQuery);
+    }
+
+    @PostMapping("getEmployeeListPageByWarehouseId/{currentPage}/{pageSize}/{warehouseId}")
+    public CommonResult getEmployeeListPageByWarehouseId(@PathVariable("currentPage") Integer currentPage,
+                                                         @PathVariable("pageSize") Integer pageSize,
+                                                         @PathVariable("warehouseId") Integer warehouseId,
+                                                         @RequestBody(required = false) EmployeeQuery employeeQuery) {
+        return employeeService.getEmployeeListPageByWarehouseId(currentPage, pageSize, warehouseId, employeeQuery);
+    }
+
     @GetMapping("getManagerList")
     public CommonResult getManagerList() {
         return employeeService.getManagerList();
@@ -44,20 +60,22 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/batch/{ids}")
-    public CommonResult deleteBatchEmployee(@PathVariable("ids") Integer[] ids){
+    public CommonResult deleteBatchEmployee(@PathVariable("ids") Integer[] ids) {
         return employeeService.deleteBatchEmployee(ids);
     }
 
     @DeleteMapping("{id}")
-    public CommonResult deleteEmployeeById(@PathVariable("id") Integer id){
+    public CommonResult deleteEmployeeById(@PathVariable("id") Integer id) {
         return employeeService.deleteEmployeeById(id);
     }
+
     @PutMapping("{id}")
-    public CommonResult updateEmployee(@PathVariable("id") Integer id, @RequestBody Employee employee){
+    public CommonResult updateEmployee(@PathVariable("id") Integer id, @RequestBody Employee employee) {
         return employeeService.updateEmployee(id, employee);
     }
+
     @PostMapping
-    public CommonResult addEmployee(@RequestBody Employee employee){
+    public CommonResult addEmployee(@RequestBody Employee employee) {
         return employeeService.addEmployee(employee);
     }
 }

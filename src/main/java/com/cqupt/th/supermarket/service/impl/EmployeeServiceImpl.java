@@ -189,6 +189,48 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
         return CommonResult.error().message("添加失败");
     }
 
+    @Override
+    public CommonResult getEmployeeListPageByStoreId(Integer currentPage, Integer pageSize, Integer storeId, EmployeeQuery employeeQuery) {
+        if (currentPage == null || pageSize == null || storeId == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        QueryWrapper<Employee> employeeQueryWrapper = new QueryWrapper<>();
+        employeeQueryWrapper.eq("store_id", storeId);
+        employeeQueryWrapper.orderByDesc("gmt_modified");
+        if (employeeQuery != null) {
+            if (employeeQuery.getName() != null) {
+                employeeQueryWrapper.like("name", employeeQuery.getName());
+            }
+        }
+        Page<Employee> employeePage = new Page<>();
+        baseMapper.selectPage(employeePage, employeeQueryWrapper);
+        long total = employeePage.getTotal();
+        List<Employee> records = employeePage.getRecords();
+        List<EmployeeVo> rows = getEmployeeVoList(records);
+        return CommonResult.ok().data("total", total).data("rows", rows);
+    }
+
+    @Override
+    public CommonResult getEmployeeListPageByWarehouseId(Integer currentPage, Integer pageSize, Integer warehouseId, EmployeeQuery employeeQuery) {
+        if (currentPage == null || pageSize == null || warehouseId == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        QueryWrapper<Employee> employeeQueryWrapper = new QueryWrapper<>();
+        employeeQueryWrapper.eq("warehouse_id", warehouseId);
+        employeeQueryWrapper.orderByDesc("gmt_modified");
+        if (employeeQuery != null) {
+            if (employeeQuery.getName() != null) {
+                employeeQueryWrapper.like("name", employeeQuery.getName());
+            }
+        }
+        Page<Employee> employeePage = new Page<>();
+        baseMapper.selectPage(employeePage, employeeQueryWrapper);
+        long total = employeePage.getTotal();
+        List<Employee> records = employeePage.getRecords();
+        List<EmployeeVo> rows = getEmployeeVoList(records);
+        return CommonResult.ok().data("total", total).data("rows", rows);
+    }
+
     private List<EmployeeVo> getEmployeeVoList(List<Employee> records) {
         List<Region> regionList = regionService.list();
         HashMap<Integer, Region> regionHashMap = new HashMap<>();
