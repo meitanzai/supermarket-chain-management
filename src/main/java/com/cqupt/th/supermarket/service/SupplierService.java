@@ -2,6 +2,8 @@ package com.cqupt.th.supermarket.service;
 
 import com.cqupt.th.supermarket.entity.Supplier;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cqupt.th.supermarket.query.SupplierQuery;
+import com.cqupt.th.supermarket.utils.CommonResult;
 
 /**
 * @author 16075
@@ -10,4 +12,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface SupplierService extends IService<Supplier> {
 
+    CommonResult getSupplierListPage(int currentPage, int pageSize, SupplierQuery supplierQuery);
 }
