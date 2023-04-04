@@ -174,6 +174,34 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
         return CommonResult.ok().message("添加成功");
     }
 
+    @Override
+    public CommonResult getStoreIdByRegionId(Integer regionId) {
+
+        if (regionId == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        Store store = baseMapper.selectOne(new QueryWrapper<Store>().eq("region_id", regionId));
+        if (store == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        Integer id = store.getId();
+        return CommonResult.ok().data("item", id);
+    }
+
+    @Override
+    public CommonResult getRegionIdByStoreId(Integer storeId) {
+
+        if (storeId == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        Store store = baseMapper.selectById(storeId);
+        if (store == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        Integer regionId = store.getRegionId();
+        return CommonResult.ok().data("item", regionId);
+    }
+
 
 }
 

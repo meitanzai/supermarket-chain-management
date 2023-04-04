@@ -51,4 +51,13 @@ public class StoreController {
     public CommonResult addStore(@RequestBody Store store) {
         return storeService.addStore(store);
     }
+
+    @GetMapping("getStoreIdByRegionId/{regionId}")
+    public CommonResult getStoreIdByRegionId(@PathVariable("regionId") Integer regionId) {
+        return storeService.getStoreIdByRegionId(regionId);
+    }
+    @GetMapping("getRegionIdByStoreId/{storeId}")
+    public CommonResult getRegionIdByStoreId(@PathVariable("storeId") Integer storeId) {
+        return storeService.getRegionIdByStoreId(storeId);
+    }
 }

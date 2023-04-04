@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -128,6 +129,64 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
         List<Employee> records = employeePage.getRecords();
         List<EmployeeVo> rows = getEmployeeVoList(records);
         return CommonResult.ok().data("total", total).data("rows", rows);
+    }
+
+    @Override
+    public CommonResult deleteBatchEmployee(Integer[] ids) {
+        if (ids == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        int result = baseMapper.deleteBatchIds(Arrays.asList(ids));
+        if (result > 0) {
+            return CommonResult.ok();
+        }
+        return CommonResult.error().message("删除失败");
+    }
+
+    @Override
+    public CommonResult deleteEmployeeById(Integer id) {
+
+        if (id == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        int result = baseMapper.deleteById(id);
+        if (result > 0) {
+            return CommonResult.ok();
+        }
+        return CommonResult.error().message("删除失败");
+    }
+
+    @Override
+    public CommonResult updateEmployee(Integer id, Employee employee) {
+
+        if (id == null || employee == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        employee.setId(id);
+        int result = baseMapper.updateById(employee);
+        if (result > 0) {
+            return CommonResult.ok();
+        }
+        return CommonResult.error().message("更新失败");
+    }
+
+    @Override
+    public CommonResult addEmployee(Employee employee) {
+
+        if (employee == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        if (employee.getStoreId() == null) {
+            employee.setStoreId(0);
+        }
+        if (employee.getWarehouseId() == null) {
+            employee.setWarehouseId(0);
+        }
+        int result = baseMapper.insert(employee);
+        if (result > 0) {
+            return CommonResult.ok();
+        }
+        return CommonResult.error().message("添加失败");
     }
 
     private List<EmployeeVo> getEmployeeVoList(List<Employee> records) {

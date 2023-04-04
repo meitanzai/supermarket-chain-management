@@ -1,5 +1,6 @@
 package com.cqupt.th.supermarket.controller;
 
+import com.cqupt.th.supermarket.entity.Employee;
 import com.cqupt.th.supermarket.query.EmployeeQuery;
 import com.cqupt.th.supermarket.service.EmployeeService;
 import com.cqupt.th.supermarket.utils.CommonResult;
@@ -40,5 +41,23 @@ public class EmployeeController {
     @PostMapping("{currentPage}/{size}")
     public CommonResult getEmployeeListPage(@PathVariable("currentPage") Integer currentPage, @PathVariable("size") Integer size, @RequestBody(required = false) EmployeeQuery employeeQuery) {
         return employeeService.getEmployeeListPage(currentPage, size, employeeQuery);
+    }
+
+    @DeleteMapping("/batch/{ids}")
+    public CommonResult deleteBatchEmployee(@PathVariable("ids") Integer[] ids){
+        return employeeService.deleteBatchEmployee(ids);
+    }
+
+    @DeleteMapping("{id}")
+    public CommonResult deleteEmployeeById(@PathVariable("id") Integer id){
+        return employeeService.deleteEmployeeById(id);
+    }
+    @PutMapping("{id}")
+    public CommonResult updateEmployee(@PathVariable("id") Integer id, @RequestBody Employee employee){
+        return employeeService.updateEmployee(id, employee);
+    }
+    @PostMapping
+    public CommonResult addEmployee(@RequestBody Employee employee){
+        return employeeService.addEmployee(employee);
     }
 }

@@ -40,4 +40,12 @@ public class WarehouseController {
     public CommonResult updateWarehouse(@PathVariable("id") Integer id, @RequestBody Warehouse warehouse) {
         return warehouseService.updateWarehouse(id, warehouse);
     }
+    @GetMapping("getWarehouseIdByRegionId/{regionId}")
+    public CommonResult getWarehouseIdByRegionId(@PathVariable("regionId") Integer regionId) {
+        return warehouseService.getWarehouseIdByRegionId(regionId);
+    }
+    @GetMapping("getRegionIdByWarehouseId/{warehouseId}")
+    public CommonResult getRegionIdByWarehouseId(@PathVariable("warehouseId") Integer warehouseId) {
+        return warehouseService.getRegionIdByWarehouseId(warehouseId);
+    }
 }

@@ -21,4 +21,8 @@ public interface WarehouseService extends IService<Warehouse> {
     CommonResult addWarehouse(Warehouse warehouse);
 
     CommonResult updateWarehouse(Integer id, Warehouse warehouse);
+
+    CommonResult getWarehouseIdByRegionId(Integer regionId);
+
+    CommonResult getRegionIdByWarehouseId(Integer warehouseId);
 }

@@ -77,7 +77,7 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
         List<Warehouse> records = warehousePage.getRecords();
         long total = warehousePage.getTotal();
         HashMap<Integer, String> employeeHashMap = new HashMap<>();
-        employeeMapper.selectList(new QueryWrapper<Employee>().eq("store_id",0)).stream().forEach(e -> {
+        employeeMapper.selectList(new QueryWrapper<Employee>().eq("store_id", 0)).stream().forEach(e -> {
             employeeHashMap.put(e.getId(), e.getName());
         });
         List<WarehouseVo> collect = records.stream().map(s -> {
@@ -137,6 +137,31 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
             return CommonResult.error().message("修改失败");
         }
         return CommonResult.ok().message("修改成功");
+    }
+
+    @Override
+    public CommonResult getWarehouseIdByRegionId(Integer regionId) {
+        if (regionId == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        Warehouse warehouse = baseMapper.selectOne(new QueryWrapper<Warehouse>().eq("region_id", regionId));
+        if (warehouse == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        return CommonResult.ok().data("item", warehouse.getId());
+    }
+
+    @Override
+    public CommonResult getRegionIdByWarehouseId(Integer warehouseId) {
+
+        if (warehouseId == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        Warehouse warehouse = baseMapper.selectById(warehouseId);
+        if (warehouse == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        return CommonResult.ok().data("item", warehouse.getRegionId());
     }
 }
 

@@ -25,4 +25,8 @@ public interface StoreService extends IService<Store> {
     CommonResult updateStoreById(Integer id, Store store);
 
     CommonResult addStore(Store store);
+
+    CommonResult getStoreIdByRegionId(Integer regionId);
+
+    CommonResult getRegionIdByStoreId(Integer storeId);
 }
