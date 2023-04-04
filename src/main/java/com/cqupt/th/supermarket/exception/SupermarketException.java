@@ -1,7 +1,9 @@
 package com.cqupt.th.supermarket.exception;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 /**
@@ -11,19 +13,11 @@ import lombok.Data;
  * @date 2023/03/18
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class SupermarketException extends RuntimeException {
     private Integer code;
-
-    /**
-     * 接受状态码和错误消息
-     * @param code
-     * @param message
-     */
-    public SupermarketException(Integer code, String message) {
-        super(message);
-        this.code = code;
-    }
-
+    private String message;
 
 
     @Override

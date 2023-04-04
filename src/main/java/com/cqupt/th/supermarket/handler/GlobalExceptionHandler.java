@@ -17,11 +17,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * @author TianHong
  * @date 2023/03/18
  */
-@RestControllerAdvice
+@ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
+    @ResponseBody
     public CommonResult error(Exception e) {
         e.printStackTrace();
         log.error(ExceptionUtil.getMessage(e));
@@ -30,6 +31,7 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(SupermarketException.class)
+    @ResponseBody
     public CommonResult error(SupermarketException e) {
         e.printStackTrace();
         log.error(ExceptionUtil.getMessage(e));
