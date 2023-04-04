@@ -201,6 +201,12 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
             if (employeeQuery.getName() != null) {
                 employeeQueryWrapper.like("name", employeeQuery.getName());
             }
+            if (employeeQuery.getStartTime() != null) {
+                employeeQueryWrapper.ge("gmt_create", employeeQuery.getStartTime());
+            }
+            if (employeeQuery.getEndTime() != null) {
+                employeeQueryWrapper.le("gmt_create", employeeQuery.getEndTime());
+            }
         }
         Page<Employee> employeePage = new Page<>();
         baseMapper.selectPage(employeePage, employeeQueryWrapper);
@@ -221,6 +227,12 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
         if (employeeQuery != null) {
             if (employeeQuery.getName() != null) {
                 employeeQueryWrapper.like("name", employeeQuery.getName());
+            }
+            if (employeeQuery.getStartTime() != null) {
+                employeeQueryWrapper.ge("gmt_create", employeeQuery.getStartTime());
+            }
+            if (employeeQuery.getEndTime() != null) {
+                employeeQueryWrapper.le("gmt_create", employeeQuery.getEndTime());
             }
         }
         Page<Employee> employeePage = new Page<>();
