@@ -10,6 +10,7 @@ import java.io.Serializable;
  */
 @Data
 public class StoreQuery implements Serializable {
+
     private Integer regionParentId;
     private String telephone;
     private Integer managerId;

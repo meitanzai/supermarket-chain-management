@@ -10,6 +10,7 @@ import java.io.Serializable;
  */
 @Data
 public class WarehouseQuery implements Serializable {
+
     private Integer regionParentId;
     private String tel;
     private Integer managerId;

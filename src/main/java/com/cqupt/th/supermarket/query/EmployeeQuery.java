@@ -2,6 +2,7 @@ package com.cqupt.th.supermarket.query;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -9,7 +10,8 @@ import java.util.Date;
  * @date 2023/3/31 18:23
  */
 @Data
-public class EmployeeQuery {
+public class EmployeeQuery implements Serializable {
+
     private String name;
     private Integer positionId;
     private Integer storeId;

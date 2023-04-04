@@ -1,23 +1,21 @@
 package com.cqupt.th.supermarket.query;
 
-
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author th
- * @date 2023/3/26 14:58
+ * @date 2023/4/4 22:54
  */
 @Data
-public class BrandQuery implements Serializable {
+public class SupplierQuery {
 
-    private static final long serialVersionUID = 1L;
     private String name;
-    private Integer isShow;
+    private String contactPerson;
+    private String tel;
+    private Integer regionId;
     private Date startTime;
     private Date endTime;
-
-
 }
+

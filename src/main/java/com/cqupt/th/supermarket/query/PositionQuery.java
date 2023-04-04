@@ -11,6 +11,7 @@ import java.util.Date;
  */
 @Data
 public class PositionQuery implements Serializable {
+
     private String name;
     private Date startTime;
     private Date endTime;

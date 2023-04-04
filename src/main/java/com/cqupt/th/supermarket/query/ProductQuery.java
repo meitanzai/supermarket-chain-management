@@ -12,20 +12,12 @@ import java.util.Date;
  */
 @Data
 public class ProductQuery implements Serializable {
+
     private String name;
-
-    /**
-     *
-     */
     private String barcode;
-
     private Integer categoryId;
     private Integer brandId;
-    /**
-     *
-     */
     private Integer isShow;
-
     private Date startTime;
     private Date endTime;
 

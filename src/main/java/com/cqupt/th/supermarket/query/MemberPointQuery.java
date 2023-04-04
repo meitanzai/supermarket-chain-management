@@ -11,6 +11,7 @@ import java.util.Date;
  */
 @Data
 public class MemberPointQuery implements Serializable {
+
     private Integer memberId;
     private Integer point;
     private Date startTime;
