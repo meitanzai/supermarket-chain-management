@@ -42,6 +42,11 @@ public class Supplier implements Serializable {
     /**
      * 
      */
+    private Integer isUse;
+
+    /**
+     * 
+     */
     @TableField(fill = FieldFill.INSERT)
     private Date gmtCreate;
 

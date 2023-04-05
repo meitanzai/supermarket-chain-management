@@ -19,6 +19,7 @@ public class SupplierVo implements Serializable {
     private String tel;
     private Integer regionId;
     private String regionName;
+    private Integer isUse;
     private Date gmtCreate;
     private Date gmtModified;
 }

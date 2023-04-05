@@ -10,13 +10,14 @@
             <result property="contactPerson" column="contact_person" jdbcType="VARCHAR"/>
             <result property="tel" column="tel" jdbcType="CHAR"/>
             <result property="regionId" column="region_id" jdbcType="INTEGER"/>
+            <result property="isUse" column="is_use" jdbcType="TINYINT"/>
             <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
             <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,name,contact_person,
-        tel,region_id,gmt_create,
-        gmt_modified
+        tel,region_id,is_use,
+        gmt_create,gmt_modified
     </sql>
 </mapper>

@@ -14,7 +14,7 @@ public class SupplierQuery {
     private String name;
     private String contactPerson;
     private String tel;
-    private Integer regionId;
+    private Integer regionParentId;
     private Date startTime;
     private Date endTime;
 }
