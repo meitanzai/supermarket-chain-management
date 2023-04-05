@@ -64,7 +64,7 @@ public class SupplierServiceImpl extends ServiceImpl<SupplierMapper, Supplier>
                 supplierQueryWrapper.like("name", supplierQuery.getName());
             }
             if (StringUtils.hasText(supplierQuery.getContactPerson())) {
-                supplierQueryWrapper.like("contactPerson", supplierQuery.getContactPerson());
+                supplierQueryWrapper.like("contact_Person", supplierQuery.getContactPerson());
             }
             if (StringUtils.hasText(supplierQuery.getTel())) {
                 supplierQueryWrapper.like("tel", supplierQuery.getTel());
