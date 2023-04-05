@@ -49,5 +49,10 @@ public class ProductController {
     public CommonResult getCategoryIds(@PathVariable("id") Integer id) {
         return productService.getCategoryIds(id);
     }
+
+    @GetMapping("brandId/{brandId}/categoryId/{categoryId}")
+    public CommonResult getProductByBrandIdAndCategoryId(@PathVariable("brandId") Integer brandId, @PathVariable("categoryId") Integer categoryId) {
+        return productService.getProductByBrandIdAndCategoryId(brandId, categoryId);
+    }
 }
 

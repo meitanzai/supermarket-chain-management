@@ -145,6 +145,18 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
         return CommonResult.ok().data("item", ids);
     }
 
+    @Override
+    public CommonResult getProductByBrandIdAndCategoryId(Integer brandId, Integer categoryId) {
+        if (brandId == null || categoryId == null) {
+            return CommonResult.error().message("参数不能为空");
+        }
+        QueryWrapper<Product> productQueryWrapper = new QueryWrapper<>();
+        productQueryWrapper.eq("brand_id", brandId);
+        productQueryWrapper.eq("category_id", categoryId);
+        List<Product> products = baseMapper.selectList(productQueryWrapper);
+        return CommonResult.ok().data("items", products);
+    }
+
 
 }
 
