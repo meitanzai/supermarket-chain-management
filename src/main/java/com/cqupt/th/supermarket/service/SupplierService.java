@@ -13,4 +13,16 @@ import com.cqupt.th.supermarket.utils.CommonResult;
 public interface SupplierService extends IService<Supplier> {
 
     CommonResult getSupplierListPage(int currentPage, int pageSize, SupplierQuery supplierQuery);
+
+    CommonResult deleteSupplierBatch(Integer[] ids);
+
+    CommonResult updateSupplierIsUse(Integer id, Integer isUse);
+
+    CommonResult getSupplierRegionIds(Integer regionId);
+
+    CommonResult deleteSupplier(Integer id);
+
+    CommonResult addSupplier(Supplier supplier);
+
+    CommonResult updateSupplier(Integer id, Supplier supplier);
 }

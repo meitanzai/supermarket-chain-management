@@ -7,14 +7,18 @@ import com.cqupt.th.supermarket.entity.Region;
 import com.cqupt.th.supermarket.entity.Supplier;
 import com.cqupt.th.supermarket.mapper.RegionMapper;
 import com.cqupt.th.supermarket.query.SupplierQuery;
+import com.cqupt.th.supermarket.service.RegionService;
 import com.cqupt.th.supermarket.service.SupplierService;
 import com.cqupt.th.supermarket.mapper.SupplierMapper;
 import com.cqupt.th.supermarket.utils.CommonResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,8 +30,9 @@ import java.util.List;
 @Service("supplierService")
 public class SupplierServiceImpl extends ServiceImpl<SupplierMapper, Supplier>
         implements SupplierService {
-    @Resource
-    private RegionMapper regionMapper;
+    @Autowired
+    @Qualifier("regionService")
+    private RegionService regionService;
 
     @Override
     public CommonResult getSupplierListPage(int currentPage, int pageSize, SupplierQuery supplierQuery) {
@@ -35,7 +40,7 @@ public class SupplierServiceImpl extends ServiceImpl<SupplierMapper, Supplier>
             return CommonResult.error().message("参数错误");
         }
         QueryWrapper<Supplier> supplierQueryWrapper = new QueryWrapper<>();
-        List<Region> regionList = regionMapper.selectList(null);
+        List<Region> regionList = regionService.list(null);
         HashMap<Integer, Region> map = new HashMap<>();
         regionList.stream().forEach(r -> {
             map.put(r.getId(), r);
@@ -76,6 +81,89 @@ public class SupplierServiceImpl extends ServiceImpl<SupplierMapper, Supplier>
         long total = supplierPage.getTotal();
         List<Supplier> rows = supplierPage.getRecords();
         return CommonResult.ok().data("total", total).data("rows", rows);
+    }
+
+    @Override
+    public CommonResult deleteSupplierBatch(Integer[] ids) {
+
+        if (ids == null || ids.length == 0) {
+            return CommonResult.error().message("参数错误");
+        }
+        int result = baseMapper.deleteBatchIds(Arrays.asList(ids));
+        if (result == 0) {
+            return CommonResult.error().message("删除失败");
+        }
+        return CommonResult.ok().message("删除成功");
+    }
+
+    @Override
+    public CommonResult updateSupplierIsUse(Integer id, Integer isUse) {
+
+        if (id == null || isUse == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        Supplier supplier = baseMapper.selectById(id);
+        if (supplier == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        supplier.setIsUse(isUse);
+        int result = baseMapper.updateById(supplier);
+        if (result == 0) {
+            return CommonResult.error().message("修改失败");
+        }
+        return CommonResult.ok().message("修改成功");
+    }
+
+    @Override
+    public CommonResult getSupplierRegionIds(Integer regionId) {
+        if (regionId == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        Integer[] ids = regionService.getAllRegionIds(regionId);
+        if (ids == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        return CommonResult.ok().data("items", ids);
+    }
+
+    @Override
+    public CommonResult deleteSupplier(Integer id) {
+
+        if (id == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        int result = baseMapper.deleteById(id);
+        if (result == 0) {
+            return CommonResult.error().message("删除失败");
+        }
+        return CommonResult.ok().message("删除成功");
+    }
+
+    @Override
+    public CommonResult addSupplier(Supplier supplier) {
+
+        if (supplier == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        int result = baseMapper.insert(supplier);
+        if (result == 0) {
+            return CommonResult.error().message("添加失败");
+        }
+        return CommonResult.ok().message("添加成功");
+    }
+
+    @Override
+    public CommonResult updateSupplier(Integer id, Supplier supplier) {
+
+        if (id == null || supplier == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        supplier.setId(id);
+        int result = baseMapper.updateById(supplier);
+        if (result == 0) {
+            return CommonResult.error().message("修改失败");
+        }
+        return CommonResult.ok().message("修改成功");
     }
 }
 
