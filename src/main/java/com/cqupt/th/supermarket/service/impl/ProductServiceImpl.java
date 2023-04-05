@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqupt.th.supermarket.entity.Product;
+import com.cqupt.th.supermarket.mapper.PurchaseMapper;
 import com.cqupt.th.supermarket.query.ProductQuery;
 import com.cqupt.th.supermarket.service.BrandService;
 import com.cqupt.th.supermarket.service.CategoryService;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +37,8 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
     @Autowired
     @Qualifier("categoryService")
     private CategoryService categoryService;
+    @Resource
+    private PurchaseMapper purchaseMapper;
 
     @Override
     public CommonResult getProductByPage(Integer currentPage, Integer size, ProductQuery productQuery) {
@@ -103,6 +107,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
         if (ids == null || ids.length == 0) {
             return CommonResult.error().message("参数不能为空");
         }
+        purchaseMapper.updatePurchaseByProductIds(ids);
         int i = baseMapper.deleteBatchIds(Arrays.asList(ids));
         if (i > 0) {
             return CommonResult.ok().message("删除成功");
@@ -116,6 +121,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
         if (id == null) {
             return CommonResult.error().message("参数不能为空");
         }
+        purchaseMapper.updatePurchaseByProductId(id);
         int i = baseMapper.deleteById(id);
         if (i > 0) {
             return CommonResult.ok().message("删除成功");

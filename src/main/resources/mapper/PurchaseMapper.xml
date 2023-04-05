@@ -5,19 +5,33 @@
 <mapper namespace="com.cqupt.th.supermarket.mapper.PurchaseMapper">
 
     <resultMap id="BaseResultMap" type="com.cqupt.th.supermarket.entity.Purchase">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="productId" column="product_id" jdbcType="INTEGER"/>
-            <result property="supplierId" column="supplier_id" jdbcType="INTEGER"/>
-            <result property="quantity" column="quantity" jdbcType="INTEGER"/>
-            <result property="purchasePrice" column="purchase_price" jdbcType="DECIMAL"/>
-            <result property="totalPrice" column="total_price" jdbcType="DECIMAL"/>
-            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
-            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="productId" column="product_id" jdbcType="INTEGER"/>
+        <result property="supplierId" column="supplier_id" jdbcType="INTEGER"/>
+        <result property="quantity" column="quantity" jdbcType="INTEGER"/>
+        <result property="purchasePrice" column="purchase_price" jdbcType="DECIMAL"/>
+        <result property="totalPrice" column="total_price" jdbcType="DECIMAL"/>
+        <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,product_id,supplier_id,
+        id
+        ,product_id,supplier_id,
         quantity,purchase_price,total_price,
         gmt_create,gmt_modified
     </sql>
+    <update id="updatePurchaseByProductId">
+        update purchase
+        set product_id = null
+        where product_id = #{productId}
+    </update>
+    <update id="updatePurchaseByProductIds">
+        update purchase
+        set product_id = null
+        where product_id in
+        <foreach collection="productIds" item="productId" open="(" separator="," close=")">
+            #{productId}
+        </foreach>
+    </update>
 </mapper>

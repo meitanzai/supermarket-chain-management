@@ -3,9 +3,11 @@ package com.cqupt.th.supermarket.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cqupt.th.supermarket.entity.Order;
 import com.cqupt.th.supermarket.entity.Product;
 import com.cqupt.th.supermarket.entity.Purchase;
 import com.cqupt.th.supermarket.entity.Supplier;
+import com.cqupt.th.supermarket.mapper.OrderMapper;
 import com.cqupt.th.supermarket.mapper.ProductMapper;
 import com.cqupt.th.supermarket.mapper.SupplierMapper;
 import com.cqupt.th.supermarket.query.PurchaseQuery;
@@ -34,6 +36,8 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
     private ProductMapper productMapper;
     @Resource
     private SupplierMapper supplierMapper;
+    @Resource
+    private OrderMapper orderMapper;
 
     @Override
     public CommonResult getPurchaseListPage(Integer currentPage, Integer pageSize, PurchaseQuery purchaseQuery) {
@@ -96,9 +100,10 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
         if (id == null) {
             return CommonResult.error().message("id不能为空");
         }
-        //TODO 删除订单
+
         int i = baseMapper.deleteById(id);
-        if (i == 0) {
+        int result = orderMapper.delete(new QueryWrapper<Order>().eq("purchase_id", id));
+        if (i == 0 || result == 0) {
             return CommonResult.error().message("删除失败");
         }
         return CommonResult.ok().message("删除成功");

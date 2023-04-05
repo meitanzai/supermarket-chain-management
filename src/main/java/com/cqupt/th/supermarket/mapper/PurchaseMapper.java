@@ -2,6 +2,7 @@ package com.cqupt.th.supermarket.mapper;
 
 import com.cqupt.th.supermarket.entity.Purchase;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
 * @author 16075
@@ -11,6 +12,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface PurchaseMapper extends BaseMapper<Purchase> {
 
+    void updatePurchaseByProductId(@Param("productId") Integer productId);
+
+    void updatePurchaseByProductIds(@Param("productIds") Integer[] productIds);
 }
 
 
