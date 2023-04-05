@@ -9,6 +9,7 @@ import java.util.Date;
 import lombok.Data;
 
 /**
+ * @author 16075
  * @TableName purchase
  */
 @TableName(value = "purchase")

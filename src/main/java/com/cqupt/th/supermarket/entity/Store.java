@@ -7,8 +7,12 @@ import java.util.Date;
 import lombok.Data;
 
 /**
+ * 商店
  * 门店表
+ *
+ * @author TianHong
  * @TableName store
+ * @date 2023/04/05
  */
 @TableName(value ="store")
 @Data

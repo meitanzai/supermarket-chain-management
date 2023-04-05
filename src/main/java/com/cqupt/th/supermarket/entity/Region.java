@@ -8,7 +8,11 @@ import java.util.Date;
 import lombok.Data;
 
 /**
+ * 地区
+ *
+ * @author TianHong
  * @TableName region
+ * @date 2023/04/05
  */
 @TableName(value = "region")
 @Data

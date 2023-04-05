@@ -8,7 +8,11 @@ import java.util.Date;
 import lombok.Data;
 
 /**
+ * 类别
+ *
+ * @author TianHong
  * @TableName category
+ * @date 2023/04/05
  */
 @TableName(value = "category")
 @Data

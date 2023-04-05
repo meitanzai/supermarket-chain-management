@@ -7,8 +7,11 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 
+ * 供应商
+ *
+ * @author TianHong
  * @TableName supplier
+ * @date 2023/04/05
  */
 @TableName(value ="supplier")
 @Data
