@@ -55,5 +55,10 @@ public class SupplierController {
         return supplierService.updateSupplier(id, supplier);
     }
 
+    @GetMapping("all")
+    public CommonResult getAllSupplier() {
+        return supplierService.getAllSupplier();
+    }
+
 }
 

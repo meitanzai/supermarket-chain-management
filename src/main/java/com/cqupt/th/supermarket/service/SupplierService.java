@@ -25,4 +25,7 @@ public interface SupplierService extends IService<Supplier> {
     CommonResult addSupplier(Supplier supplier);
 
     CommonResult updateSupplier(Integer id, Supplier supplier);
+
+    CommonResult getAllSupplier();
+
 }

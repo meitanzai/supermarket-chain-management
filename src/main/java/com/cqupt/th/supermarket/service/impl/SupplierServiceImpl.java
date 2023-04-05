@@ -176,6 +176,13 @@ public class SupplierServiceImpl extends ServiceImpl<SupplierMapper, Supplier>
         }
         return CommonResult.ok().message("修改成功");
     }
+
+    @Override
+    public CommonResult getAllSupplier() {
+
+        List<Supplier> suppliers = baseMapper.selectList(null);
+        return CommonResult.ok().data("items", suppliers);
+    }
 }
 
 

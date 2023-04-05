@@ -13,4 +13,10 @@ import com.cqupt.th.supermarket.utils.CommonResult;
 public interface PurchaseService extends IService<Purchase> {
 
     CommonResult getPurchaseListPage(Integer currentPage, Integer pageSize, PurchaseQuery purchaseQuery);
+
+    CommonResult deletePurchase(Integer id);
+
+    CommonResult addPurchase(Purchase purchase);
+
+    CommonResult updatePurchase(Integer id, Purchase purchase);
 }

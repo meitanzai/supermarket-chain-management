@@ -157,6 +157,16 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
         return CommonResult.ok().data("items", products);
     }
 
+    @Override
+    public CommonResult getProductById(Integer id) {
+
+        if (id == null) {
+            return CommonResult.error().message("参数不能为空");
+        }
+        Product product = baseMapper.selectById(id);
+        return CommonResult.ok().data("item", product);
+    }
+
 
 }
 

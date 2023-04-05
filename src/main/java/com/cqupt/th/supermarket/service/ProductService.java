@@ -25,4 +25,6 @@ public interface ProductService extends IService<Product> {
     CommonResult getCategoryIds(Integer id);
 
     CommonResult getProductByBrandIdAndCategoryId(Integer brandId, Integer categoryId);
+
+    CommonResult getProductById(Integer id);
 }

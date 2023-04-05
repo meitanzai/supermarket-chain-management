@@ -138,6 +138,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
     public Integer[] getCategoryIds(Integer id) {
         Category category = baseMapper.selectById(id);
         ArrayList<Integer> list = new ArrayList<>();
+        if (category == null) {
+            return null;
+        }
         list.add(category.getId());
         while (category.getParentId() != 0) {
             id = category.getParentId();
