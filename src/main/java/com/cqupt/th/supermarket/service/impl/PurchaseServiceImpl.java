@@ -1,5 +1,7 @@
 package com.cqupt.th.supermarket.service.impl;
 
+import java.util.Date;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -120,8 +122,14 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
             productMapper.updatePurchasePrice(purchase.getProductId(), purchasePrice);
         }
         //TODO 生成订单
+        Order order = new Order();
+        order.setPurchaseId(purchase.getId());
+        order.setSupplierId(purchase.getSupplierId());
+        order.setTotalPrice(purchase.getTotalPrice());
+        order.setStatus(2);
+        int insert1 = orderMapper.insert(order);
         int insert = baseMapper.insert(purchase);
-        if (insert == 0) {
+        if (insert == 0 || insert1 == 0) {
             return CommonResult.error().message("添加失败");
         }
         return CommonResult.ok().message("添加成功");
@@ -137,9 +145,12 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
             productMapper.updatePurchasePrice(purchase.getProductId(), purchasePrice);
         }
         //TODO 修改订单
-        purchase.setId(id);
+        Order order = orderMapper.selectOne(new QueryWrapper<Order>().eq("purchase_id", id));
+        order.setSupplierId(purchase.getSupplierId());
+        order.setTotalPrice(purchase.getTotalPrice());
+        int result = orderMapper.updateById(order);
         int i = baseMapper.updateById(purchase);
-        if (i == 0) {
+        if (i == 0 || result == 0) {
             return CommonResult.error().message("修改失败");
         }
         return CommonResult.ok().message("修改成功");
