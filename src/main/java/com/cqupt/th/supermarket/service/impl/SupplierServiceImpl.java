@@ -3,6 +3,7 @@ package com.cqupt.th.supermarket.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cqupt.th.supermarket.entity.Employee;
 import com.cqupt.th.supermarket.entity.Region;
 import com.cqupt.th.supermarket.entity.Supplier;
 import com.cqupt.th.supermarket.mapper.RegionMapper;
@@ -11,6 +12,9 @@ import com.cqupt.th.supermarket.service.RegionService;
 import com.cqupt.th.supermarket.service.SupplierService;
 import com.cqupt.th.supermarket.mapper.SupplierMapper;
 import com.cqupt.th.supermarket.utils.CommonResult;
+import com.cqupt.th.supermarket.vo.StoreVo;
+import com.cqupt.th.supermarket.vo.SupplierVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -21,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author 16075
@@ -79,7 +84,13 @@ public class SupplierServiceImpl extends ServiceImpl<SupplierMapper, Supplier>
         Page<Supplier> supplierPage = new Page<>(currentPage, pageSize);
         baseMapper.selectPage(supplierPage, supplierQueryWrapper);
         long total = supplierPage.getTotal();
-        List<Supplier> rows = supplierPage.getRecords();
+        List<Supplier> records = supplierPage.getRecords();
+        List<SupplierVo> rows = records.stream().map(s -> {
+            SupplierVo supplierVo = new SupplierVo();
+            BeanUtils.copyProperties(s, supplierVo);
+            supplierVo.setRegionName(regionService.getRegionName(s.getRegionId(), map));
+            return supplierVo;
+        }).collect(Collectors.toList());
         return CommonResult.ok().data("total", total).data("rows", rows);
     }
 
