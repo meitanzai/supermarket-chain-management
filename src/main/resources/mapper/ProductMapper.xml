@@ -47,4 +47,9 @@
             #{brandId}
         </foreach>
     </update>
+    <update id="updatePurchasePrice">
+        UPDATE product
+        SET purchase_price = #{purchasePrice}
+        WHERE id = #{productId}
+    </update>
 </mapper>

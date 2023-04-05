@@ -2,6 +2,7 @@ package com.cqupt.th.supermarket.query;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -10,7 +11,7 @@ import java.util.Date;
  * @date 2023/4/5 17:06
  */
 @Data
-public class PurchaseQuery {
+public class PurchaseQuery implements Serializable {
     private Integer productId;
     private String productName;
     private Integer supplierId;

@@ -17,6 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -109,6 +110,10 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
         if (purchase == null) {
             return CommonResult.error().message("参数不能为空");
         }
+        BigDecimal purchasePrice = purchase.getPurchasePrice();
+        if (purchasePrice != null) {
+            productMapper.updatePurchasePrice(purchase.getProductId(), purchasePrice);
+        }
         //TODO 生成订单
         int insert = baseMapper.insert(purchase);
         if (insert == 0) {
@@ -121,6 +126,10 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
     public CommonResult updatePurchase(Integer id, Purchase purchase) {
         if (id == null || purchase == null) {
             return CommonResult.error().message("参数不能为空");
+        }
+        BigDecimal purchasePrice = purchase.getPurchasePrice();
+        if (purchasePrice != null) {
+            productMapper.updatePurchasePrice(purchase.getProductId(), purchasePrice);
         }
         //TODO 修改订单
         purchase.setId(id);
