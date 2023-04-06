@@ -281,6 +281,14 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
         return CommonResult.ok().data("items", regionListVos);
     }
 
+    @Override
+    public CommonResult getBusinessStoreRegionAll() {
+        List<Store> stores = storeMapper.selectList(new QueryWrapper<Store>().eq("status", "1"));
+        List<Integer> regionIds = stores.stream().map(store -> store.getRegionId()).collect(Collectors.toList());
+        List<RegionListVo> regionListVos = getRegionAll(regionIds);
+        return CommonResult.ok().data("items", regionListVos);
+    }
+
     private List<RegionListVo> getRegionAll(List<Integer> regionIds) {
         List<Region> regions = baseMapper.selectList(null);
         Map<Integer, RegionListVo> collect = regions.stream().map(region -> {

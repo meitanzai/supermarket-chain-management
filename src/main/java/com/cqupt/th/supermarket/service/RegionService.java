@@ -38,4 +38,6 @@ public interface RegionService extends IService<Region> {
 
     CommonResult getWarehouseRegionAll();
 
+    CommonResult getBusinessStoreRegionAll();
+
 }

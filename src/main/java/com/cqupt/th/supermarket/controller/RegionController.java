@@ -70,4 +70,8 @@ public class RegionController {
     public CommonResult getWarehouseRegionAll() {
         return regionService.getWarehouseRegionAll();
     }
+    @GetMapping("businessStoreRegionAll")
+    public CommonResult getBusinessStoreRegionAll() {
+        return regionService.getBusinessStoreRegionAll();
+    }
 }
