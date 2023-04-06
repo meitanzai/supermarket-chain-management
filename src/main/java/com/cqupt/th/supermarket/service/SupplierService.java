@@ -28,4 +28,7 @@ public interface SupplierService extends IService<Supplier> {
 
     CommonResult getAllSupplier();
 
+    CommonResult getAvailableSuppliers();
+
+
 }

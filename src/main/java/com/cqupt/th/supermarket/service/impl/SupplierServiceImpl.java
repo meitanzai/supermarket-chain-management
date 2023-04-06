@@ -183,6 +183,15 @@ public class SupplierServiceImpl extends ServiceImpl<SupplierMapper, Supplier>
         List<Supplier> suppliers = baseMapper.selectList(null);
         return CommonResult.ok().data("items", suppliers);
     }
+
+    @Override
+    public CommonResult getAvailableSuppliers() {
+
+        QueryWrapper<Supplier> supplierQueryWrapper = new QueryWrapper<>();
+        supplierQueryWrapper.eq("is_use", 1);
+        List<Supplier> suppliers = baseMapper.selectList(supplierQueryWrapper);
+        return CommonResult.ok().data("items", suppliers);
+    }
 }
 
 

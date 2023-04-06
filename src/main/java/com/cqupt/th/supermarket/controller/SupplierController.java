@@ -60,5 +60,10 @@ public class SupplierController {
         return supplierService.getAllSupplier();
     }
 
+    @GetMapping("getAvailableSuppliers")
+    public CommonResult getAvailableSuppliers() {
+        return supplierService.getAvailableSuppliers();
+    }
+
 }
 
