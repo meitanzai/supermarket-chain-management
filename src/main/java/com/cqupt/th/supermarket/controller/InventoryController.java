@@ -1,11 +1,11 @@
 package com.cqupt.th.supermarket.controller;
 
+import com.cqupt.th.supermarket.query.InventoryQuery;
 import com.cqupt.th.supermarket.service.InventoryService;
+import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author th
@@ -18,4 +18,8 @@ public class InventoryController {
     @Autowired
     @Qualifier("inventoryService")
     private InventoryService inventoryService;
+    @PostMapping("{currentPage}/{pageSize}")
+    public CommonResult getInventoryListPage(@PathVariable("currentPage") Integer currentPage, @PathVariable("pageSize") Integer pageSize, @RequestBody(required = false) InventoryQuery inventoryQuery) {
+        return inventoryService.getInventoryListPage(currentPage, pageSize, inventoryQuery);
+    }
 }
