@@ -1,6 +1,6 @@
 package com.cqupt.th.supermarket.controller;
 
-import com.cqupt.th.supermarket.service.OrderService;
+import com.cqupt.th.supermarket.service.PurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @CrossOrigin
-@RequestMapping("/order")
-public class OrderController {
+@RequestMapping("/purchaseOrder")
+public class PurchaseOrderController {
     @Autowired
-    @Qualifier("orderService")
-    private OrderService orderService;
+    @Qualifier("purchaseOrderService")
+    private PurchaseOrderService purchaseOrderService;
 }

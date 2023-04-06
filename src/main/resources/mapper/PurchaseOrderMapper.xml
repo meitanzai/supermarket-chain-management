@@ -2,21 +2,21 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cqupt.th.supermarket.mapper.OrderMapper">
+<mapper namespace="com.cqupt.th.supermarket.mapper.PurchaseOrderMapper">
 
-    <resultMap id="BaseResultMap" type="com.cqupt.th.supermarket.entity.Order">
+    <resultMap id="BaseResultMap" type="com.cqupt.th.supermarket.entity.PurchaseOrder">
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="purchaseId" column="purchase_id" jdbcType="INTEGER"/>
             <result property="supplierId" column="supplier_id" jdbcType="INTEGER"/>
             <result property="totalPrice" column="total_price" jdbcType="DECIMAL"/>
-            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="isPay" column="is_pay" jdbcType="TINYINT"/>
             <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
             <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,purchase_id,supplier_id,
-        total_price,status,gmt_create,
+        total_price,is_pay,gmt_create,
         gmt_modified
     </sql>
 </mapper>

@@ -1,16 +1,14 @@
 package com.cqupt.th.supermarket.service.impl;
 
-import java.util.Date;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cqupt.th.supermarket.entity.Order;
 import com.cqupt.th.supermarket.entity.Product;
 import com.cqupt.th.supermarket.entity.Purchase;
+import com.cqupt.th.supermarket.entity.PurchaseOrder;
 import com.cqupt.th.supermarket.entity.Supplier;
-import com.cqupt.th.supermarket.mapper.OrderMapper;
 import com.cqupt.th.supermarket.mapper.ProductMapper;
+import com.cqupt.th.supermarket.mapper.PurchaseOrderMapper;
 import com.cqupt.th.supermarket.mapper.SupplierMapper;
 import com.cqupt.th.supermarket.query.PurchaseQuery;
 import com.cqupt.th.supermarket.service.PurchaseService;
@@ -39,7 +37,7 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
     @Resource
     private SupplierMapper supplierMapper;
     @Resource
-    private OrderMapper orderMapper;
+    private PurchaseOrderMapper purchaseOrderMapper;
 
     @Override
     public CommonResult getPurchaseListPage(Integer currentPage, Integer pageSize, PurchaseQuery purchaseQuery) {
@@ -103,8 +101,8 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
             return CommonResult.error().message("id不能为空");
         }
 
+        int result = purchaseOrderMapper.delete(new QueryWrapper<PurchaseOrder>().eq("purchase_id", id));
         int i = baseMapper.deleteById(id);
-        int result = orderMapper.delete(new QueryWrapper<Order>().eq("purchase_id", id));
         if (i == 0 || result == 0) {
             return CommonResult.error().message("删除失败");
         }
@@ -122,14 +120,17 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
             productMapper.updatePurchasePrice(purchase.getProductId(), purchasePrice);
         }
         //TODO 生成订单
-        Order order = new Order();
-        order.setPurchaseId(purchase.getId());
+        int id = baseMapper.insert(purchase);
+        if (id <= 0) {
+            return CommonResult.error().message("添加失败");
+        }
+        PurchaseOrder order = new PurchaseOrder();
         order.setSupplierId(purchase.getSupplierId());
         order.setTotalPrice(purchase.getTotalPrice());
-        order.setStatus(2);
-        int insert1 = orderMapper.insert(order);
-        int insert = baseMapper.insert(purchase);
-        if (insert == 0 || insert1 == 0) {
+        order.setPurchaseId(purchase.getId());
+        order.setIsPay(2);
+        int insert1 = purchaseOrderMapper.insert(order);
+        if (insert1 <= 0) {
             return CommonResult.error().message("添加失败");
         }
         return CommonResult.ok().message("添加成功");
@@ -145,10 +146,10 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
             productMapper.updatePurchasePrice(purchase.getProductId(), purchasePrice);
         }
         //TODO 修改订单
-        Order order = orderMapper.selectOne(new QueryWrapper<Order>().eq("purchase_id", id));
+        PurchaseOrder order = purchaseOrderMapper.selectOne(new QueryWrapper<PurchaseOrder>().eq("purchase_id", id));
         order.setSupplierId(purchase.getSupplierId());
         order.setTotalPrice(purchase.getTotalPrice());
-        int result = orderMapper.updateById(order);
+        int result = purchaseOrderMapper.updateById(order);
         int i = baseMapper.updateById(purchase);
         if (i == 0 || result == 0) {
             return CommonResult.error().message("修改失败");
