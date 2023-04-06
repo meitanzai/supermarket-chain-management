@@ -2,6 +2,8 @@ package com.cqupt.th.supermarket.service;
 
 import com.cqupt.th.supermarket.entity.PurchaseOrder;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cqupt.th.supermarket.query.PurchaseOrderQuery;
+import com.cqupt.th.supermarket.utils.CommonResult;
 
 /**
 * @author 16075
@@ -10,4 +12,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface PurchaseOrderService extends IService<PurchaseOrder> {
 
+    CommonResult getPurchaseOrderListPage(int currentPage, int pageSize, PurchaseOrderQuery purchaseOrderQuery);
+
+    CommonResult updatePurchaseOrder(Integer id, PurchaseOrder purchaseOrder);
+
+    CommonResult getPurchaseOrderIsPay(Integer purchaseId);
 }

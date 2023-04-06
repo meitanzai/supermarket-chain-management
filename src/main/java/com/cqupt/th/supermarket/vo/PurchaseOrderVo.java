@@ -18,6 +18,6 @@ public class PurchaseOrderVo implements Serializable {
     private String supplierName;
     private BigDecimal totalPrice;
     private Integer isPay;
-    private Date gmCreate;
-    private Date gmModified;
+    private Date gmtCreate;
+    private Date gmtModified;
 }
