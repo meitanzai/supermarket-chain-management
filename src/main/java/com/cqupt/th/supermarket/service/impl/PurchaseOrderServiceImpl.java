@@ -37,6 +37,9 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
         QueryWrapper<PurchaseOrder> purchaseOrderQueryWrapper = new QueryWrapper<>();
         purchaseOrderQueryWrapper.orderByDesc("gmt_modified");
         if (purchaseOrderQuery != null) {
+            if (purchaseOrderQuery.getOrderNumber() != null) {
+                purchaseOrderQueryWrapper.eq("order_number", purchaseOrderQuery.getOrderNumber());
+            }
             if (purchaseOrderQuery.getSupplierId() != null) {
                 purchaseOrderQueryWrapper.eq("supplier_id", purchaseOrderQuery.getSupplierId());
             }
@@ -94,6 +97,17 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
             return CommonResult.error().message("参数错误");
         }
         return CommonResult.ok().data("item", purchaseOrder.getIsPay());
+    }
+
+    @Override
+    public CommonResult getPurchaseOrder(Integer purchaseId) {
+
+        if (purchaseId == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        PurchaseOrder purchaseOrder = baseMapper.selectOne(new QueryWrapper<PurchaseOrder>().eq("purchase_id", purchaseId));
+        return CommonResult.ok().data("item", purchaseOrder);
+
     }
 }
 

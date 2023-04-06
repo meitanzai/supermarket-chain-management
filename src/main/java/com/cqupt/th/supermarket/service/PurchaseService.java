@@ -19,4 +19,7 @@ public interface PurchaseService extends IService<Purchase> {
     CommonResult addPurchase(Purchase purchase);
 
     CommonResult updatePurchase(Integer id, Purchase purchase);
+
+    CommonResult getPurchaseByPurchaseId(Integer purchaseId);
+
 }

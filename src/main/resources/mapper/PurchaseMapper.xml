@@ -6,6 +6,7 @@
 
     <resultMap id="BaseResultMap" type="com.cqupt.th.supermarket.entity.Purchase">
         <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="purchaseNumber" column="purchase_number" jdbcType="BIGINT"/>
         <result property="productId" column="product_id" jdbcType="INTEGER"/>
         <result property="supplierId" column="supplier_id" jdbcType="INTEGER"/>
         <result property="quantity" column="quantity" jdbcType="INTEGER"/>

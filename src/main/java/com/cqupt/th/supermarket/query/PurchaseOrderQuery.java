@@ -14,6 +14,7 @@ import java.util.Date;
 public class PurchaseOrderQuery implements Serializable {
 
     private Integer supplierId;
+    private Long orderNumber;
     private BigDecimal totalPrice;
     private Integer isPay;
     private Date startTime;

@@ -36,4 +36,8 @@ public class PurchaseController {
     public CommonResult updatePurchase(@PathVariable("id") Integer id, @RequestBody Purchase purchase) {
         return purchaseService.updatePurchase(id, purchase);
     }
+    @GetMapping("{purchaseId}")
+    public CommonResult getPurchaseByPurchaseId(@PathVariable("purchaseId") Integer purchaseId) {
+        return purchaseService.getPurchaseByPurchaseId(purchaseId);
+    }
 }

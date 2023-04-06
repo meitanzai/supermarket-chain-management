@@ -13,6 +13,7 @@ import java.util.Date;
 @Data
 public class PurchaseQuery implements Serializable {
     private Integer productId;
+    private Long purchaseNumber;
     private String productName;
     private Integer supplierId;
     private BigDecimal totalPrice;

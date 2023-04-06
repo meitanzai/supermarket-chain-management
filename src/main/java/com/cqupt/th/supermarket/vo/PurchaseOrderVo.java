@@ -1,5 +1,7 @@
 package com.cqupt.th.supermarket.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,6 +16,9 @@ import java.util.Date;
 public class PurchaseOrderVo implements Serializable {
 
     private Integer id;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long orderNumber;
+    private Integer purchaseId;
     private Integer supplierId;
     private String supplierName;
     private BigDecimal totalPrice;

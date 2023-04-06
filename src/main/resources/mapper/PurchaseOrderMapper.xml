@@ -6,6 +6,7 @@
 
     <resultMap id="BaseResultMap" type="com.cqupt.th.supermarket.entity.PurchaseOrder">
             <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="orderNumber" column="order_number" jdbcType="BIGINT"/>
             <result property="purchaseId" column="purchase_id" jdbcType="INTEGER"/>
             <result property="supplierId" column="supplier_id" jdbcType="INTEGER"/>
             <result property="totalPrice" column="total_price" jdbcType="DECIMAL"/>
@@ -15,8 +16,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,purchase_id,supplier_id,
-        total_price,is_pay,gmt_create,
-        gmt_modified
+        id,order_number,purchase_id,
+        supplier_id,total_price,is_pay,
+        gmt_create,gmt_modified
     </sql>
 </mapper>

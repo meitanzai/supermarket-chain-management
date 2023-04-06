@@ -14,6 +14,7 @@ import com.cqupt.th.supermarket.query.PurchaseQuery;
 import com.cqupt.th.supermarket.service.PurchaseService;
 import com.cqupt.th.supermarket.mapper.PurchaseMapper;
 import com.cqupt.th.supermarket.utils.CommonResult;
+import com.cqupt.th.supermarket.utils.SnowFlakeUtil;
 import com.cqupt.th.supermarket.vo.PurchaseVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
     @Resource
     private PurchaseOrderMapper purchaseOrderMapper;
 
+
     @Override
     public CommonResult getPurchaseListPage(Integer currentPage, Integer pageSize, PurchaseQuery purchaseQuery) {
         if (currentPage == null || pageSize == null) {
@@ -57,6 +59,9 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
                 }
                 List<Integer> productIds = products.stream().map(Product::getId).collect(Collectors.toList());
                 purchaseQueryWrapper.in("product_id", productIds);
+            }
+            if (purchaseQuery.getPurchaseNumber() != null) {
+                purchaseQueryWrapper.eq("purchase_number", purchaseQuery.getPurchaseNumber());
             }
             if (purchaseQuery.getSupplierId() != null) {
                 purchaseQueryWrapper.eq("supplier_id", purchaseQuery.getSupplierId());
@@ -120,11 +125,15 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
             productMapper.updatePurchasePrice(purchase.getProductId(), purchasePrice);
         }
         //TODO 生成订单
+        long nextId = new SnowFlakeUtil(1, 1).getNextId();
+        purchase.setPurchaseNumber(nextId);
         int id = baseMapper.insert(purchase);
         if (id <= 0) {
             return CommonResult.error().message("添加失败");
         }
         PurchaseOrder order = new PurchaseOrder();
+
+        order.setOrderNumber(nextId);
         order.setSupplierId(purchase.getSupplierId());
         order.setTotalPrice(purchase.getTotalPrice());
         order.setPurchaseId(purchase.getId());
@@ -155,6 +164,25 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
             return CommonResult.error().message("修改失败");
         }
         return CommonResult.ok().message("修改成功");
+    }
+
+    @Override
+    public CommonResult getPurchaseByPurchaseId(Integer purchaseId) {
+
+        if (purchaseId == null) {
+            return CommonResult.error().message("参数不能为空");
+        }
+        Purchase purchase = baseMapper.selectById(purchaseId);
+        PurchaseVo purchaseVo = new PurchaseVo();
+        BeanUtils.copyProperties(purchase, purchaseVo);
+        Product product = productMapper.selectById(purchase.getProductId());
+        purchaseVo.setProductName(product.getName());
+        Supplier supplier = supplierMapper.selectById(purchase.getSupplierId());
+        purchaseVo.setSupplierName(supplier.getName());
+        if (purchase == null) {
+            return CommonResult.error().message("查询失败");
+        }
+        return CommonResult.ok().data("item", purchaseVo);
     }
 }
 

@@ -17,4 +17,6 @@ public interface PurchaseOrderService extends IService<PurchaseOrder> {
     CommonResult updatePurchaseOrder(Integer id, PurchaseOrder purchaseOrder);
 
     CommonResult getPurchaseOrderIsPay(Integer purchaseId);
+
+    CommonResult getPurchaseOrder(Integer purchaseId);
 }

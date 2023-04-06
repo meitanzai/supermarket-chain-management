@@ -33,4 +33,8 @@ public class PurchaseOrderController {
     public CommonResult getPurchaseOrderIsPay(@PathVariable("purchaseId") Integer purchaseId) {
         return purchaseOrderService.getPurchaseOrderIsPay(purchaseId);
     }
+    @GetMapping("{purchaseId}")
+    public CommonResult getPurchaseOrder(@PathVariable("purchaseId") Integer purchaseId) {
+        return purchaseOrderService.getPurchaseOrder(purchaseId);
+    }
 }

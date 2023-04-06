@@ -20,7 +20,7 @@ public class Purchase implements Serializable {
      */
     @TableId(type = IdType.AUTO)
     private Integer id;
-
+    private Long purchaseNumber;
     /**
      *
      */
