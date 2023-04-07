@@ -4,14 +4,23 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqupt.th.supermarket.entity.Inventory;
+import com.cqupt.th.supermarket.entity.Product;
+import com.cqupt.th.supermarket.entity.Region;
+import com.cqupt.th.supermarket.mapper.ProductMapper;
+import com.cqupt.th.supermarket.mapper.RegionMapper;
 import com.cqupt.th.supermarket.query.InventoryQuery;
 import com.cqupt.th.supermarket.service.InventoryService;
 import com.cqupt.th.supermarket.mapper.InventoryMapper;
+import com.cqupt.th.supermarket.service.RegionService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import com.cqupt.th.supermarket.vo.InventoryVo;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +32,11 @@ import java.util.stream.Collectors;
 @Service("inventoryService")
 public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory>
         implements InventoryService {
+    @Resource
+    private ProductMapper productMapper;
+    @Autowired
+    @Qualifier("regionService")
+    private RegionService regionService;
 
     @Override
     public CommonResult getInventoryListPage(Integer currentPage, Integer pageSize, InventoryQuery inventoryQuery) {
@@ -52,9 +66,21 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
         baseMapper.selectPage(inventoryPage, inventoryQueryWrapper);
         long total = inventoryPage.getTotal();
         List<Inventory> records = inventoryPage.getRecords();
+        HashMap<Integer, String> productHashMap = new HashMap<>();
+        List<Product> products = productMapper.selectList(null);
+        products.stream().forEach(p -> {
+            productHashMap.put(p.getId(), p.getName());
+        });
+        HashMap<Integer, Region> regionHashMap = new HashMap<>();
+        List<Region> regions = regionService.list(null);
+        regions.stream().forEach(r -> {
+            regionHashMap.put(r.getId(), r);
+        });
         List<InventoryVo> rows = records.stream().map(r -> {
             InventoryVo inventoryVo = new InventoryVo();
             BeanUtils.copyProperties(r, inventoryVo);
+            inventoryVo.setProductName(productHashMap.get(r.getProductId()));
+            inventoryVo.setWarehouseRegion(regionService.getRegionName(r.getWarehouseId(), regionHashMap));
             return inventoryVo;
         }).collect(Collectors.toList());
         return CommonResult.ok().data("total", total).data("rows", rows);
