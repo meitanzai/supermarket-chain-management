@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqupt.th.supermarket.entity.Inventory;
 import com.cqupt.th.supermarket.entity.Product;
 import com.cqupt.th.supermarket.entity.Region;
+import com.cqupt.th.supermarket.entity.Warehouse;
 import com.cqupt.th.supermarket.mapper.ProductMapper;
 import com.cqupt.th.supermarket.mapper.RegionMapper;
+import com.cqupt.th.supermarket.mapper.WarehouseMapper;
 import com.cqupt.th.supermarket.query.InventoryQuery;
 import com.cqupt.th.supermarket.service.InventoryService;
 import com.cqupt.th.supermarket.mapper.InventoryMapper;
@@ -37,6 +39,8 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
     @Autowired
     @Qualifier("regionService")
     private RegionService regionService;
+    @Resource
+    private WarehouseMapper warehouseMapper;
 
     @Override
     public CommonResult getInventoryListPage(Integer currentPage, Integer pageSize, InventoryQuery inventoryQuery) {
@@ -76,14 +80,30 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
         regions.stream().forEach(r -> {
             regionHashMap.put(r.getId(), r);
         });
+        HashMap<Integer, Integer> regionIdHashMap = new HashMap<>();
+        warehouseMapper.selectList(null).stream().forEach(w -> {
+            regionIdHashMap.put(w.getId(), w.getRegionId());
+        });
         List<InventoryVo> rows = records.stream().map(r -> {
             InventoryVo inventoryVo = new InventoryVo();
             BeanUtils.copyProperties(r, inventoryVo);
             inventoryVo.setProductName(productHashMap.get(r.getProductId()));
-            inventoryVo.setWarehouseRegion(regionService.getRegionName(r.getWarehouseId(), regionHashMap));
+            inventoryVo.setWarehouseRegion(regionService.getRegionName(regionIdHashMap.get(r.getWarehouseId()), regionHashMap));
             return inventoryVo;
         }).collect(Collectors.toList());
         return CommonResult.ok().data("total", total).data("rows", rows);
+    }
+
+    @Override
+    public CommonResult getWarehouseIdByRegionId(Integer regionId) {
+        if (regionId == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        Warehouse warehouse = warehouseMapper.selectOne(new QueryWrapper<Warehouse>().eq("region_id", regionId));
+        if (warehouse == null) {
+            return CommonResult.ok().data("item", -1);
+        }
+        return CommonResult.ok().data("item", warehouse.getId());
     }
 }
 

@@ -3,10 +3,7 @@ package com.cqupt.th.supermarket.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cqupt.th.supermarket.entity.Instock;
-import com.cqupt.th.supermarket.entity.Region;
-import com.cqupt.th.supermarket.entity.Store;
-import com.cqupt.th.supermarket.entity.Warehouse;
+import com.cqupt.th.supermarket.entity.*;
 import com.cqupt.th.supermarket.mapper.*;
 import com.cqupt.th.supermarket.query.InstockQuery;
 import com.cqupt.th.supermarket.service.InstockService;
@@ -39,9 +36,9 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
     @Resource
     private ProductMapper productMapper;
     @Resource
-    private StoreMapper storeMapper;
-    @Resource
     private WarehouseMapper warehouseMapper;
+    @Resource
+    private InventoryMapper inventoryMapper;
 
     @Override
     public CommonResult getInstockListPage(Integer currentPage, Integer pageSize, InstockQuery instockQuery) {
@@ -53,6 +50,9 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
         if (instockQueryWrapper != null) {
             if (instockQuery.getSupplierId() != null) {
                 instockQueryWrapper.eq("supplier_id", instockQuery.getSupplierId());
+            }
+            if (instockQuery.getWarehouseId() != null) {
+                instockQueryWrapper.eq("warehouse_id", instockQuery.getWarehouseId());
             }
             if (instockQuery.getProductId() != null) {
                 instockQueryWrapper.eq("product_id", instockQuery.getProductId());
@@ -104,16 +104,13 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
             return CommonResult.error().message("参数错误");
         }
         Warehouse warehouse = warehouseMapper.selectById(warehouseId);
-        Store store = null;
         int regionId = 0;
-        if (warehouse == null) {
-            store = storeMapper.selectById(warehouseId);
-            regionId = store.getRegionId();
-        } else {
+        if (warehouse != null) {
+
             regionId = warehouse.getRegionId();
         }
         if (regionId == 0) {
-            return CommonResult.error().message("参数错误");
+            return CommonResult.ok().data("items", new Integer[0]);
         }
         Integer[] ids = regionService.getAllRegionIds(regionId);
         if (ids == null) {
@@ -128,14 +125,8 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
             return CommonResult.error().message("参数错误");
         }
         Warehouse warehouse = warehouseMapper.selectOne(new QueryWrapper<Warehouse>().eq("region_id", regionId));
-        int id = 0;
-        if (warehouse == null) {
-            Store store = storeMapper.selectOne(new QueryWrapper<Store>().eq("region_id", regionId));
-            if (store == null) {
-                return CommonResult.error().message("参数错误");
-            }
-            id = store.getId();
-        } else {
+        int id = -1;
+        if (warehouse != null) {
             id = warehouse.getId();
         }
         return CommonResult.ok().data("item", id);
@@ -147,6 +138,17 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
             return CommonResult.error().message("参数错误");
         }
         //TODO 库存的删除
+        Instock instock = baseMapper.selectById(id);
+        if (instock == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        Inventory inventory = inventoryMapper.selectOne(new QueryWrapper<Inventory>().eq("warehouse_id", instock.getWarehouseId()).eq("product_id", instock.getProductId()));
+        if (inventory == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        inventory.setInstockCount(inventory.getInstockCount() - instock.getInstockCount());
+        inventory.setInventoryCount(inventory.getInventoryCount() - instock.getInstockCount());
+        inventoryMapper.updateById(inventory);
         int i = baseMapper.deleteById(id);
         if (i == 0) {
             return CommonResult.error().message("删除失败");
@@ -161,16 +163,27 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
             return CommonResult.error().message("参数错误");
         }
         instock.setId(id);
-        if (instock.getFromWarehouseId() != null && instock.getSupplierId() != null) {
-            Instock instock1 = baseMapper.selectById(id);
-            if (instock1 == null) {
-                return CommonResult.error().message("参数错误");
-            }
-            if (instock.getSupplierId() == 0) {
-                instock.setFromWarehouseId(0);
-            } else {
-                instock.setFromWarehouseId(0);
-            }
+        Instock instock1 = baseMapper.selectById(id);
+        if (instock1 == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        Inventory inventory = inventoryMapper.selectOne(new QueryWrapper<Inventory>().eq("warehouse_id", instock1.getWarehouseId()).eq("product_id", instock1.getProductId()));
+        if (inventory == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        if (instock.getProductId() == inventory.getProductId() && instock.getWarehouseId() == inventory.getWarehouseId()) {
+            inventory.setInstockCount(inventory.getInstockCount() - instock1.getInstockCount() + instock.getInstockCount());
+            inventory.setInventoryCount(inventory.getInventoryCount() - instock1.getInstockCount() + instock.getInstockCount());
+            inventoryMapper.updateById(inventory);
+        } else {
+            inventory.setInstockCount(inventory.getInstockCount() - instock1.getInstockCount());
+            inventory.setInventoryCount(inventory.getInventoryCount() - instock1.getInstockCount());
+            inventoryMapper.updateById(inventory);
+            Inventory inventory1 = new Inventory();
+            BeanUtils.copyProperties(instock, inventory1);
+            inventory1.setInventoryCount(inventory1.getInstockCount());
+            inventory1.setId(null);
+            inventoryMapper.insert(inventory1);
         }
         //TODO 库存的更新
         int i = baseMapper.updateById(instock);
@@ -187,6 +200,17 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
             return CommonResult.error().message("参数错误");
         }
         //TODO 库存的添加
+        Inventory inventory = inventoryMapper.selectOne(new QueryWrapper<Inventory>().eq("warehouse_id", instock.getWarehouseId()).eq("product_id", instock.getProductId()));
+        if (inventory == null) {
+            Inventory inventory1 = new Inventory();
+            BeanUtils.copyProperties(instock, inventory1);
+            inventory1.setInventoryCount(inventory1.getInstockCount());
+            inventoryMapper.insert(inventory1);
+        } else {
+            inventory.setInstockCount(inventory.getInstockCount() + instock.getInstockCount());
+            inventory.setInventoryCount(inventory.getInventoryCount() + instock.getInstockCount());
+            inventoryMapper.updateById(inventory);
+        }
         int i = baseMapper.insert(instock);
         if (i == 0) {
             return CommonResult.error().message("添加失败");
@@ -197,12 +221,7 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
     private Integer getRegionIdByWarehouseId(Integer warehouseId) {
         Warehouse warehouse = warehouseMapper.selectById(warehouseId);
         int regionId = 0;
-        if (warehouse == null) {
-            Store store = storeMapper.selectById(warehouseId);
-            if (store != null) {
-                regionId = store.getRegionId();
-            }
-        } else {
+        if (warehouse != null) {
             regionId = warehouse.getRegionId();
         }
         return regionId;

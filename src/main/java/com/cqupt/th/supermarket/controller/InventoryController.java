@@ -22,4 +22,8 @@ public class InventoryController {
     public CommonResult getInventoryListPage(@PathVariable("currentPage") Integer currentPage, @PathVariable("pageSize") Integer pageSize, @RequestBody(required = false) InventoryQuery inventoryQuery) {
         return inventoryService.getInventoryListPage(currentPage, pageSize, inventoryQuery);
     }
+    @GetMapping("getWarehouseIdByRegionId/{regionId}")
+    public CommonResult getWarehouseIdByRegionId(@PathVariable("regionId") Integer regionId) {
+        return inventoryService.getWarehouseIdByRegionId(regionId);
+    }
 }

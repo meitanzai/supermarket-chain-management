@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqupt.th.supermarket.entity.Employee;
 import com.cqupt.th.supermarket.entity.Region;
 import com.cqupt.th.supermarket.entity.Store;
+import com.cqupt.th.supermarket.entity.Warehouse;
 import com.cqupt.th.supermarket.mapper.EmployeeMapper;
+import com.cqupt.th.supermarket.mapper.WarehouseMapper;
 import com.cqupt.th.supermarket.query.StoreQuery;
 import com.cqupt.th.supermarket.service.EmployeeService;
 import com.cqupt.th.supermarket.service.PositionService;
@@ -40,6 +42,8 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
     private RegionService regionService;
     @Resource
     private EmployeeMapper employeeMapper;
+    @Resource
+    private WarehouseMapper warehouseMapper;
 
 
     @Override
@@ -156,6 +160,19 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
             return CommonResult.error().message("参数错误");
         }
         store.setId(id);
+        Warehouse warehouse = new Warehouse();
+        BeanUtils.copyProperties(store, warehouse);
+        Store store1 = baseMapper.selectById(store);
+        Warehouse warehouse1 = warehouseMapper.selectOne(new QueryWrapper<Warehouse>().eq("region_id", store1.getRegionId()));
+        if (warehouse1 != null) {
+            if (store.getTelephone() != null) {
+                warehouse1.setTel(store.getTelephone());
+            }
+            if (store.getRegionId() != null) {
+                warehouse1.setRegionId(store.getRegionId());
+
+            }
+        }
         int result = baseMapper.updateById(store);
         if (result == 0) {
             return CommonResult.error().message("更新失败");
@@ -168,6 +185,14 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
 
         if (store == null) {
             return CommonResult.error().message("参数错误");
+        }
+        Warehouse warehouse = new Warehouse();
+        BeanUtils.copyProperties(store, warehouse);
+        warehouse.setTel(store.getTelephone());
+        warehouse.setManagerId(null);
+        int insert = warehouseMapper.insert(warehouse);
+        if (insert == 0) {
+            return CommonResult.error().message("添加失败");
         }
         int result = baseMapper.insert(store);
         if (result == 0) {

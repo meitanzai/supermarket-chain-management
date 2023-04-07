@@ -14,4 +14,5 @@ public interface InventoryService extends IService<Inventory> {
 
     CommonResult getInventoryListPage(Integer currentPage, Integer pageSize, InventoryQuery inventoryQuery);
 
+    CommonResult getWarehouseIdByRegionId(Integer regionId);
 }
