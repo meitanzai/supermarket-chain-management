@@ -4,13 +4,13 @@ import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
 import java.util.Date;
+
 import lombok.Data;
 
 /**
- *
  * @TableName instock
  */
-@TableName(value ="instock")
+@TableName(value = "instock")
 @Data
 public class Instock implements Serializable {
     /**
@@ -38,6 +38,11 @@ public class Instock implements Serializable {
      *
      */
     private Integer supplierId;
+
+    /**
+     *
+     */
+    private Integer fromWarehouseId;
 
     /**
      *

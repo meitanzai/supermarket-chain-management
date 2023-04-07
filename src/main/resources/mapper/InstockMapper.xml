@@ -10,13 +10,14 @@
             <result property="productId" column="product_id" jdbcType="INTEGER"/>
             <result property="instockCount" column="instock_count" jdbcType="INTEGER"/>
             <result property="supplierId" column="supplier_id" jdbcType="INTEGER"/>
+            <result property="fromWarehouseId" column="from_warehouse_id" jdbcType="INTEGER"/>
             <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
             <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,warehouse_id,product_id,
-        instock_count,supplier_id,gmt_create,
-        gmt_modified
+        instock_count,supplier_id,from_warehouse_id,
+        gmt_create,gmt_modified
     </sql>
 </mapper>
