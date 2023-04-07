@@ -10,7 +10,6 @@ import com.cqupt.th.supermarket.mapper.WarehouseMapper;
 import com.cqupt.th.supermarket.query.EmployeeQuery;
 import com.cqupt.th.supermarket.service.EmployeeService;
 import com.cqupt.th.supermarket.mapper.EmployeeMapper;
-import com.cqupt.th.supermarket.service.PositionService;
 import com.cqupt.th.supermarket.service.RegionService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import com.cqupt.th.supermarket.vo.EmployeeVo;

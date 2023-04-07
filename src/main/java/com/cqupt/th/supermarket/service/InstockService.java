@@ -13,4 +13,14 @@ import com.cqupt.th.supermarket.utils.CommonResult;
 public interface InstockService extends IService<Instock> {
 
     CommonResult getInstockListPage(Integer currentPage, Integer pageSize, InstockQuery instockQuery);
+
+    CommonResult getInstockRegionIds(Integer warehouseId);
+
+    CommonResult getwarehouseIdByRegionId(Integer regionId);
+
+    CommonResult deleteInstockById(Integer id);
+
+    CommonResult updateInstockById(Integer id, Instock instock);
+
+    CommonResult addInstock(Instock instock);
 }

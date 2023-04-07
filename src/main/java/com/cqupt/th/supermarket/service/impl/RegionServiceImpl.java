@@ -254,6 +254,9 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
 
     @Override
     public String getRegionName(Integer id, HashMap<Integer, Region> map) {
+        if (id == 0) {
+            return "";
+        }
         StringBuilder stringBuilder = new StringBuilder();
         Region region = map.get(id);
         //倒转装名字
@@ -285,6 +288,17 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
     public CommonResult getBusinessStoreRegionAll() {
         List<Store> stores = storeMapper.selectList(new QueryWrapper<Store>().eq("status", "1"));
         List<Integer> regionIds = stores.stream().map(store -> store.getRegionId()).collect(Collectors.toList());
+        List<RegionListVo> regionListVos = getRegionAll(regionIds);
+        return CommonResult.ok().data("items", regionListVos);
+    }
+
+    @Override
+    public CommonResult getStoreAndWarehouseRegionAll() {
+        List<Store> stores = storeMapper.selectList(null);
+        List<Warehouse> warehouses = warehouseMapper.selectList(null);
+        List<Integer> regionIds = new ArrayList<>();
+        regionIds.addAll(stores.stream().map(store -> store.getRegionId()).collect(Collectors.toList()));
+        regionIds.addAll(warehouses.stream().map(warehouse -> warehouse.getRegionId()).collect(Collectors.toList()));
         List<RegionListVo> regionListVos = getRegionAll(regionIds);
         return CommonResult.ok().data("items", regionListVos);
     }
