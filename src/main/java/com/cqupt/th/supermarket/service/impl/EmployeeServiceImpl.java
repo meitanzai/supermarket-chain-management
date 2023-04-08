@@ -181,6 +181,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
         if (employee.getWarehouseId() == null) {
             employee.setWarehouseId(0);
         }
+
         int result = baseMapper.insert(employee);
         if (result > 0) {
             return CommonResult.ok();
@@ -269,10 +270,20 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
             BeanUtils.copyProperties(employee, employeeVo);
             employeeVo.setPositionName(positionHashMap.get(employee.getPositionId()).getName());
             if (employee.getWarehouseId() != null && employee.getStoreId() != null && employee.getStoreId() == 0) {
-                employeeVo.setWarehouseRegion(regionService.getRegionName(warehouseHashMap.get(employee.getWarehouseId()).getRegionId(), regionHashMap));
+                Warehouse warehouse = warehouseHashMap.get(employee.getWarehouseId());
+                if (warehouse != null) {
+                    employeeVo.setWarehouseRegion(regionService.getRegionName(warehouse.getRegionId(), regionHashMap));
+                } else {
+                    employeeVo.setWarehouseRegion("");
+                }
             }
             if (employee.getStoreId() != null && employee.getWarehouseId() != null && employee.getWarehouseId() == 0) {
-                employeeVo.setStoreRegion(regionService.getRegionName(storeHashMap.get(employee.getStoreId()).getRegionId(), regionHashMap));
+                Store store = storeHashMap.get(employee.getStoreId());
+                if (store != null) {
+                    employeeVo.setStoreRegion(regionService.getRegionName(store.getRegionId(), regionHashMap));
+                } else {
+                    employeeVo.setStoreRegion("");
+                }
             }
 
             return employeeVo;

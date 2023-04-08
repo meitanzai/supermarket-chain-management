@@ -223,7 +223,7 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
         }
         Store store = baseMapper.selectById(storeId);
         if (store == null) {
-            return CommonResult.error().message("参数错误");
+            return CommonResult.ok().data("item", "");
         }
         Integer regionId = store.getRegionId();
         return CommonResult.ok().data("item", regionId);

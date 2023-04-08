@@ -160,7 +160,7 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
         }
         Warehouse warehouse = baseMapper.selectById(warehouseId);
         if (warehouse == null) {
-            return CommonResult.error().message("参数错误");
+            return CommonResult.ok().data("item", "");
         }
         return CommonResult.ok().data("item", warehouse.getRegionId());
     }

@@ -259,6 +259,9 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
         }
         StringBuilder stringBuilder = new StringBuilder();
         Region region = map.get(id);
+        if (region == null) {
+            return "";
+        }
         //倒转装名字
         while (region != null) {
             stringBuilder.insert(0, region.getName());
