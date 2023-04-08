@@ -162,6 +162,17 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
             return CommonResult.error().message("参数错误");
         }
         employee.setId(id);
+        if (employee.getStoreId() != null && employee.getWarehouseId() != 0) {
+            Employee employee1 = baseMapper.selectById(id);
+            if (employee1 == null) {
+                return CommonResult.error().message("员工不存在");
+            }
+            if (employee1.getStoreId() != 0) {
+                employee.setStoreId(0);
+            } else {
+                employee.setWarehouseId(0);
+            }
+        }
         int result = baseMapper.updateById(employee);
         if (result > 0) {
             return CommonResult.ok();
