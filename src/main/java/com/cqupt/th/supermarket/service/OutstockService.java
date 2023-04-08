@@ -2,6 +2,8 @@ package com.cqupt.th.supermarket.service;
 
 import com.cqupt.th.supermarket.entity.Outstock;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cqupt.th.supermarket.query.OutstockQuery;
+import com.cqupt.th.supermarket.utils.CommonResult;
 
 /**
 * @author 16075
@@ -10,4 +12,15 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface OutstockService extends IService<Outstock> {
 
+    CommonResult getOutstockListPage(Integer currentPage, Integer pageSize, OutstockQuery outstockQuery);
+
+    CommonResult getwarehouseIdByRegionId(Integer regionId);
+
+    CommonResult deleteOutstockById(Integer id);
+
+    CommonResult updateOutstockById(Integer id, Outstock outstock);
+
+    CommonResult addOutstock(Outstock outstock);
+
+    CommonResult getwarehouseRegionByWarehouseId(Integer warehouseId);
 }

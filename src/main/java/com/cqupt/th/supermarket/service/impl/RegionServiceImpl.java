@@ -295,17 +295,6 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
         return CommonResult.ok().data("items", regionListVos);
     }
 
-    @Override
-    public CommonResult getStoreAndWarehouseRegionAll() {
-        List<Store> stores = storeMapper.selectList(null);
-        List<Warehouse> warehouses = warehouseMapper.selectList(null);
-        List<Integer> regionIds = new ArrayList<>();
-        regionIds.addAll(stores.stream().map(store -> store.getRegionId()).collect(Collectors.toList()));
-        regionIds.addAll(warehouses.stream().map(warehouse -> warehouse.getRegionId()).collect(Collectors.toList()));
-        List<RegionListVo> regionListVos = getRegionAll(regionIds);
-        return CommonResult.ok().data("items", regionListVos);
-    }
-
     private List<RegionListVo> getRegionAll(List<Integer> regionIds) {
         List<Region> regions = baseMapper.selectList(null);
         Map<Integer, RegionListVo> collect = regions.stream().map(region -> {

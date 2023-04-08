@@ -74,8 +74,4 @@ public class RegionController {
     public CommonResult getBusinessStoreRegionAll() {
         return regionService.getBusinessStoreRegionAll();
     }
-    @GetMapping("storeAndWarehouseRegionAll")
-    public CommonResult getStoreAndWarehouseRegionAll() {
-        return regionService.getStoreAndWarehouseRegionAll();
-    }
 }

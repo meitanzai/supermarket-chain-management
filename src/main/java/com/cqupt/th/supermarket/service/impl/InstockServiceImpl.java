@@ -47,7 +47,7 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
         }
         QueryWrapper<Instock> instockQueryWrapper = new QueryWrapper<>();
         instockQueryWrapper.orderByDesc("gmt_modified");
-        if (instockQueryWrapper != null) {
+        if (instockQuery != null) {
             if (instockQuery.getSupplierId() != null) {
                 instockQueryWrapper.eq("supplier_id", instockQuery.getSupplierId());
             }
