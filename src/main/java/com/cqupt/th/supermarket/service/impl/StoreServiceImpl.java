@@ -92,9 +92,9 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
         }
         List<Integer> integers = Arrays.asList(ids);
         List<Integer> regionIds = baseMapper.selectBatchIds(integers).stream().map(Store::getRegionId).collect(Collectors.toList());
-        int region_id = warehouseMapper.delete(new QueryWrapper<Warehouse>().in("region_id", regionIds));
+        warehouseMapper.delete(new QueryWrapper<Warehouse>().in("region_id", regionIds));
         int result = baseMapper.deleteBatchIds(integers);
-        if (region_id == 0 || result == 0) {
+        if (result == 0) {
             return CommonResult.error().message("删除失败");
         }
         return CommonResult.ok().message("删除成功");
@@ -107,9 +107,9 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
             return CommonResult.error().message("参数错误");
         }
         Store store = baseMapper.selectById(id);
-        int region_id = warehouseMapper.delete(new QueryWrapper<Warehouse>().eq("region_id", store.getRegionId()));
+        warehouseMapper.delete(new QueryWrapper<Warehouse>().eq("region_id", store.getRegionId()));
         int result = baseMapper.deleteById(id);
-        if (region_id == 0 || result == 0) {
+        if (result == 0) {
             return CommonResult.error().message("删除失败");
         }
         return CommonResult.ok().message("删除成功");
