@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqupt.th.supermarket.constants.MemberConstant;
+import com.cqupt.th.supermarket.entity.Brand;
 import com.cqupt.th.supermarket.entity.Member;
 import com.cqupt.th.supermarket.entity.MemberPoint;
 import com.cqupt.th.supermarket.mapper.MemberPointMapper;
@@ -127,6 +128,27 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
         QueryWrapper<Member> queryWrapper = new QueryWrapper<Member>().orderByDesc("gmt_modified");
         List<Member> members = baseMapper.selectList(queryWrapper);
         return CommonResult.ok().data("items", members);
+    }
+
+    @Override
+    public CommonResult isExistMemberName(Member member) {
+        if (member == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        if (member.getId() != null) {
+            Member member1 = baseMapper.selectById(member.getId());
+            if (member1 == null) {
+                return CommonResult.error().message("参数错误");
+            }
+            if (member1.getName().equals(member.getName())) {
+                return CommonResult.ok().data("item", false);
+            }
+        }
+        Member member1 = baseMapper.selectOne(new QueryWrapper<Member>().eq("name", member.getName()));
+        if (member1 == null) {
+            return CommonResult.ok().data("item", false);
+        }
+        return CommonResult.ok().data("item", true);
     }
 
 }

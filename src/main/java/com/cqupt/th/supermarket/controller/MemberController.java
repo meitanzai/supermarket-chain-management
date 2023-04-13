@@ -49,4 +49,8 @@ public class MemberController {
     public CommonResult getMemberList() {
         return memberService.getMemberList();
     }
+    @PostMapping("isExistMemberName")
+    public CommonResult isExistMemberName(@RequestBody Member member) {
+        return memberService.isExistMemberName(member);
+    }
 }

@@ -23,4 +23,6 @@ public interface MemberService extends IService<Member> {
     CommonResult updateMemberById(Integer id, Member member);
 
     CommonResult getMemberList();
+
+    CommonResult isExistMemberName(Member member);
 }
