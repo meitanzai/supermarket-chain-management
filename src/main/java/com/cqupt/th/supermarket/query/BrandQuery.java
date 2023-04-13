@@ -13,11 +13,9 @@ import java.util.Date;
 @Data
 public class BrandQuery implements Serializable {
 
-    private static final long serialVersionUID = 1L;
     private String name;
     private Integer isShow;
     private Date startTime;
     private Date endTime;
-
 
 }

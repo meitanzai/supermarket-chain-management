@@ -155,8 +155,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         if (user.getId() != null) {
             User user1 = baseMapper.selectById(user.getId());
+            if (user1 == null) {
+                return CommonResult.error().message("参数错误");
+            }
             if (user1.getUsername().equals(user.getUsername())) {
-                return CommonResult.ok().data("isExist", false);
+                return CommonResult.ok().data("item", false);
             }
 
         }
@@ -164,9 +167,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         userQueryWrapper.eq("username", user.getUsername());
         User user1 = baseMapper.selectOne(userQueryWrapper);
         if (user1 != null) {
-            return CommonResult.ok().data("isExist", true);
+            return CommonResult.ok().data("item", true);
         }
-        return CommonResult.ok().data("isExist", false);
+        return CommonResult.ok().data("item", false);
     }
 
     @Override

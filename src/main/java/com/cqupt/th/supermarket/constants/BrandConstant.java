@@ -1,25 +1,17 @@
 package com.cqupt.th.supermarket.constants;
 
-
 import lombok.AllArgsConstructor;
-
 import lombok.Getter;
 
 /**
- * 商店常数
- *
  * @author th
- * @date 2023/3/28 15:15
+ * @date 2023/4/13 16:16
  */
-@Getter
 @AllArgsConstructor
-public enum StoreConstant {
-    //正常营业
-    OPEN(1, "营业"),
-    //装修
-    DECORATE(2, "装修"),
-    //关闭
-    CLOSE(3, "关闭");
+@Getter
+public enum BrandConstant {
+    SHOW(1, "展示"),
+    HIDE(0, "隐藏");
     private final Integer code;
     private final String status;
 

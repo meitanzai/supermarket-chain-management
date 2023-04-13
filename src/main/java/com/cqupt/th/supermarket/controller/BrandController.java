@@ -53,9 +53,9 @@ public class BrandController {
         return brandService.deleteBrandByIds(ids);
     }
 
-    @PostMapping("brandByName")
-    public CommonResult getBrandByName(@RequestBody Brand brand) {
-        return brandService.getBrandByName(brand);
+    @PostMapping("isExistBrandName")
+    public CommonResult isExistBrandName(@RequestBody Brand brand) {
+        return brandService.isExistBrandName(brand);
     }
 }
 

@@ -3,20 +3,17 @@ package com.cqupt.th.supermarket.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cqupt.th.supermarket.constants.BrandConstant;
 import com.cqupt.th.supermarket.entity.Brand;
-import com.cqupt.th.supermarket.entity.Store;
-import com.cqupt.th.supermarket.mapper.ProductMapper;
 import com.cqupt.th.supermarket.query.BrandQuery;
 import com.cqupt.th.supermarket.service.BrandService;
 import com.cqupt.th.supermarket.mapper.BrandMapper;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author 16075
@@ -26,8 +23,6 @@ import java.util.Map;
 @Service("brandService")
 public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
         implements BrandService {
-    @Resource
-    private ProductMapper productMapper;
 
     @Override
     public CommonResult getAllBrand() {
@@ -44,7 +39,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
         }
         QueryWrapper<Brand> brandQueryWrapper = new QueryWrapper<>();
         if (brandQuery != null) {
-            if (brandQuery.getName() != null) {
+            if (StringUtils.hasText(brandQuery.getName())) {
                 brandQueryWrapper.like("name", brandQuery.getName());
             }
             if (brandQuery.getIsShow() != null) {
@@ -73,7 +68,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
         if (result == 1) {
             return CommonResult.ok();
         } else {
-            return CommonResult.error();
+            return CommonResult.error().message("更新失败");
         }
     }
 
@@ -82,12 +77,14 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
         if (brand == null) {
             return CommonResult.error().message("brand不能为空");
         }
-        brand.setIsShow(0);
+        if (brand.getIsShow() == null) {
+            brand.setIsShow(BrandConstant.HIDE.getCode());
+        }
         int result = baseMapper.insert(brand);
         if (result == 1) {
             return CommonResult.ok();
         } else {
-            return CommonResult.error();
+            return CommonResult.error().message("添加失败");
         }
     }
 
@@ -96,8 +93,6 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
         if (id == null) {
             return CommonResult.error().message("id不能为空");
         }
-        //TODO
-//        productMapper.updateBrandIdByBrandId(id);
         int result = baseMapper.deleteById(id);
         if (result > 0) {
             return CommonResult.ok();
@@ -113,18 +108,16 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
             return CommonResult.error().message("ids不能为空");
         }
         List<Integer> brandIds = Arrays.asList(ids);
-        //TODO
-//        productMapper.updateBrandIdByBrandIds(brandIds);
         int result = baseMapper.deleteBatchIds(brandIds);
         if (result > 0) {
             return CommonResult.ok();
         } else {
-            return CommonResult.error();
+            return CommonResult.error().message("删除失败");
         }
     }
 
     @Override
-    public CommonResult getBrandByName(Brand brand) {
+    public CommonResult isExistBrandName(Brand brand) {
         if (brand == null) {
             return CommonResult.error().message("参数错误");
         }
@@ -134,14 +127,14 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
                 return CommonResult.error().message("参数错误");
             }
             if (brand1.getName().equals(brand.getName())) {
-                return CommonResult.ok().data("item", null);
+                return CommonResult.ok().data("item", false);
             }
         }
         Brand brand1 = baseMapper.selectOne(new QueryWrapper<Brand>().eq("name", brand.getName()));
         if (brand1 == null) {
-            return CommonResult.ok().data("item", null);
+            return CommonResult.ok().data("item", false);
         }
-        return CommonResult.ok().data("item", brand1);
+        return CommonResult.ok().data("item", true);
     }
 }
 
