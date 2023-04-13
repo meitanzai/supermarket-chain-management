@@ -53,9 +53,9 @@ public class StoreController {
         return storeService.addStore(store);
     }
 
-    @PostMapping("storeByStore")
-    public CommonResult getStoreByStore(@RequestBody Store store) {
-        return storeService.getStoreByStore(store);
+    @PostMapping("isExistStoreRegion")
+    public CommonResult isExistStoreRegion(@RequestBody Store store) {
+        return storeService.isExistStoreRegion(store);
     }
     @GetMapping("managerIdByManagerId/{managerId}")
     public CommonResult getManagerIdByManagerId(@PathVariable("managerId") Integer managerId) {

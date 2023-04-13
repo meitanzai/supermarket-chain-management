@@ -3,10 +3,8 @@ package com.cqupt.th.supermarket.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cqupt.th.supermarket.entity.Employee;
-import com.cqupt.th.supermarket.entity.Region;
-import com.cqupt.th.supermarket.entity.Store;
-import com.cqupt.th.supermarket.entity.Warehouse;
+import com.cqupt.th.supermarket.constants.StoreConstant;
+import com.cqupt.th.supermarket.entity.*;
 import com.cqupt.th.supermarket.mapper.EmployeeMapper;
 import com.cqupt.th.supermarket.mapper.WarehouseMapper;
 import com.cqupt.th.supermarket.query.StoreQuery;
@@ -71,8 +69,8 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
         baseMapper.selectPage(storePage, storeQueryWrapper);
         long total = storePage.getTotal();
         List<Store> records = storePage.getRecords();
-        HashMap<Integer, String> employeeMap = new HashMap<>();
         List<Employee> employeeList = employeeMapper.selectList(new QueryWrapper<Employee>().eq("warehouse_id", 0));
+        HashMap<Integer, String> employeeMap = new HashMap<>(employeeList.size());
         employeeList.stream().forEach(e -> {
             employeeMap.put(e.getId(), e.getName());
         });
@@ -80,12 +78,7 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
             StoreVo storeVo = new StoreVo();
             BeanUtils.copyProperties(s, storeVo);
             storeVo.setRegionName(regionService.getRegionName(s.getRegionId(), map));
-            String managerName = employeeMap.get(s.getManagerId());
-            if (managerName != null) {
-                storeVo.setManagerName(managerName);
-            } else {
-                storeVo.setManagerName("");
-            }
+            storeVo.setManagerName(employeeMap.get(s.getManagerId()));
             return storeVo;
         }).collect(Collectors.toList());
         return CommonResult.ok().data("total", total).data("rows", collect);
@@ -96,13 +89,11 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
         if (ids == null || ids.length == 0) {
             return CommonResult.error().message("参数错误");
         }
-        //TODO
-        //删除仓库
-        List<Store> stores = baseMapper.selectBatchIds(Arrays.asList(ids));
-        List<Integer> regionIds = stores.stream().map(Store::getRegionId).collect(Collectors.toList());
-        warehouseMapper.delete(new QueryWrapper<Warehouse>().in("region_id", regionIds));
-        int result = baseMapper.deleteBatchIds(Arrays.asList(ids));
-        if (result == 0) {
+        List<Integer> integers = Arrays.asList(ids);
+        List<Integer> regionIds = baseMapper.selectBatchIds(integers).stream().map(Store::getRegionId).collect(Collectors.toList());
+        int region_id = warehouseMapper.delete(new QueryWrapper<Warehouse>().in("region_id", regionIds));
+        int result = baseMapper.deleteBatchIds(integers);
+        if (region_id == 0 || result == 0) {
             return CommonResult.error().message("删除失败");
         }
         return CommonResult.ok().message("删除成功");
@@ -114,11 +105,10 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
         if (id == null) {
             return CommonResult.error().message("参数错误");
         }
-        //TODO
         Store store = baseMapper.selectById(id);
-        warehouseMapper.delete(new QueryWrapper<Warehouse>().eq("region_id", store.getRegionId()));
+        int region_id = warehouseMapper.delete(new QueryWrapper<Warehouse>().eq("region_id", store.getRegionId()));
         int result = baseMapper.deleteById(id);
-        if (result == 0) {
+        if (region_id == 0 || result == 0) {
             return CommonResult.error().message("删除失败");
         }
         return CommonResult.ok().message("删除成功");
@@ -195,6 +185,9 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
                 return CommonResult.error().message("添加失败");
             }
         }
+        if (store.getStatus() == null) {
+            store.setStatus(StoreConstant.CLOSE.getCode());
+        }
         int result = baseMapper.insert(store);
         if (result == 0) {
             return CommonResult.error().message("添加失败");
@@ -203,12 +196,12 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
     }
 
     @Override
-    public CommonResult getStoreByStore(Store store) {
+    public CommonResult isExistStoreRegion(Store store) {
+        if (store.getRegionId() == null) {
+            return CommonResult.ok().data("item", false);
+        }
         if (store == null) {
             return CommonResult.error().message("参数错误");
-        }
-        if (store.getRegionId() != null && store.getRegionId() == 0) {
-            return CommonResult.ok().data("item", null);
         }
         if (store.getId() != null) {
             Store store1 = baseMapper.selectById(store.getId());
@@ -216,14 +209,14 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
                 return CommonResult.error().message("参数错误");
             }
             if (store1.getRegionId().equals(store.getRegionId())) {
-                return CommonResult.ok().data("item", null);
+                return CommonResult.ok().data("item", false);
             }
         }
         Store store1 = baseMapper.selectOne(new QueryWrapper<Store>().eq("region_id", store.getRegionId()));
         if (store1 == null) {
-            return CommonResult.ok().data("item", null);
+            return CommonResult.ok().data("item", false);
         }
-        return CommonResult.ok().data("item", store1);
+        return CommonResult.ok().data("item", true);
     }
 
     @Override

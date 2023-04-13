@@ -24,7 +24,7 @@ public interface StoreService extends IService<Store> {
 
     CommonResult addStore(Store store);
 
-    CommonResult getStoreByStore(Store store);
+    CommonResult isExistStoreRegion(Store store);
 
     CommonResult getManagerIdByManagerId(Integer managerId);
 
