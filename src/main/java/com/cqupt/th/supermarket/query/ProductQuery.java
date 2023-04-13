@@ -14,7 +14,6 @@ import java.util.Date;
 public class ProductQuery implements Serializable {
 
     private String name;
-    private String barcode;
     private Integer categoryId;
     private Integer brandId;
     private Integer isShow;

@@ -3,12 +3,11 @@ package com.cqupt.th.supermarket.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cqupt.th.supermarket.constants.ProductConstant;
 import com.cqupt.th.supermarket.entity.Brand;
 import com.cqupt.th.supermarket.entity.Product;
 import com.cqupt.th.supermarket.mapper.BrandMapper;
-import com.cqupt.th.supermarket.mapper.PurchaseMapper;
 import com.cqupt.th.supermarket.query.ProductQuery;
-import com.cqupt.th.supermarket.service.BrandService;
 import com.cqupt.th.supermarket.service.CategoryService;
 import com.cqupt.th.supermarket.service.ProductService;
 import com.cqupt.th.supermarket.mapper.ProductMapper;
@@ -18,9 +17,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,14 +44,11 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
         }
         QueryWrapper<Product> productQueryWrapper = new QueryWrapper<>();
         if (productQuery != null) {
-            if (productQuery.getName() != null) {
+            if (StringUtils.hasText(productQuery.getName())) {
                 productQueryWrapper.like("name", productQuery.getName());
             }
             if (productQuery.getIsShow() != null) {
                 productQueryWrapper.eq("is_show", productQuery.getIsShow());
-            }
-            if (productQuery.getBarcode() != null) {
-                productQueryWrapper.eq("barcode", productQuery.getBarcode());
             }
             if (productQuery.getCategoryId() != null) {
                 productQueryWrapper.eq("category_id", productQuery.getCategoryId());
@@ -83,18 +79,8 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
         List<ProductVo> rows = records.stream().map(r -> {
             ProductVo productVo = new ProductVo();
             BeanUtils.copyProperties(r, productVo);
-            String brandName = brandMap.get(r.getBrandId());
-            if (brandName != null) {
-                productVo.setBrandName(brandName);
-            } else {
-                productVo.setBrandName("");
-            }
-            String categoryName = categoryMap.get(r.getCategoryId());
-            if (categoryName != null) {
-                productVo.setCategoryName(categoryName);
-            } else {
-                productVo.setCategoryName("");
-            }
+            productVo.setBrandName(brandMap.get(r.getBrandId()));
+            productVo.setCategoryName(categoryMap.get(r.getCategoryId()));
             return productVo;
         }).collect(Collectors.toList());
         return CommonResult.ok().data("total", total).data("rows", rows);
@@ -102,11 +88,8 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
 
     @Override
     public CommonResult updateProductById(Integer id, Product product) {
-        if (product == null) {
+        if (id == null || product == null) {
             return CommonResult.error().message("参数不能为空");
-        }
-        if (id == null) {
-            return CommonResult.error().message("id不能为空");
         }
         product.setId(id);
         int i = baseMapper.updateById(product);
@@ -122,7 +105,6 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
         if (ids == null || ids.length == 0) {
             return CommonResult.error().message("参数不能为空");
         }
-//        purchaseMapper.updatePurchaseByProductIds(ids);
         int i = baseMapper.deleteBatchIds(Arrays.asList(ids));
         if (i > 0) {
             return CommonResult.ok().message("删除成功");
@@ -136,7 +118,6 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
         if (id == null) {
             return CommonResult.error().message("参数不能为空");
         }
-//        purchaseMapper.updatePurchaseByProductId(id);
         int i = baseMapper.deleteById(id);
         if (i > 0) {
             return CommonResult.ok().message("删除成功");
@@ -149,8 +130,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
         if (product == null) {
             return CommonResult.error().message("参数不能为空");
         }
-        product.setIsShow(0);
-        product.setPurchasePrice(new BigDecimal(0));
+        product.setIsShow(ProductConstant.HIDE.getCode());
         int i = baseMapper.insert(product);
         if (i > 0) {
             return CommonResult.ok().message("添加成功");
@@ -182,7 +162,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
         if (brand == null) {
             return CommonResult.ok().data("item", null);
         } else {
-            return CommonResult.ok().data("item", brandId);
+            return CommonResult.ok().data("item", brand.getId());
         }
 
     }
@@ -207,6 +187,27 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
         }
         Product product = baseMapper.selectById(id);
         return CommonResult.ok().data("item", product);
+    }
+
+    @Override
+    public CommonResult isExistProductName(Product product) {
+        if (product == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        if (product.getId() != null) {
+            Product product1 = baseMapper.selectById(product.getId());
+            if (product1 == null) {
+                return CommonResult.error().message("参数错误");
+            }
+            if (product1.getName().equals(product.getName())) {
+                return CommonResult.ok().data("item", false);
+            }
+        }
+        Product product1 = baseMapper.selectOne(new QueryWrapper<Product>().eq("name", product.getName()).eq("category_id", product.getCategoryId()).eq("brand_id", product.getBrandId()));
+        if (product1 == null) {
+            return CommonResult.ok().data("item", false);
+        }
+        return CommonResult.ok().data("item", true);
     }
 
 

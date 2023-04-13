@@ -64,5 +64,9 @@ public class ProductController {
         return productService.getProductById(id);
 
     }
+    @PostMapping("isExistProductName")
+    public CommonResult isExistProductName(@RequestBody Product product) {
+        return productService.isExistProductName(product);
+    }
 }
 

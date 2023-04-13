@@ -27,11 +27,6 @@ public class Product implements Serializable {
     /**
      *
      */
-    private String barcode;
-
-    /**
-     *
-     */
     private String name;
 
     /**
@@ -45,19 +40,9 @@ public class Product implements Serializable {
     private Integer brandId;
 
     /**
-     * 进价
-     */
-    private BigDecimal purchasePrice;
-
-    /**
      * 售价
      */
     private BigDecimal sellPrice;
-
-    /**
-     *
-     */
-    private String introduction;
 
     /**
      *
