@@ -5,17 +5,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqupt.th.supermarket.entity.Employee;
 import com.cqupt.th.supermarket.entity.Region;
-import com.cqupt.th.supermarket.entity.Store;
 import com.cqupt.th.supermarket.entity.Warehouse;
 import com.cqupt.th.supermarket.mapper.EmployeeMapper;
 import com.cqupt.th.supermarket.query.WarehouseQuery;
-import com.cqupt.th.supermarket.service.EmployeeService;
 import com.cqupt.th.supermarket.service.RegionService;
 import com.cqupt.th.supermarket.service.WarehouseService;
 import com.cqupt.th.supermarket.mapper.WarehouseMapper;
 import com.cqupt.th.supermarket.utils.CommonResult;
-import com.cqupt.th.supermarket.vo.RegionListVo;
-import com.cqupt.th.supermarket.vo.StoreVo;
+import com.cqupt.th.supermarket.vo.RegionVo;
 import com.cqupt.th.supermarket.vo.WarehouseVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +20,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -182,7 +178,7 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
     public CommonResult getWarehouseRegionList() {
         List<Warehouse> warehouses = baseMapper.selectList(new QueryWrapper<Warehouse>().ne("region_id", 0));
         List<Integer> ids = warehouses.stream().map(s -> s.getRegionId()).collect(Collectors.toList());
-        List<RegionListVo> items = regionService.getRegionAll(ids);
+        List<RegionVo> items = regionService.getRegionAll(ids);
         return CommonResult.ok().data("items", items);
     }
 
@@ -216,7 +212,7 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
     public CommonResult getWarehouseRegionAll() {
         List<Warehouse> region_id = baseMapper.selectList(new QueryWrapper<Warehouse>().ne("region_id", 0));
         List<Integer> ids = region_id.stream().map(s -> s.getRegionId()).collect(Collectors.toList());
-        List<RegionListVo> items = regionService.getRegionAll(ids);
+        List<RegionVo> items = regionService.getRegionAll(ids);
         return CommonResult.ok().data("items", items);
     }
 }

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqupt.th.supermarket.constants.ProductConstant;
 import com.cqupt.th.supermarket.entity.Brand;
+import com.cqupt.th.supermarket.entity.Category;
 import com.cqupt.th.supermarket.entity.Product;
 import com.cqupt.th.supermarket.mapper.BrandMapper;
 import com.cqupt.th.supermarket.query.ProductQuery;
@@ -68,12 +69,14 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
         baseMapper.selectPage(productPage, productQueryWrapper);
         long total = productPage.getTotal();
         List<Product> records = productPage.getRecords();
-        HashMap<Integer, String> brandMap = new HashMap<>();
-        HashMap<Integer, String> categoryMap = new HashMap<>();
-        brandMapper.selectList(null).stream().forEach(brand -> {
+        List<Brand> brands = brandMapper.selectList(null);
+        List<Category> categories = categoryService.list(null);
+        HashMap<Integer, String> brandMap = new HashMap<>(brands.size());
+        HashMap<Integer, String> categoryMap = new HashMap<>(categories.size());
+        brands.stream().forEach(brand -> {
             brandMap.put(brand.getId(), brand.getName());
         });
-        categoryService.list(null).stream().forEach(category -> {
+        categories.stream().forEach(category -> {
             categoryMap.put(category.getId(), category.getTitle());
         });
         List<ProductVo> rows = records.stream().map(r -> {

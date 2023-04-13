@@ -1,12 +1,10 @@
 package com.cqupt.th.supermarket.controller;
 
 import com.cqupt.th.supermarket.entity.Region;
-import com.cqupt.th.supermarket.query.RegionQuery;
 import com.cqupt.th.supermarket.service.RegionService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -20,18 +18,6 @@ public class RegionController {
     @Autowired
     @Qualifier("regionService")
     private RegionService regionService;
-
-    @PostMapping("{currentPage}/{size}")
-    public CommonResult getRegionListPage(@PathVariable("currentPage") Integer currentPage,
-                                          @PathVariable("size") Integer size, @RequestBody(required = false) RegionQuery regionQuery
-    ) {
-        return regionService.getRegionListPage(currentPage, size, regionQuery);
-    }
-
-    @DeleteMapping("/batch/{ids}")
-    public CommonResult deleteRegionByIds(@PathVariable("ids") Integer[] ids) {
-        return regionService.deleteRegionByIds(ids);
-    }
 
     @DeleteMapping("{id}")
     public CommonResult deleteRegionById(@PathVariable("id") Integer id) {
@@ -51,6 +37,10 @@ public class RegionController {
     @PutMapping("{id}")
     public CommonResult updateRegionById(@PathVariable("id") Integer id, @RequestBody Region region) {
         return regionService.updateRegionById(id, region);
+    }
+    @PostMapping("isExistRegionName")
+    public CommonResult isExistRegionName(@RequestBody Region region) {
+        return regionService.isExistRegionName(region);
     }
 
 }

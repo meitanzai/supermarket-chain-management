@@ -10,13 +10,11 @@ import com.cqupt.th.supermarket.entity.Warehouse;
 import com.cqupt.th.supermarket.mapper.EmployeeMapper;
 import com.cqupt.th.supermarket.mapper.WarehouseMapper;
 import com.cqupt.th.supermarket.query.StoreQuery;
-import com.cqupt.th.supermarket.service.EmployeeService;
-import com.cqupt.th.supermarket.service.PositionService;
 import com.cqupt.th.supermarket.service.RegionService;
 import com.cqupt.th.supermarket.service.StoreService;
 import com.cqupt.th.supermarket.mapper.StoreMapper;
 import com.cqupt.th.supermarket.utils.CommonResult;
-import com.cqupt.th.supermarket.vo.RegionListVo;
+import com.cqupt.th.supermarket.vo.RegionVo;
 import com.cqupt.th.supermarket.vo.StoreVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +22,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -248,7 +245,7 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
     public CommonResult getStoreRegionList() {
         List<Store> stores = baseMapper.selectList(new QueryWrapper<Store>().ne("region_id", 0));
         List<Integer> ids = stores.stream().map(s -> s.getRegionId()).collect(Collectors.toList());
-        List<RegionListVo> items = regionService.getRegionAll(ids);
+        List<RegionVo> items = regionService.getRegionAll(ids);
         return CommonResult.ok().data("items", items);
     }
 
