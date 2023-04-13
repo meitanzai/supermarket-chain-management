@@ -1,4 +1,4 @@
-package com.cqupt.th.supermarket.security;
+package com.cqupt.th.supermarket.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cqupt.th.supermarket.entity.Permission;

@@ -23,9 +23,6 @@ import java.util.stream.Collectors;
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
         implements CategoryService {
-    @Resource
-    private ProductMapper productMapper;
-
 
     /**
      * 得到所有类别树
@@ -34,7 +31,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
      */
     @Override
     public CommonResult getAllCategoryWithTree() {
-        //1、查出所有分类
+
         List<Category> entities = baseMapper.selectList(new QueryWrapper<Category>().orderByDesc("gmt_modified"));
         if (entities == null || entities.size() == 0) {
             return CommonResult.ok().data("items", null);
@@ -45,12 +42,10 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
             vo.setLevel(1);
             return vo;
         }).collect(Collectors.toList());
-        //2、组装成具有父子关系的树形结构(因为要形成树形结构，所以要有一个List的属性来存子分类)
-        //2.1、找到所有一级分类（parentId == 0）
+
         List<CategoryVo> level1 = categoryVoList.stream().filter(e ->
                 e.getParentId() == 0
         ).map(e -> {
-            //查找子分类
             List<CategoryVo> children = getChildren(e, categoryVoList, 2);
             if (children != null && children.size() > 0) {
                 e.setChildren(children);
@@ -68,7 +63,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
         if (id == null) {
             return CommonResult.error().message("id不能为空");
         }
-//        递归删除子目录
         List<Integer> ids = new ArrayList<>();
         ids.add(id);
         List<Integer> level2 = baseMapper.selectList(new QueryWrapper<Category>().eq("parent_id", id)).stream().map(e -> {
@@ -87,8 +81,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
                 }).collect(Collectors.toList());
             }
         }
-        //TODO 商品
-//        productMapper.updateCategoryIdByCategoryIds(ids);
         int result = baseMapper.deleteBatchIds(ids);
         if (result == 0) {
             return CommonResult.error().message("删除失败");
@@ -130,19 +122,22 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
 
     @Override
     public Integer[] getCategoryIds(Integer id) {
+        if (id == null || id == 0) {
+            return new Integer[]{};
+        }
         Category category = baseMapper.selectById(id);
-        ArrayList<Integer> list = new ArrayList<>();
         if (category == null) {
             return new Integer[]{};
         }
+        ArrayList<Integer> list = new ArrayList<>();
         list.add(category.getId());
         while (category.getParentId() != 0) {
             id = category.getParentId();
             list.add(0, id);
             category = baseMapper.selectById(id);
         }
-        Integer[] integers = list.stream().toArray(Integer[]::new);
-        return integers;
+        Integer[] categoryIds = list.stream().toArray(Integer[]::new);
+        return categoryIds;
     }
 
 
@@ -153,10 +148,10 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
         ).map(e -> {
             //继续找每个子分类的子分类
             List<CategoryVo> children1 = getChildren(e, all, level + 1);
-            if (children1 == null || children1.size() == 0) {
-                e.setChildren(null);
-            } else {
+            if (children1 != null && children1.size() > 0) {
                 e.setChildren(children1);
+            } else {
+                e.setChildren(null);
             }
             e.setLevel(level);
             return e;
