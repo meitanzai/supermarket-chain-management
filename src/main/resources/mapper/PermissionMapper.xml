@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqupt.th.supermarket.mapper.PermissionMapper">
+
+    <resultMap id="BaseResultMap" type="com.cqupt.th.supermarket.entity.Permission">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="pid" column="pid" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="TINYINT"/>
+        <result property="permissionValue" column="permission_value" jdbcType="VARCHAR"/>
+        <result property="path" column="path" jdbcType="VARCHAR"/>
+        <result property="component" column="component" jdbcType="VARCHAR"/>
+        <result property="icon" column="icon" jdbcType="VARCHAR"/>
+        <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,pid,name,
+        type,permission_value,path,
+        component,icon,gmt_create,
+        gmt_modified
+    </sql>
+    <select id="selectPermissionValueByUserId" resultType="java.lang.String">
+        SELECT DISTINCT p.permission_value
+        FROM user_role ur
+                 LEFT JOIN `role` r ON ur.`role_id` = r.`id`
+                 LEFT JOIN `role_permission` rp ON ur.`role_id` = rp.`role_id`
+                 LEFT JOIN `permission` p ON p.`id` = rp.`permission_id`
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectPermissionByRoles" resultType="com.cqupt.th.supermarket.entity.Permission">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        permission
+        WHERE
+        id IN
+        (
+        SELECT
+        permission_id
+        FROM
+        role_permission
+        WHERE
+        role_id IN
+        (
+        <foreach collection="roles" item="role" open="(" separator="," close=")">
+            #{role.id}
+        </foreach>
+        )
+        )
+    </select>
+    <select id="selectPermissionVosByRoleId" resultType="com.cqupt.th.supermarket.entity.Permission">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        permission
+        WHERE
+        id IN
+        (
+        SELECT
+        permission_id
+        FROM
+        role_permission
+        WHERE
+        role_id = #{roleId}
+        )
+    </select>
+</mapper>

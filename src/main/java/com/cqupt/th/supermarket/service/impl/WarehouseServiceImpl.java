@@ -14,6 +14,7 @@ import com.cqupt.th.supermarket.service.RegionService;
 import com.cqupt.th.supermarket.service.WarehouseService;
 import com.cqupt.th.supermarket.mapper.WarehouseMapper;
 import com.cqupt.th.supermarket.utils.CommonResult;
+import com.cqupt.th.supermarket.vo.RegionListVo;
 import com.cqupt.th.supermarket.vo.StoreVo;
 import com.cqupt.th.supermarket.vo.WarehouseVo;
 import org.springframework.beans.BeanUtils;
@@ -50,19 +51,8 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
         });
         QueryWrapper<Warehouse> warehouseWrapper = new QueryWrapper<>();
         if (warehouseQuery != null) {
-
-            if (warehouseQuery.getRegionParentId() != null) {
-                ArrayList<Integer> list1 = new ArrayList<>();
-                map.forEach((k, v) -> {
-                    if (v.getParentId().equals(warehouseQuery.getRegionParentId())) {
-                        list1.add(v.getId());
-                    }
-                });
-                if (list1.size() != 0) {
-                    warehouseWrapper.in("region_id", list1);
-                } else {
-                    return CommonResult.ok().data("total", 0).data("rows", new ArrayList<>());
-                }
+            if (warehouseQuery.getRegionId() != null) {
+                warehouseWrapper.like("region_id", warehouseQuery.getRegionId());
             }
             if (warehouseQuery.getManagerId() != null) {
                 warehouseWrapper.eq("manager_id", warehouseQuery.getManagerId());
@@ -84,18 +74,26 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
             WarehouseVo warehouseVo = new WarehouseVo();
             BeanUtils.copyProperties(s, warehouseVo);
             warehouseVo.setRegionName(regionService.getRegionName(s.getRegionId(), map));
-            warehouseVo.setManagerName(employeeHashMap.get(s.getManagerId()));
+            String managerName = employeeHashMap.get(s.getManagerId());
+            if (managerName != null) {
+                warehouseVo.setManagerName(managerName);
+            } else {
+                warehouseVo.setManagerName("");
+            }
             return warehouseVo;
         }).collect(Collectors.toList());
         return CommonResult.ok().data("total", total).data("rows", collect);
     }
 
     @Override
-    public CommonResult getWarehouseRegionIds(Integer regionId) {
+    public CommonResult warehouseRegionIdsByRegionId(Integer regionId) {
         if (regionId == null) {
             return CommonResult.error().message("参数错误");
         }
-        Integer[] ids = regionService.getAllRegionIds(regionId);
+        if (regionId == 0) {
+            return CommonResult.ok().data("items", new Integer[]{});
+        }
+        Integer[] ids = regionService.getRegionIdsById(regionId);
         if (ids == null) {
             return CommonResult.error().message("参数错误");
         }
@@ -107,7 +105,8 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
         if (id == null) {
             return CommonResult.error().message("参数错误");
         }
-        employeeMapper.updateEmployeeByWarehouseId(id);
+        //TODO
+//        employeeMapper.updateEmployeeByWarehouseId(id);
         int i = baseMapper.deleteById(id);
         if (i == 0) {
             return CommonResult.error().message("删除失败");
@@ -128,7 +127,7 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
     }
 
     @Override
-    public CommonResult updateWarehouse(Integer id, Warehouse warehouse) {
+    public CommonResult updateWarehouseById(Integer id, Warehouse warehouse) {
         if (id == null || warehouse == null) {
             return CommonResult.error().message("参数错误");
         }
@@ -138,6 +137,53 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
             return CommonResult.error().message("修改失败");
         }
         return CommonResult.ok().message("修改成功");
+    }
+
+    @Override
+    public CommonResult getManagerIdByManagerId(Integer managerId) {
+        if (managerId == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        if (managerId == 0) {
+            return CommonResult.ok().data("item", null);
+        }
+        Employee employee = employeeMapper.selectById(managerId);
+        if (employee == null) {
+            return CommonResult.ok().data("item", null);
+        }
+        return CommonResult.ok().data("item", managerId);
+    }
+
+    @Override
+    public CommonResult getWarehouseByWarehouse(Warehouse warehouse) {
+        if (warehouse == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        if (warehouse.getRegionId() != null && warehouse.getRegionId() == 0) {
+            return CommonResult.ok().data("item", null);
+        }
+        if (warehouse.getId() != null) {
+            Warehouse warehouse1 = baseMapper.selectById(warehouse.getId());
+            if (warehouse1 == null) {
+                return CommonResult.error().message("参数错误");
+            }
+            if (warehouse1.getRegionId().equals(warehouse.getRegionId())) {
+                return CommonResult.ok().data("item", null);
+            }
+        }
+        Warehouse warehouse1 = baseMapper.selectOne(new QueryWrapper<Warehouse>().eq("region_id", warehouse.getRegionId()));
+        if (warehouse1 == null) {
+            return CommonResult.ok().data("item", null);
+        }
+        return CommonResult.ok().data("item", warehouse1);
+    }
+
+    @Override
+    public CommonResult getWarehouseRegionList() {
+        List<Warehouse> warehouses = baseMapper.selectList(new QueryWrapper<Warehouse>().ne("region_id", 0));
+        List<Integer> ids = warehouses.stream().map(s -> s.getRegionId()).collect(Collectors.toList());
+        List<RegionListVo> items = regionService.getRegionAll(ids);
+        return CommonResult.ok().data("items", items);
     }
 
     @Override
@@ -152,6 +198,7 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
         return CommonResult.ok().data("item", warehouse.getId());
     }
 
+
     @Override
     public CommonResult getRegionIdByWarehouseId(Integer warehouseId) {
 
@@ -160,9 +207,17 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
         }
         Warehouse warehouse = baseMapper.selectById(warehouseId);
         if (warehouse == null) {
-            return CommonResult.ok().data("item", "");
+            return CommonResult.ok().data("item", null);
         }
         return CommonResult.ok().data("item", warehouse.getRegionId());
+    }
+
+    @Override
+    public CommonResult getWarehouseRegionAll() {
+        List<Warehouse> region_id = baseMapper.selectList(new QueryWrapper<Warehouse>().ne("region_id", 0));
+        List<Integer> ids = region_id.stream().map(s -> s.getRegionId()).collect(Collectors.toList());
+        List<RegionListVo> items = regionService.getRegionAll(ids);
+        return CommonResult.ok().data("items", items);
     }
 }
 

@@ -6,6 +6,7 @@ import com.cqupt.th.supermarket.service.InstockService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2023/4/7 12:49
  */
 @RestController
-@CrossOrigin
+@PreAuthorize("hasAuthority('inventory:instock:index')")
 @RequestMapping("/instock")
 public class InstockController {
     @Autowired

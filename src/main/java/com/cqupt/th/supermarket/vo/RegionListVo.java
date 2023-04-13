@@ -14,6 +14,5 @@ public class RegionListVo implements Serializable {
     private Integer id;
     private String name;
     private List<RegionListVo> children;
-    private Integer level;
     private Integer parentId;
 }

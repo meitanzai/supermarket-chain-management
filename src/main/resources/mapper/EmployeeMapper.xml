@@ -6,6 +6,7 @@
 
     <resultMap id="BaseResultMap" type="com.cqupt.th.supermarket.entity.Employee">
         <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="workNumber" column="work_number" jdbcType="CHAR"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="sex" column="sex" jdbcType="TINYINT"/>
         <result property="age" column="age" jdbcType="INTEGER"/>
@@ -18,7 +19,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id
+        id,work_number
         ,name,sex,
         age,position_id,store_id,warehouse_id,
         status,gmt_create,gmt_modified

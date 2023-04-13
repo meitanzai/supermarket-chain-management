@@ -6,6 +6,7 @@ import com.cqupt.th.supermarket.service.MemberPointService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2023/3/30 15:37
  */
 @RestController
-@CrossOrigin
+@PreAuthorize("hasAuthority('member:memberpoint:index')")
 @RequestMapping("/memberPoint")
 public class MemberPointController {
     @Autowired
@@ -41,7 +42,7 @@ public class MemberPointController {
         return memberPointService.addMemberPoint(memberPoint);
     }
     @PutMapping("{id}")
-    public CommonResult updateMemberPoint(@PathVariable("id") Integer id, @RequestBody MemberPoint memberPoint) {
-        return memberPointService.updateMemberPoint(id, memberPoint);
+    public CommonResult updateMemberPointById(@PathVariable("id") Integer id, @RequestBody MemberPoint memberPoint) {
+        return memberPointService.updateMemberPointById(id, memberPoint);
     }
 }

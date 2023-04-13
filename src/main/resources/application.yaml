@@ -31,9 +31,9 @@ spring:
 #      min-idle: 0           # 连接池中的最小空闲连接
 #    timeout: 1000
   #  这个mvc的配置是springboot2.6.1不支持swagger3的折衷配置，后面考虑升级Springboot版本或降级版本
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
+#  mvc:
+#    pathmatch:
+#      matching-strategy: ant_path_matcher
   profiles:
     active: dev
 mybatis-plus:
@@ -41,4 +41,7 @@ mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   type-aliases-package: com.cqupt.th.supermarket.entity
-
+jwt:
+  header: Authorization
+  expire: 86400
+  secret: ukc8BDbRigUDaY6pZFfWus2jZWLPHO

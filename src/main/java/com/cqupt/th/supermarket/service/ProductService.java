@@ -12,7 +12,7 @@ import com.cqupt.th.supermarket.utils.CommonResult;
 */
 public interface ProductService extends IService<Product> {
 
-    CommonResult getProductByPage(Integer currentPage, Integer size, ProductQuery productQuery);
+    CommonResult getProductListPage(Integer currentPage, Integer size, ProductQuery productQuery);
 
     CommonResult updateProductById(Integer id, Product product);
 
@@ -22,7 +22,9 @@ public interface ProductService extends IService<Product> {
 
     CommonResult addProduct(Product product);
 
-    CommonResult getCategoryIds(Integer id);
+    CommonResult getCategoryIdsByCategoryId(Integer categoryId);
+
+    CommonResult getBrandIdByBrandId(Integer brandId);
 
     CommonResult getProductByBrandIdAndCategoryId(Integer brandId, Integer categoryId);
 

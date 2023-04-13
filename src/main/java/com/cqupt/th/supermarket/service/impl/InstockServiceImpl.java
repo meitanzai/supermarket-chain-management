@@ -48,9 +48,7 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
         QueryWrapper<Instock> instockQueryWrapper = new QueryWrapper<>();
         instockQueryWrapper.orderByDesc("gmt_modified");
         if (instockQuery != null) {
-            if (instockQuery.getSupplierId() != null) {
-                instockQueryWrapper.eq("supplier_id", instockQuery.getSupplierId());
-            }
+
             if (instockQuery.getWarehouseId() != null) {
                 instockQueryWrapper.eq("warehouse_id", instockQuery.getWarehouseId());
             }
@@ -59,9 +57,6 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
             }
             if (instockQuery.getInstockCount() != null) {
                 instockQueryWrapper.eq("instock_count", instockQuery.getInstockCount());
-            }
-            if (instockQuery.getFromWarehouseId() != null) {
-                instockQueryWrapper.eq("from_warehouse_id", instockQuery.getFromWarehouseId());
             }
             if (instockQuery.getStartTime() != null) {
                 instockQueryWrapper.ge("gmt_create", instockQuery.getStartTime());
@@ -91,8 +86,7 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
             BeanUtils.copyProperties(r, instockVo);
             instockVo.setProductName(productHashMap.get(r.getProductId()));
             instockVo.setWarehouseRegion(regionService.getRegionName(getRegionIdByWarehouseId(r.getWarehouseId()), regionHashMap));
-            instockVo.setSupplierName(supplierHashMap.get(r.getSupplierId()));
-            instockVo.setFromWarehouseRegion(regionService.getRegionName(getRegionIdByWarehouseId(r.getFromWarehouseId()), regionHashMap));
+
             return instockVo;
         }).collect(Collectors.toList());
         return CommonResult.ok().data("total", total).data("rows", rows);
@@ -112,7 +106,7 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
         if (regionId == 0) {
             return CommonResult.ok().data("items", new Integer[0]);
         }
-        Integer[] ids = regionService.getAllRegionIds(regionId);
+        Integer[] ids = regionService.getRegionIdsById(regionId);
         if (ids == null) {
             return CommonResult.error().message("参数错误");
         }
@@ -125,7 +119,7 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
             return CommonResult.error().message("参数错误");
         }
         Warehouse warehouse = warehouseMapper.selectOne(new QueryWrapper<Warehouse>().eq("region_id", regionId));
-        int id = -1;
+        int id = 0;
         if (warehouse != null) {
             id = warehouse.getId();
         }
@@ -171,7 +165,7 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
         if (inventory == null) {
             return CommonResult.error().message("参数错误");
         }
-        if (instock.getProductId() == inventory.getProductId() && instock.getWarehouseId() == inventory.getWarehouseId()) {
+        if (inventory.getProductId().equals(instock.getProductId()) && inventory.getWarehouseId().equals(instock.getWarehouseId())) {
             inventory.setInstockCount(inventory.getInstockCount() - instock1.getInstockCount() + instock.getInstockCount());
             inventory.setInventoryCount(inventory.getInventoryCount() - instock1.getInstockCount() + instock.getInstockCount());
             inventoryMapper.updateById(inventory);

@@ -6,6 +6,7 @@ import com.cqupt.th.supermarket.service.StoreService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2023/3/28 15:21
  */
 @RestController
-@CrossOrigin
+//@PreAuthorize("hasAuthority('entity:store:index')")
 @RequestMapping("/store")
 public class StoreController {
     @Autowired
@@ -37,9 +38,9 @@ public class StoreController {
         return storeService.deleteStoreById(id);
     }
 
-    @GetMapping("regionIds/{regionId}")
-    public CommonResult getStoreRegionIds(@PathVariable("regionId") Integer regionId) {
-        return storeService.getStoreRegionIds(regionId);
+    @GetMapping("storeRegionIdsByRegionId/{regionId}")
+    public CommonResult getStoreRegionIdsByRegionId(@PathVariable("regionId") Integer regionId) {
+        return storeService.getStoreRegionIdsByRegionId(regionId);
     }
 
     @PutMapping("{id}")
@@ -52,11 +53,24 @@ public class StoreController {
         return storeService.addStore(store);
     }
 
-    @GetMapping("getStoreIdByRegionId/{regionId}")
+    @PostMapping("storeByStore")
+    public CommonResult getStoreByStore(@RequestBody Store store) {
+        return storeService.getStoreByStore(store);
+    }
+    @GetMapping("managerIdByManagerId/{managerId}")
+    public CommonResult getManagerIdByManagerId(@PathVariable("managerId") Integer managerId) {
+        return storeService.getManagerIdByManagerId(managerId);
+    }
+    @GetMapping("storeRegionList")
+    public CommonResult getStoreRegionList() {
+        return storeService.getStoreRegionList();
+    }
+
+    @GetMapping("storeIdByRegionId/{regionId}")
     public CommonResult getStoreIdByRegionId(@PathVariable("regionId") Integer regionId) {
         return storeService.getStoreIdByRegionId(regionId);
     }
-    @GetMapping("getRegionIdByStoreId/{storeId}")
+    @GetMapping("regionIdByStoreId/{storeId}")
     public CommonResult getRegionIdByStoreId(@PathVariable("storeId") Integer storeId) {
         return storeService.getRegionIdByStoreId(storeId);
     }

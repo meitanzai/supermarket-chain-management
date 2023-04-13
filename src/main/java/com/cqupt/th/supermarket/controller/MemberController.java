@@ -6,6 +6,7 @@ import com.cqupt.th.supermarket.service.MemberService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2023/3/30 15:37
  */
 @RestController
-@CrossOrigin
+@PreAuthorize("hasAuthority('member:member:index')")
 @RequestMapping("/member")
 public class MemberController {
     @Autowired
@@ -23,11 +24,6 @@ public class MemberController {
     @PostMapping("{currentPage}/{size}")
     public CommonResult getMemberListByPage(@PathVariable("currentPage") Integer currentPage, @PathVariable("size") Integer size, @RequestBody(required = false) MemberQuery memberQuery) {
         return memberService.getMemberListByPage(currentPage, size, memberQuery);
-    }
-
-    @GetMapping("status/{id}")
-    public CommonResult getMemberStatusAndSexById(@PathVariable("id") Integer id) {
-        return memberService.getMemberStatusAndSexById(id);
     }
 
     @DeleteMapping("{id}")
@@ -46,10 +42,10 @@ public class MemberController {
     }
 
     @PutMapping("{id}")
-    public CommonResult updateMember(@PathVariable("id") Integer id, @RequestBody Member member) {
-        return memberService.updateMember(id, member);
+    public CommonResult updateMemberById(@PathVariable("id") Integer id, @RequestBody Member member) {
+        return memberService.updateMemberById(id, member);
     }
-    @GetMapping("list")
+    @GetMapping("all")
     public CommonResult getMemberList() {
         return memberService.getMemberList();
     }

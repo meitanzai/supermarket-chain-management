@@ -14,15 +14,24 @@ public interface WarehouseService extends IService<Warehouse> {
 
     CommonResult getWarehouseByPage(Integer currentPage, Integer pageSize, WarehouseQuery warehouseQuery);
 
-    CommonResult getWarehouseRegionIds(Integer regionId);
+    CommonResult warehouseRegionIdsByRegionId(Integer regionId);
 
     CommonResult deleteWarehouseById(Integer id);
 
     CommonResult addWarehouse(Warehouse warehouse);
 
-    CommonResult updateWarehouse(Integer id, Warehouse warehouse);
+    CommonResult updateWarehouseById(Integer id, Warehouse warehouse);
+
+    CommonResult getManagerIdByManagerId(Integer managerId);
+
+    CommonResult getWarehouseByWarehouse(Warehouse warehouse);
+
+    CommonResult getWarehouseRegionList();
 
     CommonResult getWarehouseIdByRegionId(Integer regionId);
 
     CommonResult getRegionIdByWarehouseId(Integer warehouseId);
+
+    CommonResult getWarehouseRegionAll();
+
 }

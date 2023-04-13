@@ -32,15 +32,16 @@ import java.util.stream.Collectors;
 @Service("outstockService")
 public class OutstockServiceImpl extends ServiceImpl<OutstockMapper, Outstock>
         implements OutstockService {
-@Resource
-private ProductMapper productMapper;
-@Autowired
-@Qualifier("regionService")
-private RegionService regionService;
-@Resource
-private WarehouseMapper warehouseMapper;
-@Resource
-private InventoryMapper inventoryMapper;
+    @Resource
+    private ProductMapper productMapper;
+    @Autowired
+    @Qualifier("regionService")
+    private RegionService regionService;
+    @Resource
+    private WarehouseMapper warehouseMapper;
+    @Resource
+    private InventoryMapper inventoryMapper;
+
     @Override
     public CommonResult getOutstockListPage(Integer currentPage, Integer pageSize, OutstockQuery outstockQuery) {
         if (currentPage <= 0 || pageSize <= 0) {
@@ -58,18 +59,15 @@ private InventoryMapper inventoryMapper;
             if (outstockQuery.getOutstockCount() != null) {
                 outstockQueryWrapper.eq("outstock_count", outstockQuery.getOutstockCount());
             }
-            if (outstockQuery.getToWarehouseId() != null) {
-                outstockQueryWrapper.eq("to_warehouse_id", outstockQuery.getToWarehouseId());
-            }
-            if(outstockQuery.getStartTime() != null){
+            if (outstockQuery.getStartTime() != null) {
                 outstockQueryWrapper.ge("gmt_create", outstockQuery.getStartTime());
             }
-            if(outstockQuery.getEndTime() != null){
+            if (outstockQuery.getEndTime() != null) {
                 outstockQueryWrapper.le("gmt_create", outstockQuery.getEndTime());
             }
         }
         Page<Outstock> outstockPage = new Page<>(currentPage, pageSize);
-       baseMapper.selectPage(outstockPage, outstockQueryWrapper);
+        baseMapper.selectPage(outstockPage, outstockQueryWrapper);
         long total = outstockPage.getTotal();
         List<Outstock> records = outstockPage.getRecords();
         HashMap<Integer, String> productHashMap = new HashMap<>();
@@ -85,7 +83,6 @@ private InventoryMapper inventoryMapper;
             BeanUtils.copyProperties(r, outstockVo);
             outstockVo.setProductName(productHashMap.get(r.getProductId()));
             outstockVo.setWarehouseRegion(regionService.getRegionName(getRegionIdByWarehouseId(r.getWarehouseId()), regionHashMap));
-            outstockVo.setToWarehouseRegion(regionService.getRegionName(getRegionIdByWarehouseId(r.getToWarehouseId()), regionHashMap));
             return outstockVo;
         }).collect(Collectors.toList());
         return CommonResult.ok().data("total", total).data("rows", rows);
@@ -97,7 +94,7 @@ private InventoryMapper inventoryMapper;
             return CommonResult.error().message("参数错误");
         }
         Warehouse warehouse = warehouseMapper.selectOne(new QueryWrapper<Warehouse>().eq("region_id", regionId));
-        int id = -1;
+        int id = 0;
         if (warehouse != null) {
             id = warehouse.getId();
         }
@@ -202,7 +199,28 @@ private InventoryMapper inventoryMapper;
         if (regionId == 0) {
             return CommonResult.ok().data("items", new Integer[0]);
         }
-        Integer[] ids = regionService.getAllRegionIds(regionId);
+        Integer[] ids = regionService.getRegionIdsById(regionId);
+        if (ids == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        return CommonResult.ok().data("items", ids);
+    }
+
+    @Override
+    public CommonResult getOutstockRegionIds(Integer warehouseId) {
+
+        if (warehouseId == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        Warehouse warehouse = warehouseMapper.selectById(warehouseId);
+        int regionId = 0;
+        if (warehouse != null) {
+            regionId = warehouse.getRegionId();
+        }
+        if (regionId == 0) {
+            return CommonResult.ok().data("items", new Integer[0]);
+        }
+        Integer[] ids = regionService.getRegionIdsById(regionId);
         if (ids == null) {
             return CommonResult.error().message("参数错误");
         }

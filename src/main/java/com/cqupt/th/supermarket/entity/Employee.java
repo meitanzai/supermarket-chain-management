@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
 import java.util.Date;
+
 import lombok.Data;
 
 /**
@@ -14,7 +15,7 @@ import lombok.Data;
  * @TableName employee
  * @date 2023/04/05
  */
-@TableName(value ="employee")
+@TableName(value = "employee")
 @Data
 public class Employee implements Serializable {
     /**
@@ -22,7 +23,10 @@ public class Employee implements Serializable {
      */
     @TableId(type = IdType.AUTO)
     private Integer id;
-
+    /**
+     * 员工工号
+     */
+    private String workNumber;
     /**
      * 员工姓名
      */
@@ -49,18 +53,18 @@ public class Employee implements Serializable {
     private Integer storeId;
     private Integer warehouseId;
     /**
-     * 
+     *
      */
     private Integer status;
 
     /**
-     * 
+     *
      */
     @TableField(fill = FieldFill.INSERT)
     private Date gmtCreate;
 
     /**
-     * 
+     *
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date gmtModified;

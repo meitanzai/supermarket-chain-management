@@ -18,8 +18,6 @@ public class InstockQuery implements Serializable {
     private Integer warehouseId;
     private Integer productId;
     private Integer instockCount;
-    private Integer supplierId;
-    private Integer fromWarehouseId;
     private Date startTime;
     private Date endTime;
 }

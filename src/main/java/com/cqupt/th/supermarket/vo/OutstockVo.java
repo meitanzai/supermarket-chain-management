@@ -17,8 +17,6 @@ public class OutstockVo {
     private Integer productId;
     private String productName;
     private Integer outstockCount;
-    private Integer toWarehouseId;
-    private String toWarehouseRegion;
     private Date gmtCreate;
     private Date gmtModified;
 }

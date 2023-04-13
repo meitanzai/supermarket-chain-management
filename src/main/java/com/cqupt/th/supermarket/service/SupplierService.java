@@ -28,7 +28,7 @@ public interface SupplierService extends IService<Supplier> {
 
     CommonResult getAllSupplier();
 
-    CommonResult getAvailableSuppliers();
+    CommonResult getSupplierByName(Supplier supplier);
 
-
+    CommonResult getRegionByRegionId(Supplier supplier);
 }

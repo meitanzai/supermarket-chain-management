@@ -18,15 +18,19 @@ public interface StoreService extends IService<Store> {
 
     CommonResult deleteStoreById(Integer id);
 
-    CommonResult getStoreStatusById(Integer id);
-
-    CommonResult getStoreRegionIds(Integer regionId);
+    CommonResult getStoreRegionIdsByRegionId(Integer regionId);
 
     CommonResult updateStoreById(Integer id, Store store);
 
     CommonResult addStore(Store store);
 
-    CommonResult getStoreIdByRegionId(Integer regionId);
+    CommonResult getStoreByStore(Store store);
 
+    CommonResult getManagerIdByManagerId(Integer managerId);
+
+    CommonResult getStoreRegionList();
+
+    CommonResult getStoreIdByRegionId(Integer regionId);
+//
     CommonResult getRegionIdByStoreId(Integer storeId);
 }

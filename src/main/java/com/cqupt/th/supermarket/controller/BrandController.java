@@ -6,6 +6,7 @@ import com.cqupt.th.supermarket.service.BrandService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2023/3/26 13:06
  */
 @RestController
-@CrossOrigin
+//@PreAuthorize("hasAuthority('product:brand:index')")
 @RequestMapping("/brand")
 public class BrandController {
 
@@ -27,20 +28,14 @@ public class BrandController {
     }
 
     @PostMapping("{currentPage}/{size}")
-    public CommonResult getBrandByPage(@PathVariable("currentPage") Integer currentPage, @PathVariable("size") Integer size, @RequestBody(required = false) BrandQuery brandQuery
+    public CommonResult getBrandListPage(@PathVariable("currentPage") Integer currentPage, @PathVariable("size") Integer size, @RequestBody(required = false) BrandQuery brandQuery
     ) {
-        return brandService.getBrandByPage(currentPage, size, brandQuery);
+        return brandService.getBrandListPage(currentPage, size, brandQuery);
     }
 
     @PutMapping("{id}")
     public CommonResult updateBrandById(@PathVariable("id") Integer id, @RequestBody Brand brand) {
         return brandService.updateBrandById(id, brand);
-    }
-
-    @GetMapping({"/{id}"})
-    public CommonResult getBrandById(@PathVariable("id") Integer id) {
-        return brandService.getBrandById(id);
-
     }
 
     @PostMapping
@@ -56,6 +51,11 @@ public class BrandController {
     @DeleteMapping("/batch/{ids}")
     public CommonResult deleteBrandByIds(@PathVariable("ids") Integer[] ids) {
         return brandService.deleteBrandByIds(ids);
+    }
+
+    @PostMapping("brandByName")
+    public CommonResult getBrandByName(@RequestBody Brand brand) {
+        return brandService.getBrandByName(brand);
     }
 }
 

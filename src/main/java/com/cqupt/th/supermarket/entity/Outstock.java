@@ -34,14 +34,6 @@ public class Outstock implements Serializable {
      */
     private Integer outstockCount;
 
-    /**
-     *
-     */
-    private Integer toWarehouseId;
-
-    /**
-     *
-     */
     @TableField(fill = FieldFill.INSERT)
     private Date gmtCreate;
 

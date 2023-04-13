@@ -37,16 +37,6 @@ public class Instock implements Serializable {
     /**
      *
      */
-    private Integer supplierId;
-
-    /**
-     *
-     */
-    private Integer fromWarehouseId;
-
-    /**
-     *
-     */
     @TableField(fill = FieldFill.INSERT)
     private Date gmtCreate;
 

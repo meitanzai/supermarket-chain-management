@@ -8,7 +8,6 @@
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
             <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
-            <result property="level" column="level" jdbcType="INTEGER"/>
             <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
             <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
     </resultMap>

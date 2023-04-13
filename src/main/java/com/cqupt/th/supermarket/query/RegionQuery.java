@@ -11,5 +11,5 @@ import java.io.Serializable;
 @Data
 public class RegionQuery implements Serializable {
 
-    private Integer parentId;
+    private Integer Id;
 }

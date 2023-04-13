@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqupt.th.supermarket.mapper.RolePermissionMapper">
+
+    <resultMap id="BaseResultMap" type="com.cqupt.th.supermarket.entity.RolePermission">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="roleId" column="role_id" jdbcType="INTEGER"/>
+        <result property="permissionId" column="permission_id" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,role_id,permission_id,
+        gmt_create,gmt_modified
+    </sql>
+    <insert id="insertBatchByRoleIdAndPermissionIds">
+        INSERT INTO role_permission
+        (role_id, permission_id, gmt_create, gmt_modified)
+        VALUES
+        <foreach collection="permissionIds" item="permissionId" open="(" separator="),(" close=")">
+            #{roleId}, #{permissionId}, now(), now()
+        </foreach>
+    </insert>
+
+</mapper>

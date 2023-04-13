@@ -36,11 +36,6 @@ public class Region implements Serializable {
     /**
      *
      */
-    private Integer level;
-
-    /**
-     *
-     */
     @TableField(fill = FieldFill.INSERT)
     private Date gmtCreate;
 

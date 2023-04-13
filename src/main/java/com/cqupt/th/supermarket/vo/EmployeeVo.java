@@ -12,6 +12,7 @@ import java.util.Date;
 @Data
 public class EmployeeVo implements Serializable {
     private Integer id;
+    private String workNumber;
     private String name;
     private Integer sex;
     private Integer age;
@@ -20,7 +21,6 @@ public class EmployeeVo implements Serializable {
     private Integer storeId;
     private String storeRegion;
     private Integer warehouseId;
-    private String warehouseName;
     private String warehouseRegion;
     private Integer status;
     private Date gmtCreate;

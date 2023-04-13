@@ -6,6 +6,7 @@ import com.cqupt.th.supermarket.service.PurchaseService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2023/4/5 16:28
  */
 @RestController
-@CrossOrigin
+@PreAuthorize("hasAuthority('supply:pruchase:index')")
 @RequestMapping("/purchase")
 public class PurchaseController {
     @Autowired
@@ -40,4 +41,12 @@ public class PurchaseController {
     public CommonResult getPurchaseByPurchaseId(@PathVariable("purchaseId") Integer purchaseId) {
         return purchaseService.getPurchaseByPurchaseId(purchaseId);
     }
+    @GetMapping("supplierIdByPurchaseId/{purchaseId}")
+    public CommonResult getSupplierIdByPurchaseId(@PathVariable("purchaseId") Integer purchaseId) {
+        return purchaseService.getSupplierIdByPurchaseId(purchaseId);
+    }
+//    @GetMapping("brandByPurchaseId/{purchaseId}")
+//    public CommonResult getBrandByPurchaseId(@PathVariable("purchaseId") Integer purchaseId) {
+//        return purchaseService.getBrandByPurchaseId(purchaseId);
+//    }
 }

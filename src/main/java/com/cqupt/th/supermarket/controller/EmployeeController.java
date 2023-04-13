@@ -6,6 +6,7 @@ import com.cqupt.th.supermarket.service.EmployeeService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -13,14 +14,14 @@ import org.springframework.web.bind.annotation.*;
  * @date 2023/3/31 16:17
  */
 @RestController
-@CrossOrigin
+@PreAuthorize("hasAuthority('employee:employee:index')")
 @RequestMapping("/employee")
 public class EmployeeController {
     @Autowired
     @Qualifier("employeeService")
     private EmployeeService employeeService;
 
-    @PostMapping("getEmployeeListPageByPositionId/{currentPage}/{pageSize}/{positionId}")
+    @PostMapping("employeeListPageByPositionId/{currentPage}/{pageSize}/{positionId}")
     public CommonResult getEmployeeListPageByPositionId(@PathVariable("currentPage") Integer currentPage,
                                                         @PathVariable("pageSize") Integer pageSize,
                                                         @PathVariable("positionId") Integer positionId,
@@ -28,7 +29,7 @@ public class EmployeeController {
         return employeeService.getEmployeeListPageByPositionId(currentPage, pageSize, positionId, employeeQuery);
     }
 
-    @PostMapping("getEmployeeListPageByStoreId/{currentPage}/{pageSize}/{storeId}")
+    @PostMapping("employeeListPageByStoreId/{currentPage}/{pageSize}/{storeId}")
     public CommonResult getEmployeeListPageByStoreId(@PathVariable("currentPage") Integer currentPage,
                                                      @PathVariable("pageSize") Integer pageSize,
                                                      @PathVariable("storeId") Integer storeId,
@@ -36,7 +37,7 @@ public class EmployeeController {
         return employeeService.getEmployeeListPageByStoreId(currentPage, pageSize, storeId, employeeQuery);
     }
 
-    @PostMapping("getEmployeeListPageByWarehouseId/{currentPage}/{pageSize}/{warehouseId}")
+    @PostMapping("employeeListPageByWarehouseId/{currentPage}/{pageSize}/{warehouseId}")
     public CommonResult getEmployeeListPageByWarehouseId(@PathVariable("currentPage") Integer currentPage,
                                                          @PathVariable("pageSize") Integer pageSize,
                                                          @PathVariable("warehouseId") Integer warehouseId,
@@ -70,12 +71,17 @@ public class EmployeeController {
     }
 
     @PutMapping("{id}")
-    public CommonResult updateEmployee(@PathVariable("id") Integer id, @RequestBody Employee employee) {
-        return employeeService.updateEmployee(id, employee);
+    public CommonResult updateEmployeeById(@PathVariable("id") Integer id, @RequestBody Employee employee) {
+        return employeeService.updateEmployeeById(id, employee);
     }
 
     @PostMapping
     public CommonResult addEmployee(@RequestBody Employee employee) {
         return employeeService.addEmployee(employee);
+    }
+
+    @PostMapping("workNumberByWorkNumber")
+    public CommonResult getWorkNumberByWorkNumber(@RequestBody Employee employee) {
+        return employeeService.getWorkNumberByWorkNumber(employee);
     }
 }

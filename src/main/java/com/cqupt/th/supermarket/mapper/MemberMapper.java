@@ -2,6 +2,7 @@ package com.cqupt.th.supermarket.mapper;
 
 import com.cqupt.th.supermarket.entity.Member;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
 * @author 16075
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface MemberMapper extends BaseMapper<Member> {
 
+    void updateMemberPointById(@Param("memberId") Integer memberId,@Param("point") int point);
 }
 
 

@@ -18,10 +18,6 @@ public class InstockVo {
     private Integer productId;
     private String productName;
     private Integer instockCount;
-    private Integer supplierId;
-    private String supplierName;
-    private Integer fromWarehouseId;
-    private String fromWarehouseRegion;
     private Date gmtCreate;
     private Date gmtModified;
 }

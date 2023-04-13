@@ -11,7 +11,7 @@ import java.util.Date;
  */
 @Data
 public class EmployeeQuery implements Serializable {
-
+    private String workNumber;
     private String name;
     private Integer positionId;
     private Integer storeId;

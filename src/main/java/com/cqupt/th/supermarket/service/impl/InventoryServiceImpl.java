@@ -101,7 +101,7 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
         }
         Warehouse warehouse = warehouseMapper.selectOne(new QueryWrapper<Warehouse>().eq("region_id", regionId));
         if (warehouse == null) {
-            return CommonResult.ok().data("item", -1);
+            return CommonResult.ok().data("item", null);
         }
         return CommonResult.ok().data("item", warehouse.getId());
     }

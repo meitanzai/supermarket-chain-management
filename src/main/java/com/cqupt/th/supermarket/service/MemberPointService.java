@@ -22,6 +22,6 @@ public interface MemberPointService extends IService<MemberPoint> {
 
     CommonResult addMemberPoint(MemberPoint memberPoint);
 
-    CommonResult updateMemberPoint(Integer id, MemberPoint memberPoint);
+    CommonResult updateMemberPointById(Integer id, MemberPoint memberPoint);
 
 }

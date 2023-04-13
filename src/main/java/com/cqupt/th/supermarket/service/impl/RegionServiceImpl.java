@@ -31,24 +31,23 @@ import java.util.stream.Collectors;
 @Service("regionService")
 public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
         implements RegionService {
-    @Resource
-    private StoreMapper storeMapper;
-    @Resource
-    private WarehouseMapper warehouseMapper;
 
     @Override
-    public CommonResult getRegionByPage(Integer currentPage, Integer size, RegionQuery regionQuery) {
-        List<Region> regions = baseMapper.selectList(new QueryWrapper<Region>().ne("level", 5));
-        HashMap<Integer, Region> map = new HashMap<>(regions.size());
-        regions.stream().forEach(region -> {
-            map.put(region.getId(), region);
-        });
+    public CommonResult getRegionListPage(Integer currentPage, Integer size, RegionQuery regionQuery) {
+        if (currentPage <= 0 || size <= 0) {
+            return CommonResult.error().message("参数错误");
+        }
         QueryWrapper<Region> regionQueryWrapper = new QueryWrapper<>();
         if (regionQuery != null) {
-            if (regionQuery.getParentId() != null) {
-                regionQueryWrapper.eq("parent_id", regionQuery.getParentId());
+            if (regionQuery.getId() != null) {
+                regionQueryWrapper.eq("id", regionQuery.getId());
             }
         }
+        HashMap<Integer, Region> regionMap = new HashMap<>();
+        List<Region> regions = baseMapper.selectList(null);
+        regions.stream().forEach(region -> {
+            regionMap.put(region.getId(), region);
+        });
         regionQueryWrapper.orderByDesc("gmt_modified");
         Page<Region> regionPage = new Page<>(currentPage, size);
         baseMapper.selectPage(regionPage, regionQueryWrapper);
@@ -57,7 +56,7 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
         List<RegionVo> collect = records.stream().map(region -> {
             RegionVo regionVo = new RegionVo();
             BeanUtils.copyProperties(region, regionVo);
-            regionVo.setFullName(getName(region, map));
+            regionVo.setFullName(getName(region, regionMap));
             return regionVo;
         }).collect(Collectors.toList());
         return CommonResult.ok().data("total", total).data("rows", collect);
@@ -75,8 +74,9 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
             Set<Integer> sonIds = getSonIds(id, set);
             set.addAll(sonIds);
         }
-        storeMapper.updateRegionIdByRegionIds(set);
-        warehouseMapper.updateRegionIdByRegionIds(set);
+        //TODO
+//        storeMapper.updateRegionIdByRegionIds(set);
+//        warehouseMapper.updateRegionIdByRegionIds(set);
 
         int i = baseMapper.deleteBatchIds(set);
         if (i > 0) {
@@ -94,62 +94,15 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
         HashSet<Integer> set = new HashSet<>();
         //递归获得所有子节点
         Set<Integer> ids = getSonIds(id, set);
-        storeMapper.updateRegionIdByRegionIds(ids);
-        warehouseMapper.updateRegionIdByRegionIds(ids);
+        //TODO
+//        storeMapper.updateRegionIdByRegionIds(ids);
+//        warehouseMapper.updateRegionIdByRegionIds(ids);
         int i = baseMapper.deleteBatchIds(ids);
         if (i > 0) {
             return CommonResult.ok().message("删除成功");
         }
         return CommonResult.error().message("删除失败");
 
-    }
-
-    private Set<Integer> getSonIds(Integer id, HashSet<Integer> set) {
-        set.add(id);
-        List<Region> regions = baseMapper.selectList(new QueryWrapper<Region>().eq("parent_id", id));
-        if (regions.size() > 0) {
-            regions.stream().forEach(region -> {
-                set.add(region.getId());
-                getSonIds(region.getId(), set);
-            });
-        }
-        return set;
-    }
-
-    @Override
-    public CommonResult getRegionTree() {
-        List<Region> regions = baseMapper.selectList(new QueryWrapper<Region>().ne("level", 5));
-        List<RegionListVo> collect = regions.stream().map(region -> {
-            RegionListVo regionListVo = new RegionListVo();
-            BeanUtils.copyProperties(region, regionListVo);
-            return regionListVo;
-        }).collect(Collectors.toList());
-        List<RegionListVo> collect1 = collect.stream().filter(regionListVo -> regionListVo.getParentId() == 0).map(regionListVo -> {
-            List<RegionListVo> children = getChildren(collect, regionListVo);
-            if (children.size() > 0) {
-                regionListVo.setChildren(children);
-            } else {
-                regionListVo.setChildren(null);
-            }
-            return regionListVo;
-        }).collect(Collectors.toList());
-        return CommonResult.ok().data("items", collect1);
-    }
-
-    @Override
-    public CommonResult getRegionIds(Integer id) {
-
-        if (id == null) {
-            return CommonResult.error().message("请选择要删除的数据");
-        }
-        ArrayList<Integer> ids = new ArrayList<>();
-        Region region = baseMapper.selectById(id);
-        while (region.getLevel() != 1) {
-            region = baseMapper.selectById(region.getParentId());
-            ids.add(0, region.getId());
-        }
-        Integer[] integers = ids.stream().toArray(Integer[]::new);
-        return CommonResult.ok().data("items", integers);
     }
 
     @Override
@@ -159,10 +112,7 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
             return CommonResult.error().message("请选择要添加的数据");
         }
         Region region1 = baseMapper.selectById(region.getParentId());
-        if (region1 != null) {
-            region.setLevel(region1.getLevel() + 1);
-        } else {
-            region.setLevel(1);
+        if (region1 == null) {
             region.setParentId(0);
         }
         int insert = baseMapper.insert(region);
@@ -179,13 +129,6 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
             return CommonResult.error().message("请选择要修改的数据");
         }
         region.setId(id);
-        Region region1 = baseMapper.selectById(region.getParentId());
-        if (region1 == null) {
-            region.setLevel(1);
-            region.setParentId(0);
-        } else {
-            region.setLevel(region1.getLevel() + 1);
-        }
         int i = baseMapper.updateById(region);
         if (i == 0) {
             return CommonResult.error().message("修改失败");
@@ -214,15 +157,25 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
     }
 
     @Override
-    public Integer[] getAllRegionIds(Integer regionId) {
-        ArrayList<Integer> list = new ArrayList<>();
-        Region region = baseMapper.selectById(regionId);
-        list.add(region.getId());
-        while (region.getLevel() != 1) {
-            region = baseMapper.selectById(region.getParentId());
-            list.add(0, region.getId());
+    public Integer[] getRegionIdsById(Integer id) {
+
+        if (id == null) {
+            return new Integer[]{};
         }
-        Integer[] integers = list.stream().toArray(Integer[]::new);
+        if (id == 0) {
+            return new Integer[]{};
+        }
+        Region region = baseMapper.selectById(id);
+        if (region == null) {
+            return new Integer[]{};
+        }
+        ArrayList<Integer> ids = new ArrayList<>();
+        ids.add(id);
+        while (region.getParentId() != 0) {
+            region = baseMapper.selectById(region.getParentId());
+            ids.add(0, region.getId());
+        }
+        Integer[] integers = ids.stream().toArray(Integer[]::new);
         return integers;
     }
 
@@ -245,7 +198,7 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(name);
         //倒转装名字
-        while (region.getLevel() != 1) {
+        while (region.getParentId() != 0) {
             region = map.get(region.getParentId());
             stringBuilder.insert(0, region.getName());
         }
@@ -270,32 +223,20 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
         return stringBuilder.toString();
     }
 
-    @Override
-    public CommonResult getStoreRegionAll() {
-        List<Store> stores = storeMapper.selectList(null);
-        List<Integer> regionIds = stores.stream().map(store -> store.getRegionId()).collect(Collectors.toList());
-        List<RegionListVo> regionListVos = getRegionAll(regionIds);
-        return CommonResult.ok().data("items", regionListVos);
-
+    private Set<Integer> getSonIds(Integer id, HashSet<Integer> set) {
+        set.add(id);
+        List<Region> regions = baseMapper.selectList(new QueryWrapper<Region>().eq("parent_id", id));
+        if (regions != null && regions.size() > 0) {
+            regions.stream().forEach(region -> {
+                set.add(region.getId());
+                getSonIds(region.getId(), set);
+            });
+        }
+        return set;
     }
 
-    @Override
-    public CommonResult getWarehouseRegionAll() {
-        List<Warehouse> warehouses = warehouseMapper.selectList(null);
-        List<Integer> regionIds = warehouses.stream().map(warehouse -> warehouse.getRegionId()).collect(Collectors.toList());
-        List<RegionListVo> regionListVos = getRegionAll(regionIds);
-        return CommonResult.ok().data("items", regionListVos);
-    }
-
-    @Override
-    public CommonResult getBusinessStoreRegionAll() {
-        List<Store> stores = storeMapper.selectList(new QueryWrapper<Store>().eq("status", "1"));
-        List<Integer> regionIds = stores.stream().map(store -> store.getRegionId()).collect(Collectors.toList());
-        List<RegionListVo> regionListVos = getRegionAll(regionIds);
-        return CommonResult.ok().data("items", regionListVos);
-    }
-
-    private List<RegionListVo> getRegionAll(List<Integer> regionIds) {
+   @Override
+   public List<RegionListVo> getRegionAll(List<Integer> regionIds) {
         List<Region> regions = baseMapper.selectList(null);
         Map<Integer, RegionListVo> collect = regions.stream().map(region -> {
             RegionListVo regionListVo = new RegionListVo();
@@ -308,7 +249,7 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
         HashSet<RegionListVo> set4 = new HashSet<>();
         HashSet<RegionListVo> set5 = new HashSet<>();
         for (Integer regionId : regionIds) {
-            Integer[] ids = getAllRegionIds(regionId);
+            Integer[] ids = getRegionIdsById(regionId);
             for (int j = 0; j < ids.length; j++) {
                 RegionListVo regionListVo = collect.get(ids[j]);
                 if (j == 0) {

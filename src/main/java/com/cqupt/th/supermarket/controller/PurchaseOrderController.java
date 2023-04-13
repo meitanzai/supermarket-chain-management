@@ -6,6 +6,7 @@ import com.cqupt.th.supermarket.service.PurchaseOrderService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2023/4/5 21:59
  */
 @RestController
-@CrossOrigin
+@PreAuthorize("hasAuthority('supply:order:index')")
 @RequestMapping("/purchaseOrder")
 public class PurchaseOrderController {
     @Autowired

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author TianHong
  * @date 2023/03/18
  */
-@ControllerAdvice
+//@ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 

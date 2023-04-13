@@ -6,6 +6,7 @@ import com.cqupt.th.supermarket.service.PositionService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2023/3/31 16:13
  */
 @RestController
-@CrossOrigin
+@PreAuthorize("hasAuthority('employee:position:index')")
 @RequestMapping("/position")
 public class PositionController {
     @Autowired
@@ -48,5 +49,14 @@ public class PositionController {
     @GetMapping("all")
     public CommonResult getPositionList() {
         return positionService.getPositionList();
+    }
+
+    @GetMapping("positionNameByName/{name}")
+    public CommonResult getPositionNameByName(@PathVariable("name") String name) {
+        return positionService.getPositionNameByName(name);
+    }
+    @GetMapping("{id}")
+    public CommonResult getPositionIdById(@PathVariable("id") Integer id) {
+        return positionService.getPositionIdById(id);
     }
 }

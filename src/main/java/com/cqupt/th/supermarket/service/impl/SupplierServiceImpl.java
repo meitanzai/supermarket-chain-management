@@ -3,9 +3,7 @@ package com.cqupt.th.supermarket.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cqupt.th.supermarket.entity.Employee;
-import com.cqupt.th.supermarket.entity.Region;
-import com.cqupt.th.supermarket.entity.Supplier;
+import com.cqupt.th.supermarket.entity.*;
 import com.cqupt.th.supermarket.mapper.RegionMapper;
 import com.cqupt.th.supermarket.query.SupplierQuery;
 import com.cqupt.th.supermarket.service.RegionService;
@@ -52,18 +50,8 @@ public class SupplierServiceImpl extends ServiceImpl<SupplierMapper, Supplier>
         });
         supplierQueryWrapper.orderByDesc("gmt_modified");
         if (supplierQuery != null) {
-            if (supplierQuery.getRegionParentId() != null) {
-                ArrayList<Integer> list1 = new ArrayList<>();
-                map.forEach((k, v) -> {
-                    if (v.getParentId().equals(supplierQuery.getRegionParentId())) {
-                        list1.add(v.getId());
-                    }
-                });
-                if (list1.size() != 0) {
-                    supplierQueryWrapper.in("region_id", list1);
-                } else {
-                    return CommonResult.ok().data("total", 0).data("rows", new ArrayList<>());
-                }
+            if (supplierQuery.getRegionId() != null) {
+                supplierQueryWrapper.eq("region_id", supplierQuery.getRegionId());
             }
             if (StringUtils.hasText(supplierQuery.getName())) {
                 supplierQueryWrapper.like("name", supplierQuery.getName());
@@ -130,7 +118,10 @@ public class SupplierServiceImpl extends ServiceImpl<SupplierMapper, Supplier>
         if (regionId == null) {
             return CommonResult.error().message("参数错误");
         }
-        Integer[] ids = regionService.getAllRegionIds(regionId);
+        if (regionId == 0) {
+            return CommonResult.ok().data("items", new Integer[]{});
+        }
+        Integer[] ids = regionService.getRegionIdsById(regionId);
         if (ids == null) {
             return CommonResult.error().message("参数错误");
         }
@@ -185,13 +176,50 @@ public class SupplierServiceImpl extends ServiceImpl<SupplierMapper, Supplier>
     }
 
     @Override
-    public CommonResult getAvailableSuppliers() {
-
-        QueryWrapper<Supplier> supplierQueryWrapper = new QueryWrapper<>();
-        supplierQueryWrapper.eq("is_use", 1);
-        List<Supplier> suppliers = baseMapper.selectList(supplierQueryWrapper);
-        return CommonResult.ok().data("items", suppliers);
+    public CommonResult getSupplierByName(Supplier supplier) {
+        if (supplier == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        if (supplier.getId() != null) {
+            Supplier supplier1 = baseMapper.selectById(supplier.getId());
+            if (supplier1 == null) {
+                return CommonResult.error().message("参数错误");
+            }
+            if (supplier1.getName().equals(supplier.getName())) {
+                return CommonResult.ok().data("item", null);
+            }
+        }
+        Supplier supplier1 = baseMapper.selectOne(new QueryWrapper<Supplier>().eq("name", supplier.getName()));
+        if (supplier1 == null) {
+            return CommonResult.ok().data("item", null);
+        }
+        return CommonResult.ok().data("item", supplier1);
     }
+
+    @Override
+    public CommonResult getRegionByRegionId(Supplier supplier) {
+        if (supplier == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        if (supplier.getRegionId() != null && supplier.getRegionId() == 0) {
+            return CommonResult.ok().data("item", null);
+        }
+        if (supplier.getId() != null) {
+            Supplier supplier1 = baseMapper.selectById(supplier.getId());
+            if (supplier1 == null) {
+                return CommonResult.error().message("参数错误");
+            }
+            if (supplier1.getRegionId().equals(supplier.getRegionId())) {
+                return CommonResult.ok().data("item", null);
+            }
+        }
+        Supplier supplier1 = baseMapper.selectOne(new QueryWrapper<Supplier>().eq("region_id", supplier.getRegionId()));
+        if (supplier1 == null) {
+            return CommonResult.ok().data("item", null);
+        }
+        return CommonResult.ok().data("item", supplier1);
+    }
+
 }
 
 

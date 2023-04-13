@@ -6,6 +6,7 @@ import com.cqupt.th.supermarket.service.ProductService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2023/3/26 19:57
  */
 @RestController
-@CrossOrigin
+//@PreAuthorize("hasAuthority('product:product:index')")
 @RequestMapping("/product")
 public class ProductController {
     @Autowired
@@ -21,8 +22,8 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping("{currentPage}/{size}")
-    public CommonResult getProductByPage(@PathVariable("currentPage") Integer currentPage, @PathVariable("size") Integer size, @RequestBody(required = false) ProductQuery productQuery) {
-        return productService.getProductByPage(currentPage, size, productQuery);
+    public CommonResult getProductListPage(@PathVariable("currentPage") Integer currentPage, @PathVariable("size") Integer size, @RequestBody(required = false) ProductQuery productQuery) {
+        return productService.getProductListPage(currentPage, size, productQuery);
     }
 
     @PutMapping("{id}")
@@ -45,11 +46,15 @@ public class ProductController {
         return productService.addProduct(product);
     }
 
-    @GetMapping("categoryIds/{id}")
-    public CommonResult getCategoryIds(@PathVariable("id") Integer id) {
-        return productService.getCategoryIds(id);
+    @GetMapping("categoryIdsByCategoryId/{categoryId}")
+    public CommonResult getCategoryIdsByCategoryId(@PathVariable("categoryId") Integer categoryId) {
+        return productService.getCategoryIdsByCategoryId(categoryId);
     }
 
+    @GetMapping("brandIdByBrandId/{brandId}")
+    public CommonResult getBrandIdByBrandId(@PathVariable("brandId") Integer brandId) {
+        return productService.getBrandIdByBrandId(brandId);
+    }
     @GetMapping("brandId/{brandId}/categoryId/{categoryId}")
     public CommonResult getProductByBrandIdAndCategoryId(@PathVariable("brandId") Integer brandId, @PathVariable("categoryId") Integer categoryId) {
         return productService.getProductByBrandIdAndCategoryId(brandId, categoryId);
@@ -57,6 +62,7 @@ public class ProductController {
     @GetMapping("{id}")
     public CommonResult getProductById(@PathVariable("id") Integer id) {
         return productService.getProductById(id);
+
     }
 }
 

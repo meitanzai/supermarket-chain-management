@@ -4,13 +4,17 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqupt.th.supermarket.entity.Member;
+import com.cqupt.th.supermarket.entity.MemberPoint;
+import com.cqupt.th.supermarket.mapper.MemberPointMapper;
 import com.cqupt.th.supermarket.query.MemberQuery;
 import com.cqupt.th.supermarket.service.MemberService;
 import com.cqupt.th.supermarket.mapper.MemberMapper;
 import com.cqupt.th.supermarket.utils.CommonResult;
+import com.cqupt.th.supermarket.vo.MemberPointVo;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,9 +25,14 @@ import java.util.List;
  */
 @Service("memberService")
 public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> implements MemberService {
+    @Resource
+    private MemberPointMapper memberPointMapper;
 
     @Override
     public CommonResult getMemberListByPage(Integer currentPage, Integer size, MemberQuery memberQuery) {
+        if (currentPage <= 0 || size <= 0) {
+            return CommonResult.error().message("参数不合法");
+        }
         QueryWrapper<Member> memberQueryWrapper = new QueryWrapper<>();
         if (memberQuery != null) {
             if (StringUtils.hasText(memberQuery.getCardNumber())) {
@@ -54,23 +63,11 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
     }
 
     @Override
-    public CommonResult getMemberStatusAndSexById(Integer id) {
-
-        if (id == null) {
-            return CommonResult.error().message("id不能为空");
-        }
-        Member member = baseMapper.selectById(id);
-        if (member == null) {
-            return CommonResult.error().message("该会员不存在");
-        }
-        return CommonResult.ok().data("item", member);
-    }
-
-    @Override
     public CommonResult deleteMemberById(Integer id) {
         if (id == null) {
             return CommonResult.error().message("id不能为空");
         }
+        memberPointMapper.delete(new QueryWrapper<MemberPoint>().eq("member_id", id));
         int i = baseMapper.deleteById(id);
         if (i == 0) {
             return CommonResult.error().message("删除失败");
@@ -84,6 +81,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
         if (ids == null || ids.length == 0) {
             return CommonResult.error().message("ids不能为空");
         }
+        memberPointMapper.delete(new QueryWrapper<MemberPoint>().in("member_id", ids));
         int i = baseMapper.deleteBatchIds(Arrays.asList(ids));
         if (i == 0) {
             return CommonResult.error().message("删除失败");
@@ -105,16 +103,14 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
     }
 
     @Override
-    public CommonResult updateMember(Integer id, Member member) {
+    public CommonResult updateMemberById(Integer id, Member member) {
         if (id == null) {
             return CommonResult.error().message("id不能为空");
         }
         if (member == null) {
             return CommonResult.error().message("member不能为空");
         }
-        if (!id.equals(member.getId())) {
-            return CommonResult.error().message("id和member.id不一致");
-        }
+        member.setId(id);
         int i = baseMapper.updateById(member);
         if (i == 0) {
             return CommonResult.error().message("更新失败");
@@ -127,21 +123,6 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
         QueryWrapper<Member> queryWrapper = new QueryWrapper<Member>().orderByDesc("gmt_modified");
         List<Member> members = baseMapper.selectList(queryWrapper);
         return CommonResult.ok().data("items", members);
-    }
-
-    @Override
-    public boolean updateMemberPoint(Integer memberId, Integer point) {
-
-        Member member = baseMapper.selectById(memberId);
-        if (member == null) {
-            return false;
-        }
-        member.setPoint(point + member.getPoint());
-        int i = baseMapper.updateById(member);
-        if (i == 0) {
-            return false;
-        }
-        return true;
     }
 
 }

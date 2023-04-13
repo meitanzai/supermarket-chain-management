@@ -6,6 +6,7 @@ import com.cqupt.th.supermarket.service.SupplierService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2023/4/4 22:48
  */
 @RestController
-@CrossOrigin
+@PreAuthorize("hasAuthority('supply:supply:index')")
 @RequestMapping("/supplier")
 public class SupplierController {
     @Autowired
@@ -60,9 +61,14 @@ public class SupplierController {
         return supplierService.getAllSupplier();
     }
 
-    @GetMapping("getAvailableSuppliers")
-    public CommonResult getAvailableSuppliers() {
-        return supplierService.getAvailableSuppliers();
+    @PostMapping("supplierByName")
+    public CommonResult getSupplierByName(@RequestBody Supplier supplier) {
+        return supplierService.getSupplierByName(supplier);
+    }
+
+    @PostMapping("regionByRegionId")
+    public CommonResult getRegionByRegionId(@RequestBody Supplier supplier) {
+        return supplierService.getRegionByRegionId(supplier);
     }
 
 }

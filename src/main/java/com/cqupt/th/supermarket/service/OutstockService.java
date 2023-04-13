@@ -23,4 +23,6 @@ public interface OutstockService extends IService<Outstock> {
     CommonResult addOutstock(Outstock outstock);
 
     CommonResult getwarehouseRegionByWarehouseId(Integer warehouseId);
+
+    CommonResult getOutstockRegionIds(Integer warehouseId);
 }

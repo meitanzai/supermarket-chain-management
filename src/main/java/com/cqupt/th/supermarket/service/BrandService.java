@@ -16,11 +16,9 @@ public interface BrandService extends IService<Brand> {
 
     CommonResult getAllBrand();
 
-    CommonResult getBrandByPage(Integer page, Integer size, BrandQuery brandQuery);
+    CommonResult getBrandListPage(Integer page, Integer size, BrandQuery brandQuery);
 
     CommonResult updateBrandById(Integer id, Brand brand);
-
-    CommonResult getBrandById(Integer id);
 
     CommonResult addBrand(Brand brand);
 
@@ -28,7 +26,5 @@ public interface BrandService extends IService<Brand> {
 
     CommonResult deleteBrandByIds(Integer[] ids);
 
-    Map<Integer, String> getBrandNameById();
-
-
+    CommonResult getBrandByName(Brand brand);
 }

@@ -15,7 +15,7 @@ public class SupplierQuery implements Serializable {
     private String name;
     private String contactPerson;
     private String tel;
-    private Integer regionParentId;
+    private Integer regionId;
     private Date startTime;
     private Date endTime;
 }

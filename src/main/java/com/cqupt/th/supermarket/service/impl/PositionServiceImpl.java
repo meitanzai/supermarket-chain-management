@@ -11,6 +11,7 @@ import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -79,7 +80,7 @@ public class PositionServiceImpl extends ServiceImpl<PositionMapper, Position>
         if (ids == null || ids.length == 0) {
             return CommonResult.error().message("参数错误");
         }
-        int result = baseMapper.deleteBatchIds(java.util.Arrays.asList(ids));
+        int result = baseMapper.deleteBatchIds(Arrays.asList(ids));
         if (result == ids.length) {
             return CommonResult.ok();
         }
@@ -106,6 +107,35 @@ public class PositionServiceImpl extends ServiceImpl<PositionMapper, Position>
         positionQueryWrapper.orderByDesc("gmt_modified");
         List<Position> positionList = baseMapper.selectList(positionQueryWrapper);
         return CommonResult.ok().data("items", positionList);
+    }
+
+    @Override
+    public CommonResult getPositionNameByName(String name) {
+        if (!StringUtils.hasText(name)) {
+            return CommonResult.error().message("参数错误");
+        }
+        Position name1 = baseMapper.selectOne(new QueryWrapper<Position>().eq("name", name));
+        if (name1 != null) {
+            return CommonResult.ok().data("item", name1.getName());
+        }
+        return CommonResult.ok().data("item", null);
+
+    }
+
+    @Override
+    public CommonResult getPositionIdById(Integer id) {
+        if (id == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        if (id == 0){
+            return CommonResult.ok().data("item", null);
+        }else {
+            Position id1 = baseMapper.selectOne(new QueryWrapper<Position>().eq("id", id));
+            if (id1 != null) {
+                return CommonResult.ok().data("item", id1.getId());
+            }
+            return CommonResult.ok().data("item", null);
+        }
     }
 }
 

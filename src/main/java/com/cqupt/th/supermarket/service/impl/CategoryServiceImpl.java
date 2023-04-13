@@ -1,9 +1,8 @@
 package com.cqupt.th.supermarket.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqupt.th.supermarket.entity.Category;
-import com.cqupt.th.supermarket.entity.Product;
 import com.cqupt.th.supermarket.mapper.ProductMapper;
 import com.cqupt.th.supermarket.service.CategoryService;
 import com.cqupt.th.supermarket.mapper.CategoryMapper;
@@ -27,15 +26,19 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
     @Resource
     private ProductMapper productMapper;
 
+
     /**
-     * 得到所有类别
+     * 得到所有类别树
      *
      * @return {@link CommonResult}
      */
     @Override
     public CommonResult getAllCategoryWithTree() {
         //1、查出所有分类
-        List<Category> entities = baseMapper.selectList(null);
+        List<Category> entities = baseMapper.selectList(new QueryWrapper<Category>().orderByDesc("gmt_modified"));
+        if (entities == null || entities.size() == 0) {
+            return CommonResult.ok().data("items", null);
+        }
         List<CategoryVo> categoryVoList = entities.stream().map(e -> {
             CategoryVo vo = new CategoryVo();
             BeanUtils.copyProperties(e, vo);
@@ -44,52 +47,53 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
         }).collect(Collectors.toList());
         //2、组装成具有父子关系的树形结构(因为要形成树形结构，所以要有一个List的属性来存子分类)
         //2.1、找到所有一级分类（parentId == 0）
-        List<CategoryVo> level1Menus = categoryVoList.stream().filter(e ->
+        List<CategoryVo> level1 = categoryVoList.stream().filter(e ->
                 e.getParentId() == 0
         ).map(e -> {
             //查找子分类
-            e.setChildren(getChildren(e, categoryVoList, 2));
+            List<CategoryVo> children = getChildren(e, categoryVoList, 2);
+            if (children != null && children.size() > 0) {
+                e.setChildren(children);
+            } else {
+                e.setChildren(null);
+            }
             return e;
         }).collect(Collectors.toList());
-        return CommonResult.ok().data("items", level1Menus);
+        return CommonResult.ok().data("items", level1);
     }
 
     @Override
-    public CommonResult deleteCategory(Integer id) {
+    public CommonResult deleteCategoryById(Integer id) {
 
         if (id == null) {
             return CommonResult.error().message("id不能为空");
         }
-        List<Category> categories = baseMapper.selectList(null);
-        //删除三级分类
+//        递归删除子目录
         List<Integer> ids = new ArrayList<>();
         ids.add(id);
-        for (Category category : categories) {
-            if (category.getParentId().intValue() == id.intValue()) {
-                ids.add(category.getId());
-                for (Category category1 : categories) {
-                    if (category1.getParentId().intValue() == category.getId().intValue()) {
-                        ids.add(category1.getId());
-                    }
-                }
+        List<Integer> level2 = baseMapper.selectList(new QueryWrapper<Category>().eq("parent_id", id)).stream().map(e -> {
+            ids.add(e.getId());
+            return e.getId();
+        }).collect(Collectors.toList());
+        if (level2 != null && level2.size() > 0) {
+            List<Integer> level3 = baseMapper.selectList(new QueryWrapper<Category>().in("parent_id", level2)).stream().map(e -> {
+                ids.add(e.getId());
+                return e.getId();
+            }).collect(Collectors.toList());
+            if (level3 != null && level3.size() > 0) {
+                baseMapper.selectList(new QueryWrapper<Category>().in("parent_id", level3)).stream().map(e -> {
+                    ids.add(e.getId());
+                    return e.getId();
+                }).collect(Collectors.toList());
             }
         }
-        productMapper.updateCategoryIdByCategoryIds(ids);
+        //TODO 商品
+//        productMapper.updateCategoryIdByCategoryIds(ids);
         int result = baseMapper.deleteBatchIds(ids);
-        if (result > 0) {
-            return CommonResult.ok();
+        if (result == 0) {
+            return CommonResult.error().message("删除失败");
         }
-        return CommonResult.error().message("删除失败");
-
-    }
-
-    @Override
-    public CommonResult getCategoryById(Integer id) {
-        if (id == null) {
-            return CommonResult.error().message("id不能为空");
-        }
-        Category category = baseMapper.selectById(id);
-        return CommonResult.ok().data("item", category);
+        return CommonResult.ok();
     }
 
     @Override
@@ -108,7 +112,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
     }
 
     @Override
-    public CommonResult updateCategory(Integer id, Category category) {
+    public CommonResult updateCategoryById(Integer id, Category category) {
 
         if (id == null) {
             return CommonResult.error().message("id不能为空");
@@ -125,21 +129,11 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
     }
 
     @Override
-    public Map<Integer, String> getCategoryNameById() {
-        List<Category> categories = baseMapper.selectList(null);
-        HashMap<Integer, String> map = new HashMap<>();
-        for (Category category : categories) {
-            map.put(category.getId(), category.getTitle());
-        }
-        return map;
-    }
-
-    @Override
     public Integer[] getCategoryIds(Integer id) {
         Category category = baseMapper.selectById(id);
         ArrayList<Integer> list = new ArrayList<>();
         if (category == null) {
-            return null;
+            return new Integer[]{};
         }
         list.add(category.getId());
         while (category.getParentId() != 0) {
@@ -152,14 +146,14 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
     }
 
 
-    private List<CategoryVo> getChildren(CategoryVo currentMenu, List<CategoryVo> all, int level) {
+    private List<CategoryVo> getChildren(CategoryVo current, List<CategoryVo> all, int level) {
         //找到所有子分类并加入到子分类的List中
-        List<CategoryVo> children = all.stream().filter(e -> {
-            return e.getParentId().intValue() == currentMenu.getId().intValue();
-        }).map(e -> {
+        List<CategoryVo> children = all.stream().filter(e ->
+                e.getParentId().equals(current.getId())
+        ).map(e -> {
             //继续找每个子分类的子分类
             List<CategoryVo> children1 = getChildren(e, all, level + 1);
-            if (children1.size() == 0) {
+            if (children1 == null || children1.size() == 0) {
                 e.setChildren(null);
             } else {
                 e.setChildren(children1);
@@ -167,7 +161,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category>
             e.setLevel(level);
             return e;
         }).collect(Collectors.toList());
-
         return children;
     }
 

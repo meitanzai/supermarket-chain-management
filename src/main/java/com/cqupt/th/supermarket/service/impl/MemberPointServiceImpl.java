@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqupt.th.supermarket.entity.Member;
 import com.cqupt.th.supermarket.entity.MemberPoint;
 import com.cqupt.th.supermarket.exception.SupermarketException;
+import com.cqupt.th.supermarket.mapper.MemberMapper;
 import com.cqupt.th.supermarket.query.MemberPointQuery;
 import com.cqupt.th.supermarket.service.MemberPointService;
 import com.cqupt.th.supermarket.mapper.MemberPointMapper;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -31,18 +33,20 @@ import java.util.stream.Collectors;
 @Service("memberPointService")
 public class MemberPointServiceImpl extends ServiceImpl<MemberPointMapper, MemberPoint>
         implements MemberPointService {
-    @Autowired
-    @Qualifier("memberService")
-    private MemberService memberService;
+    @Resource
+    private MemberMapper memberMapper;
 
     @Override
     public CommonResult getMemberPointListPageByMemberId(Integer currentPage, Integer size, Integer memberId, MemberPointQuery memberPointQuery) {
+        if (currentPage <= 0 || size <= 0) {
+            return CommonResult.error().message("当前页码或每页记录数不能小于0");
+        }
         if (memberId == null) {
             return CommonResult.error().message("会员id不能为空");
         }
         QueryWrapper<MemberPoint> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("member_id", memberId);
         queryWrapper.orderByDesc("gmt_modified");
+        queryWrapper.eq("member_id", memberId);
         if (memberPointQuery != null) {
             if (memberPointQuery.getStartTime() != null) {
                 queryWrapper.ge("gmt_create", memberPointQuery.getStartTime());
@@ -60,8 +64,11 @@ public class MemberPointServiceImpl extends ServiceImpl<MemberPointMapper, Membe
 
     @Override
     public CommonResult getMemberPointListPage(Integer currentPage, Integer size, MemberPointQuery memberPointQuery) {
+        if (currentPage <= 0 || size <= 0) {
+            return CommonResult.error().message("当前页码或每页记录数不能小于0");
+        }
         QueryWrapper<MemberPoint> queryWrapper = new QueryWrapper<>();
-        queryWrapper.orderByDesc("gmt_create");
+        queryWrapper.orderByDesc("gmt_modified");
         if (memberPointQuery != null) {
             if (memberPointQuery.getMemberId() != null) {
                 queryWrapper.eq("member_id", memberPointQuery.getMemberId());
@@ -79,9 +86,10 @@ public class MemberPointServiceImpl extends ServiceImpl<MemberPointMapper, Membe
         queryWrapper.orderByDesc("gmt_modified");
         Page<MemberPoint> memberPointPage = new Page<>(currentPage, size);
         baseMapper.selectPage(memberPointPage, queryWrapper);
+        long total = memberPointPage.getTotal();
         List<MemberPoint> memberPointList = memberPointPage.getRecords();
         HashMap<Integer, String> map = new HashMap<>();
-        memberService.list().forEach(member -> {
+        memberMapper.selectList(null).forEach(member -> {
             map.put(member.getId(), member.getName());
         });
         List<MemberPointVo> collect = memberPointList.stream().map(m -> {
@@ -90,7 +98,6 @@ public class MemberPointServiceImpl extends ServiceImpl<MemberPointMapper, Membe
             memberPointVo.setMemberName(map.get(m.getMemberId()));
             return memberPointVo;
         }).collect(Collectors.toList());
-        long total = memberPointPage.getTotal();
         return CommonResult.ok().data("rows", collect).data("total", total);
     }
 
@@ -101,13 +108,10 @@ public class MemberPointServiceImpl extends ServiceImpl<MemberPointMapper, Membe
             return CommonResult.error().message("请选择要删除的数据");
         }
         List<Integer> integers = Arrays.asList(ids);
-        baseMapper.selectBatchIds(integers).forEach(memberPoint -> {
+        baseMapper.selectBatchIds(integers).stream().forEach(memberPoint -> {
             Integer memberId = memberPoint.getMemberId();
             Integer point = memberPoint.getPoint();
-            boolean b = memberService.updateMemberPoint(memberId, -point);
-            if (!b) {
-                throw new SupermarketException(500, "删除失败");
-            }
+            memberMapper.updateMemberPointById(memberId, -point);
         });
         int result = baseMapper.deleteBatchIds(integers);
         if (result > 0) {
@@ -127,9 +131,9 @@ public class MemberPointServiceImpl extends ServiceImpl<MemberPointMapper, Membe
         }
         Integer memberId = memberPoint.getMemberId();
         Integer point = memberPoint.getPoint();
-        boolean b = memberService.updateMemberPoint(memberId, -point);
+        memberMapper.updateMemberPointById(memberId, -point);
         int result = baseMapper.deleteById(id);
-        if (result > 0 && b) {
+        if (result > 0) {
             return CommonResult.ok().message("删除成功");
         }
         return CommonResult.error().message("删除失败");
@@ -142,33 +146,40 @@ public class MemberPointServiceImpl extends ServiceImpl<MemberPointMapper, Membe
         }
         Integer memberId = memberPoint.getMemberId();
         Integer point = memberPoint.getPoint();
-        boolean b = memberService.updateMemberPoint(memberId, point);
+        memberMapper.updateMemberPointById(memberId, point);
         int insert = baseMapper.insert(memberPoint);
-        if (insert > 0 && b) {
+        if (insert > 0) {
             return CommonResult.ok().message("添加成功");
         }
         return CommonResult.error().message("添加失败");
     }
 
     @Override
-    public CommonResult updateMemberPoint(Integer id, MemberPoint memberPoint) {
+    public CommonResult updateMemberPointById(Integer id, MemberPoint memberPoint) {
 
         if (id == null || memberPoint == null) {
             return CommonResult.error().message("参数不能为空");
         }
-        if (id.equals(memberPoint.getId())) {
-            Integer memberId = memberPoint.getMemberId();
-            Integer newPoint = memberPoint.getPoint();
-            MemberPoint memberPoint1 = baseMapper.selectById(id);
-            Integer oldPoint = memberPoint1.getPoint();
-            boolean b = memberService.updateMemberPoint(memberId, newPoint - oldPoint);
-            int i = baseMapper.updateById(memberPoint);
-            if (i > 0 && b) {
-                return CommonResult.ok().message("修改成功");
-            }
-            return CommonResult.error().message("修改失败");
+        Integer newMemberId = memberPoint.getMemberId();
+        Integer newPoint = memberPoint.getPoint();
+        MemberPoint memberPoint1 = baseMapper.selectById(id);
+        if (memberPoint1 == null) {
+            return CommonResult.error().message("数据不存在");
         }
-        return CommonResult.error().message("参数不匹配");
+        Integer oldMemberId = memberPoint1.getMemberId();
+        if (newMemberId.equals(oldMemberId)) {
+            Integer oldPoint = memberPoint1.getPoint();
+            memberMapper.updateMemberPointById(newMemberId, newPoint - oldPoint);
+        } else {
+            memberMapper.updateMemberPointById(oldMemberId, -memberPoint1.getPoint());
+            memberMapper.updateMemberPointById(newMemberId, newPoint);
+        }
+        int i = baseMapper.updateById(memberPoint);
+        if (i > 0) {
+            return CommonResult.ok().message("修改成功");
+        }
+        return CommonResult.error().message("修改失败");
+
     }
 }
 

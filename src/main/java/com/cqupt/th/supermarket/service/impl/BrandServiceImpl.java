@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqupt.th.supermarket.entity.Brand;
+import com.cqupt.th.supermarket.entity.Store;
 import com.cqupt.th.supermarket.mapper.ProductMapper;
 import com.cqupt.th.supermarket.query.BrandQuery;
 import com.cqupt.th.supermarket.service.BrandService;
@@ -37,7 +38,10 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
     }
 
     @Override
-    public CommonResult getBrandByPage(Integer page, Integer size, BrandQuery brandQuery) {
+    public CommonResult getBrandListPage(Integer page, Integer size, BrandQuery brandQuery) {
+        if (page <= 0 || size <= 0) {
+            return CommonResult.error().message("page或size不能小于等于0");
+        }
         QueryWrapper<Brand> brandQueryWrapper = new QueryWrapper<>();
         if (brandQuery != null) {
             if (brandQuery.getName() != null) {
@@ -61,12 +65,8 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
 
     @Override
     public CommonResult updateBrandById(Integer id, Brand brand) {
-
-        if (id == null) {
-            return CommonResult.error().message("id不能为空");
-        }
-        if (brand == null) {
-            return CommonResult.error().message("brand不能为空");
+        if (id == null || brand == null) {
+            return CommonResult.error().message("id或brand不能为空");
         }
         brand.setId(id);
         int result = baseMapper.updateById(brand);
@@ -75,17 +75,6 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
         } else {
             return CommonResult.error();
         }
-
-
-    }
-
-    @Override
-    public CommonResult getBrandById(Integer id) {
-        if (id == null) {
-            return CommonResult.error().message("id不能为空");
-        }
-        Brand brand = baseMapper.selectById(id);
-        return CommonResult.ok().data("item", brand);
     }
 
     @Override
@@ -93,7 +82,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
         if (brand == null) {
             return CommonResult.error().message("brand不能为空");
         }
-        brand.setIsShow(1);
+        brand.setIsShow(0);
         int result = baseMapper.insert(brand);
         if (result == 1) {
             return CommonResult.ok();
@@ -107,9 +96,10 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
         if (id == null) {
             return CommonResult.error().message("id不能为空");
         }
-        productMapper.updateBrandIdByBrandId(id);
+        //TODO
+//        productMapper.updateBrandIdByBrandId(id);
         int result = baseMapper.deleteById(id);
-        if (result > 0 ) {
+        if (result > 0) {
             return CommonResult.ok();
         }
         return CommonResult.error().message("删除失败");
@@ -119,13 +109,14 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
     @Override
     public CommonResult deleteBrandByIds(Integer[] ids) {
 
-        if (ids == null) {
+        if (ids == null || ids.length == 0) {
             return CommonResult.error().message("ids不能为空");
         }
         List<Integer> brandIds = Arrays.asList(ids);
-        productMapper.updateBrandIdByBrandIds(brandIds);
+        //TODO
+//        productMapper.updateBrandIdByBrandIds(brandIds);
         int result = baseMapper.deleteBatchIds(brandIds);
-        if (result > 0 ) {
+        if (result > 0) {
             return CommonResult.ok();
         } else {
             return CommonResult.error();
@@ -133,16 +124,25 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper, Brand>
     }
 
     @Override
-    public Map<Integer, String> getBrandNameById() {
-        List<Brand> brands = baseMapper.selectList(null);
-        HashMap<Integer, String> map = new HashMap<>();
-        for (Brand brand : brands) {
-            map.put(brand.getId(), brand.getName());
+    public CommonResult getBrandByName(Brand brand) {
+        if (brand == null) {
+            return CommonResult.error().message("参数错误");
         }
-        return map;
-
+        if (brand.getId() != null) {
+            Brand brand1 = baseMapper.selectById(brand.getId());
+            if (brand1 == null) {
+                return CommonResult.error().message("参数错误");
+            }
+            if (brand1.getName().equals(brand.getName())) {
+                return CommonResult.ok().data("item", null);
+            }
+        }
+        Brand brand1 = baseMapper.selectOne(new QueryWrapper<Brand>().eq("name", brand.getName()));
+        if (brand1 == null) {
+            return CommonResult.ok().data("item", null);
+        }
+        return CommonResult.ok().data("item", brand1);
     }
-
 }
 
 

@@ -155,7 +155,7 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
             productMapper.updatePurchasePrice(purchase.getProductId(), purchasePrice);
         }
         //TODO 修改订单
-        PurchaseOrder order = purchaseOrderMapper.selectOne(new QueryWrapper<PurchaseOrder>().eq("purchase_id", id));
+        PurchaseOrder order = purchaseOrderMapper.selectOne(new QueryWrapper<PurchaseOrder>().eq("order_number", purchase.getPurchaseNumber()));
         order.setSupplierId(purchase.getSupplierId());
         order.setTotalPrice(purchase.getTotalPrice());
         int result = purchaseOrderMapper.updateById(order);
@@ -183,6 +183,46 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
             return CommonResult.error().message("查询失败");
         }
         return CommonResult.ok().data("item", purchaseVo);
+    }
+
+    @Override
+    public CommonResult getSupplierIdByPurchaseId(Integer purchaseId) {
+        if (purchaseId == null) {
+            return CommonResult.error().message("参数不能为空");
+        }
+        Purchase purchase = baseMapper.selectById(purchaseId);
+        if (purchase == null) {
+            return CommonResult.error().message("查询失败");
+        }
+        Integer supplierId = purchase.getSupplierId();
+        if (supplierId == null) {
+            return CommonResult.ok().data("item", null);
+        }
+        Supplier supplier = supplierMapper.selectById(supplierId);
+        if (supplier == null) {
+            return CommonResult.ok().data("item", null);
+        }
+        return CommonResult.ok().data("item", supplier.getId());
+    }
+
+    @Override
+    public CommonResult getBrandByPurchaseId(Integer purchaseId) {
+        if (purchaseId == null) {
+            return CommonResult.error().message("参数不能为空");
+        }
+        Purchase purchase = baseMapper.selectById(purchaseId);
+        if (purchase == null) {
+            return CommonResult.error().message("查询失败");
+        }
+        if (purchase.getSupplierId() == 0) {
+            return CommonResult.ok().data("item", null);
+        } else {
+            Supplier supplier = supplierMapper.selectById(purchase.getSupplierId());
+            if (supplier == null) {
+                return CommonResult.ok().data("item", null);
+            }
+            return CommonResult.ok().data("item", supplier.getId());
+        }
     }
 }
 

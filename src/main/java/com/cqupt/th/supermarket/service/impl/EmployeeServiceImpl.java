@@ -72,7 +72,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
         positionQueryWrapper.eq("name", "超市经理");
         Position one = positionMapper.selectOne(positionQueryWrapper);
         if (one == null) {
-            return CommonResult.error().message("超市经理职位不存在");
+            return CommonResult.ok().data("items", null);
         }
         QueryWrapper<Employee> queryWrapper = new QueryWrapper<Employee>().eq("position_id", one.getId()).eq("warehouse_id", 0);
         List<Employee> managerList = baseMapper.selectList(queryWrapper);
@@ -85,7 +85,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
         positionQueryWrapper.eq("name", "仓库经理");
         Position one = positionMapper.selectOne(positionQueryWrapper);
         if (one == null) {
-            return CommonResult.error().message("仓库经理职位不存在");
+            return CommonResult.ok().data("items", null);
         }
         QueryWrapper<Employee> queryWrapper = new QueryWrapper<Employee>().eq("position_id", one.getId()).eq("store_id", 0);
         List<Employee> managerList = baseMapper.selectList(queryWrapper);
@@ -102,6 +102,9 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
         if (employeeQuery != null) {
             if (StringUtils.hasText(employeeQuery.getName())) {
                 queryWrapper.like("name", employeeQuery.getName());
+            }
+            if (employeeQuery.getWorkNumber() != null) {
+                queryWrapper.eq("work_number", employeeQuery.getWorkNumber());
             }
             if (employeeQuery.getStoreId() != null) {
                 queryWrapper.eq("store_id", employeeQuery.getStoreId());
@@ -156,13 +159,13 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
     }
 
     @Override
-    public CommonResult updateEmployee(Integer id, Employee employee) {
+    public CommonResult updateEmployeeById(Integer id, Employee employee) {
 
         if (id == null || employee == null) {
             return CommonResult.error().message("参数错误");
         }
         employee.setId(id);
-        if (employee.getStoreId() != null && employee.getWarehouseId() != 0) {
+        if (employee.getStoreId() != 0 && employee.getWarehouseId() != 0) {
             Employee employee1 = baseMapper.selectById(id);
             if (employee1 == null) {
                 return CommonResult.error().message("员工不存在");
@@ -186,13 +189,6 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
         if (employee == null) {
             return CommonResult.error().message("参数错误");
         }
-        if (employee.getStoreId() == null) {
-            employee.setStoreId(0);
-        }
-        if (employee.getWarehouseId() == null) {
-            employee.setWarehouseId(0);
-        }
-
         int result = baseMapper.insert(employee);
         if (result > 0) {
             return CommonResult.ok();
@@ -254,6 +250,27 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
         return CommonResult.ok().data("total", total).data("rows", rows);
     }
 
+    @Override
+    public CommonResult getWorkNumberByWorkNumber(Employee employee) {
+        if (employee == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        if (employee.getId() != null) {
+            Employee employee1 = baseMapper.selectById(employee.getId());
+            if (employee1 == null) {
+                return CommonResult.error().message("参数错误");
+            }
+            if (employee1.getWorkNumber().equals(employee.getWorkNumber())) {
+                return CommonResult.ok().data("item", null);
+            }
+        }
+        Employee employee1 = baseMapper.selectOne(new QueryWrapper<Employee>().eq("work_number", employee.getWorkNumber()));
+        if (employee1 == null) {
+            return CommonResult.ok().data("item", null);
+        }
+        return CommonResult.ok().data("item", employee1);
+    }
+
     private List<EmployeeVo> getEmployeeVoList(List<Employee> records) {
         List<Region> regionList = regionService.list();
         HashMap<Integer, Region> regionHashMap = new HashMap<>();
@@ -279,21 +296,38 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
         List<EmployeeVo> rows = records.stream().map(employee -> {
             EmployeeVo employeeVo = new EmployeeVo();
             BeanUtils.copyProperties(employee, employeeVo);
-            employeeVo.setPositionName(positionHashMap.get(employee.getPositionId()).getName());
-            if (employee.getWarehouseId() != null && employee.getStoreId() != null && employee.getStoreId() == 0) {
-                Warehouse warehouse = warehouseHashMap.get(employee.getWarehouseId());
-                if (warehouse != null) {
-                    employeeVo.setWarehouseRegion(regionService.getRegionName(warehouse.getRegionId(), regionHashMap));
+            if (employee.getPositionId() == 0) {
+                employeeVo.setPositionName("");
+            } else {
+                Position position = positionHashMap.get(employee.getPositionId());
+                if (position != null) {
+                    employeeVo.setPositionName(position.getName());
                 } else {
-                    employeeVo.setWarehouseRegion("");
+                    employeeVo.setPositionName("");
                 }
             }
-            if (employee.getStoreId() != null && employee.getWarehouseId() != null && employee.getWarehouseId() == 0) {
-                Store store = storeHashMap.get(employee.getStoreId());
-                if (store != null) {
-                    employeeVo.setStoreRegion(regionService.getRegionName(store.getRegionId(), regionHashMap));
+            if (employee.getStoreId() == 0) {
+                if (employee.getWarehouseId() == 0) {
+                    employeeVo.setWarehouseRegion("");
                 } else {
+                    Warehouse warehouse = warehouseHashMap.get(employee.getWarehouseId());
+                    if (warehouse != null) {
+                        employeeVo.setWarehouseRegion(regionService.getRegionName(warehouse.getRegionId(), regionHashMap));
+                    } else {
+                        employeeVo.setWarehouseRegion("");
+                    }
+                }
+            }
+            if (employee.getWarehouseId() == 0) {
+                if (employee.getStoreId() == 0) {
                     employeeVo.setStoreRegion("");
+                } else {
+                    Store store = storeHashMap.get(employee.getStoreId());
+                    if (store != null) {
+                        employeeVo.setStoreRegion(regionService.getRegionName(store.getRegionId(), regionHashMap));
+                    } else {
+                        employeeVo.setStoreRegion("");
+                    }
                 }
             }
 

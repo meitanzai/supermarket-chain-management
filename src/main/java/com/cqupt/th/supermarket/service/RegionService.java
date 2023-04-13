@@ -4,8 +4,10 @@ import com.cqupt.th.supermarket.entity.Region;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cqupt.th.supermarket.query.RegionQuery;
 import com.cqupt.th.supermarket.utils.CommonResult;
+import com.cqupt.th.supermarket.vo.RegionListVo;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author 16075
@@ -14,15 +16,11 @@ import java.util.HashMap;
  */
 public interface RegionService extends IService<Region> {
 
-    CommonResult getRegionByPage(Integer currentPage, Integer size, RegionQuery regionQuery);
+    CommonResult getRegionListPage(Integer currentPage, Integer size, RegionQuery regionQuery);
 
     CommonResult deleteRegionByIds(Integer[] ids);
 
     CommonResult deleteRegionById(Integer id);
-
-    CommonResult getRegionTree();
-
-    CommonResult getRegionIds(Integer id);
 
     CommonResult addRegion(Region region);
 
@@ -30,14 +28,10 @@ public interface RegionService extends IService<Region> {
 
     CommonResult getRegionAll();
 
-    Integer[] getAllRegionIds(Integer regionId);
+    List<RegionListVo> getRegionAll(List<Integer> regionIds);
+
+    Integer[] getRegionIdsById(Integer id);
 
     String getRegionName(Integer id, HashMap<Integer, Region> map);
-
-    CommonResult getStoreRegionAll();
-
-    CommonResult getWarehouseRegionAll();
-
-    CommonResult getBusinessStoreRegionAll();
 
 }

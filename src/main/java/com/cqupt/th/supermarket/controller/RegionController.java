@@ -6,6 +6,7 @@ import com.cqupt.th.supermarket.service.RegionService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2023/3/27 18:13
  */
 @RestController
-@CrossOrigin
+//@PreAuthorize("hasAuthority('entity:region:index')")
 @RequestMapping("/region")
 public class RegionController {
     @Autowired
@@ -21,10 +22,10 @@ public class RegionController {
     private RegionService regionService;
 
     @PostMapping("{currentPage}/{size}")
-    public CommonResult getRegionByPage(@PathVariable("currentPage") Integer currentPage,
-                                        @PathVariable("size") Integer size, @RequestBody(required = false) RegionQuery regionQuery
+    public CommonResult getRegionListPage(@PathVariable("currentPage") Integer currentPage,
+                                          @PathVariable("size") Integer size, @RequestBody(required = false) RegionQuery regionQuery
     ) {
-        return regionService.getRegionByPage(currentPage, size, regionQuery);
+        return regionService.getRegionListPage(currentPage, size, regionQuery);
     }
 
     @DeleteMapping("/batch/{ids}")
@@ -37,19 +38,9 @@ public class RegionController {
         return regionService.deleteRegionById(id);
     }
 
-    @GetMapping("tree")
-    public CommonResult getRegionTree() {
-        return regionService.getRegionTree();
-    }
-
     @GetMapping("all")
     public CommonResult getRegionAll() {
         return regionService.getRegionAll();
-    }
-
-    @GetMapping("ids/{id}")
-    public CommonResult getRegionIds(@PathVariable("id") Integer id) {
-        return regionService.getRegionIds(id);
     }
 
     @PostMapping()
@@ -62,16 +53,4 @@ public class RegionController {
         return regionService.updateRegionById(id, region);
     }
 
-    @GetMapping("storeRegionAll")
-    public CommonResult getStoreRegionAll() {
-        return regionService.getStoreRegionAll();
-    }
-    @GetMapping("warehouseRegionAll")
-    public CommonResult getWarehouseRegionAll() {
-        return regionService.getWarehouseRegionAll();
-    }
-    @GetMapping("businessStoreRegionAll")
-    public CommonResult getBusinessStoreRegionAll() {
-        return regionService.getBusinessStoreRegionAll();
-    }
 }

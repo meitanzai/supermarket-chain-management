@@ -14,17 +14,13 @@ public interface MemberService extends IService<Member> {
 
     CommonResult getMemberListByPage(Integer currentPage, Integer size, MemberQuery memberQuery);
 
-    CommonResult getMemberStatusAndSexById(Integer id);
-
     CommonResult deleteMemberById(Integer id);
 
     CommonResult deleteMemberByIds(Integer[] ids);
 
     CommonResult addMember(Member member);
 
-    CommonResult updateMember(Integer id, Member member);
+    CommonResult updateMemberById(Integer id, Member member);
 
     CommonResult getMemberList();
-
-    boolean updateMemberPoint(Integer memberId, Integer point);
 }

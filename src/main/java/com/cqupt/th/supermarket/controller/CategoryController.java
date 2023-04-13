@@ -5,6 +5,7 @@ import com.cqupt.th.supermarket.service.CategoryService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/category")
-@CrossOrigin
+//@PreAuthorize("hasAuthority('product:category:index')")
 public class CategoryController {
     @Autowired
     @Qualifier("categoryService")
@@ -24,20 +25,16 @@ public class CategoryController {
      *
      * @return {@link CommonResult}
      */
-    @GetMapping("/all")
+    @GetMapping("/allCategoryWithTree")
     public CommonResult getAllCategoryWithTree() {
         return categoryService.getAllCategoryWithTree();
     }
 
     @DeleteMapping("/{id}")
-    public CommonResult deleteCategory(@PathVariable("id") Integer id) {
-        return categoryService.deleteCategory(id);
+    public CommonResult deleteCategoryById(@PathVariable("id") Integer id) {
+        return categoryService.deleteCategoryById(id);
     }
 
-    @GetMapping({"/{id}"})
-    public CommonResult getCategoryById(@PathVariable("id") Integer id) {
-        return categoryService.getCategoryById(id);
-    }
 
     @PostMapping
     public CommonResult addCategory(@RequestBody Category category) {
@@ -45,8 +42,8 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public CommonResult updateCategory(@PathVariable("id") Integer id, @RequestBody Category category) {
-        return categoryService.updateCategory(id, category);
+    public CommonResult updateCategoryById(@PathVariable("id") Integer id, @RequestBody Category category) {
+        return categoryService.updateCategoryById(id, category);
     }
 
 

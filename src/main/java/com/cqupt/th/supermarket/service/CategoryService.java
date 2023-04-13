@@ -20,17 +20,11 @@ public interface CategoryService extends IService<Category> {
      */
     CommonResult getAllCategoryWithTree();
 
-    CommonResult deleteCategory(Integer id);
-
-    CommonResult getCategoryById(Integer id);
+    CommonResult deleteCategoryById(Integer id);
 
     CommonResult addCategory(Category category);
 
-    CommonResult updateCategory(Integer id, Category category);
-
-
-    Map<Integer, String> getCategoryNameById();
-
+    CommonResult updateCategoryById(Integer id, Category category);
 
     Integer[] getCategoryIds(Integer id);
 }
