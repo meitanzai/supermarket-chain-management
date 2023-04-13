@@ -88,8 +88,9 @@ public class MemberPointServiceImpl extends ServiceImpl<MemberPointMapper, Membe
         baseMapper.selectPage(memberPointPage, queryWrapper);
         long total = memberPointPage.getTotal();
         List<MemberPoint> memberPointList = memberPointPage.getRecords();
-        HashMap<Integer, String> map = new HashMap<>();
-        memberMapper.selectList(null).forEach(member -> {
+        List<Member> members = memberMapper.selectList(null);
+        HashMap<Integer, String> map = new HashMap<>(members.size());
+        members.stream().forEach(member -> {
             map.put(member.getId(), member.getName());
         });
         List<MemberPointVo> collect = memberPointList.stream().map(m -> {

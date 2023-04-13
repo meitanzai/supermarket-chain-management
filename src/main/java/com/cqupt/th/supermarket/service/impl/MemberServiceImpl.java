@@ -3,6 +3,7 @@ package com.cqupt.th.supermarket.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cqupt.th.supermarket.constants.MemberConstant;
 import com.cqupt.th.supermarket.entity.Member;
 import com.cqupt.th.supermarket.entity.MemberPoint;
 import com.cqupt.th.supermarket.mapper.MemberPointMapper;
@@ -94,6 +95,9 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
 
         if (member == null) {
             return CommonResult.error().message("member不能为空");
+        }
+        if (member.getStatus() == null) {
+            member.setStatus(MemberConstant.NORMAL.getCode());
         }
         int i = baseMapper.insert(member);
         if (i == 0) {
