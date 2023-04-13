@@ -18,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
@@ -54,7 +55,7 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
             if (storeQuery.getRegionId() != null) {
                 storeQueryWrapper.eq("region_id", storeQuery.getRegionId());
             }
-            if (storeQuery.getTelephone() != null) {
+            if (StringUtils.hasText(storeQuery.getTelephone())) {
                 storeQueryWrapper.like("telephone", storeQuery.getTelephone());
             }
             if (storeQuery.getManagerId() != null) {

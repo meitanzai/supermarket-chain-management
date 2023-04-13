@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqupt.th.supermarket.entity.Employee;
 import com.cqupt.th.supermarket.entity.Region;
+import com.cqupt.th.supermarket.entity.Store;
 import com.cqupt.th.supermarket.entity.Warehouse;
 import com.cqupt.th.supermarket.mapper.EmployeeMapper;
 import com.cqupt.th.supermarket.query.WarehouseQuery;
@@ -18,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -41,7 +43,7 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
     @Override
     public CommonResult getWarehouseByPage(Integer currentPage, Integer pageSize, WarehouseQuery warehouseQuery) {
         List<Region> list = regionService.list();
-        HashMap<Integer, Region> map = new HashMap<>();
+        HashMap<Integer, Region> map = new HashMap<>(list.size());
         list.stream().forEach(r -> {
             map.put(r.getId(), r);
         });
@@ -53,7 +55,7 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
             if (warehouseQuery.getManagerId() != null) {
                 warehouseWrapper.eq("manager_id", warehouseQuery.getManagerId());
             }
-            if (warehouseQuery.getTel() != null) {
+            if (StringUtils.hasText(warehouseQuery.getTel())) {
                 warehouseWrapper.like("tel", warehouseQuery.getTel());
             }
         }
@@ -62,20 +64,16 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
         baseMapper.selectPage(warehousePage, warehouseWrapper);
         List<Warehouse> records = warehousePage.getRecords();
         long total = warehousePage.getTotal();
-        HashMap<Integer, String> employeeHashMap = new HashMap<>();
-        employeeMapper.selectList(new QueryWrapper<Employee>().eq("store_id", 0)).stream().forEach(e -> {
+        List<Employee> employeeList = employeeMapper.selectList(new QueryWrapper<Employee>().eq("store_id", 0));
+        HashMap<Integer, String> employeeHashMap = new HashMap<>(employeeList.size());
+        employeeList.stream().forEach(e -> {
             employeeHashMap.put(e.getId(), e.getName());
         });
         List<WarehouseVo> collect = records.stream().map(s -> {
             WarehouseVo warehouseVo = new WarehouseVo();
             BeanUtils.copyProperties(s, warehouseVo);
             warehouseVo.setRegionName(regionService.getRegionName(s.getRegionId(), map));
-            String managerName = employeeHashMap.get(s.getManagerId());
-            if (managerName != null) {
-                warehouseVo.setManagerName(managerName);
-            } else {
-                warehouseVo.setManagerName("");
-            }
+            warehouseVo.setManagerName(employeeHashMap.get(s.getManagerId()));
             return warehouseVo;
         }).collect(Collectors.toList());
         return CommonResult.ok().data("total", total).data("rows", collect);
@@ -101,8 +99,6 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
         if (id == null) {
             return CommonResult.error().message("参数错误");
         }
-        //TODO
-//        employeeMapper.updateEmployeeByWarehouseId(id);
         int i = baseMapper.deleteById(id);
         if (i == 0) {
             return CommonResult.error().message("删除失败");
@@ -151,12 +147,12 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
     }
 
     @Override
-    public CommonResult getWarehouseByWarehouse(Warehouse warehouse) {
+    public CommonResult isExistWarehouseRegion(Warehouse warehouse) {
+        if (warehouse.getRegionId() == null) {
+            return CommonResult.ok().data("item", false);
+        }
         if (warehouse == null) {
             return CommonResult.error().message("参数错误");
-        }
-        if (warehouse.getRegionId() != null && warehouse.getRegionId() == 0) {
-            return CommonResult.ok().data("item", null);
         }
         if (warehouse.getId() != null) {
             Warehouse warehouse1 = baseMapper.selectById(warehouse.getId());
@@ -164,14 +160,14 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
                 return CommonResult.error().message("参数错误");
             }
             if (warehouse1.getRegionId().equals(warehouse.getRegionId())) {
-                return CommonResult.ok().data("item", null);
+                return CommonResult.ok().data("item", false);
             }
         }
         Warehouse warehouse1 = baseMapper.selectOne(new QueryWrapper<Warehouse>().eq("region_id", warehouse.getRegionId()));
         if (warehouse1 == null) {
-            return CommonResult.ok().data("item", null);
+            return CommonResult.ok().data("item", false);
         }
-        return CommonResult.ok().data("item", warehouse1);
+        return CommonResult.ok().data("item", true);
     }
 
     @Override

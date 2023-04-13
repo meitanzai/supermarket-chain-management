@@ -50,9 +50,9 @@ public class WarehouseController {
     public CommonResult getManagerIdByManagerId(@PathVariable("managerId") Integer managerId) {
         return warehouseService.getManagerIdByManagerId(managerId);
     }
-    @PostMapping("warehouseByWarehouse")
-    public CommonResult getWarehouseByWarehouse(@RequestBody Warehouse warehouse) {
-        return warehouseService.getWarehouseByWarehouse(warehouse);
+    @PostMapping("isExistWarehouseRegion")
+    public CommonResult isExistWarehouseRegion(@RequestBody Warehouse warehouse) {
+        return warehouseService.isExistWarehouseRegion(warehouse);
     }
     @GetMapping("warehouseRegionList")
     public CommonResult getWarehouseRegionList() {

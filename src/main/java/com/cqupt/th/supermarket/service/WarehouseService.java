@@ -24,7 +24,7 @@ public interface WarehouseService extends IService<Warehouse> {
 
     CommonResult getManagerIdByManagerId(Integer managerId);
 
-    CommonResult getWarehouseByWarehouse(Warehouse warehouse);
+    CommonResult isExistWarehouseRegion(Warehouse warehouse);
 
     CommonResult getWarehouseRegionList();
 
