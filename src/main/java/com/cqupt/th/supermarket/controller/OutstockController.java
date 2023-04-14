@@ -27,8 +27,8 @@ public class OutstockController {
     }
 
     @GetMapping("warehouseIdByRegionId/{regionId}")
-    public CommonResult getwarehouseIdByRegionId(@PathVariable("regionId") Integer regionId) {
-        return outstockService.getwarehouseIdByRegionId(regionId);
+    public CommonResult getWarehouseIdByRegionId(@PathVariable("regionId") Integer regionId) {
+        return outstockService.getWarehouseIdByRegionId(regionId);
     }
 
     @DeleteMapping("{id}")
@@ -46,10 +46,6 @@ public class OutstockController {
         return outstockService.addOutstock(outstock);
     }
 
-    @GetMapping("warehouseRegionByWarehouseId/{warehouseId}")
-    public CommonResult getwarehouseRegionByWarehouseId(@PathVariable("warehouseId") Integer warehouseId) {
-        return outstockService.getwarehouseRegionByWarehouseId(warehouseId);
-    }
     @GetMapping("outstockRegionIds/{warehouseId}")
     public CommonResult getOutstockRegionIds(@PathVariable("warehouseId") Integer warehouseId) {
         return outstockService.getOutstockRegionIds(warehouseId);

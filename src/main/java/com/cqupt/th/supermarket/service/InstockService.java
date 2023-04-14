@@ -16,7 +16,7 @@ public interface InstockService extends IService<Instock> {
 
     CommonResult getInstockRegionIds(Integer warehouseId);
 
-    CommonResult getwarehouseIdByRegionId(Integer regionId);
+    CommonResult getWarehouseIdByRegionId(Integer regionId);
 
     CommonResult deleteInstockById(Integer id);
 

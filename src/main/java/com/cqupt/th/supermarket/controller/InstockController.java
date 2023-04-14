@@ -25,13 +25,13 @@ public class InstockController {
     public CommonResult getInstockListPage(@PathVariable("currentPage") Integer currentPage, @PathVariable("pageSize") Integer pageSize, @RequestBody(required = false) InstockQuery instockQuery) {
         return instockService.getInstockListPage(currentPage, pageSize, instockQuery);
     }
-    @GetMapping("getInstockRegionIds/{warehouseId}")
+    @GetMapping("instockRegionIds/{warehouseId}")
     public CommonResult getInstockRegionIds(@PathVariable("warehouseId") Integer warehouseId) {
         return instockService.getInstockRegionIds(warehouseId);
     }
-    @GetMapping("getwarehouseIdByRegionId/{regionId}")
-    public CommonResult getwarehouseIdByRegionId(@PathVariable("regionId") Integer regionId) {
-        return instockService.getwarehouseIdByRegionId(regionId);
+    @GetMapping("warehouseIdByRegionId/{regionId}")
+    public CommonResult getWarehouseIdByRegionId(@PathVariable("regionId") Integer regionId) {
+        return instockService.getWarehouseIdByRegionId(regionId);
     }
     @DeleteMapping("{id}")
     public CommonResult deleteInstockById(@PathVariable("id") Integer id) {

@@ -69,17 +69,15 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
         baseMapper.selectPage(instockPage, instockQueryWrapper);
         long total = instockPage.getTotal();
         List<Instock> records = instockPage.getRecords();
-        HashMap<Integer, String> productHashMap = new HashMap<>();
-        productMapper.selectList(null).stream().forEach(product -> {
-            productHashMap.put(product.getId(), product.getName());
+        List<Product> products = productMapper.selectList(null);
+        HashMap<Integer, String> productHashMap = new HashMap<>(products.size());
+        products.stream().forEach(p -> {
+            productHashMap.put(p.getId(), p.getName());
         });
-        HashMap<Integer, Region> regionHashMap = new HashMap<>();
-        regionService.list(null).stream().forEach(r -> {
+        List<Region> regionList = regionService.list(null);
+        HashMap<Integer, Region> regionHashMap = new HashMap<>(regionList.size());
+        regionList.stream().forEach(r -> {
             regionHashMap.put(r.getId(), r);
-        });
-        HashMap<Integer, String> supplierHashMap = new HashMap<>();
-        supplierMapper.selectList(null).stream().forEach(supplier -> {
-            supplierHashMap.put(supplier.getId(), supplier.getName());
         });
         List<InstockVo> rows = records.stream().map(r -> {
             InstockVo instockVo = new InstockVo();
@@ -97,33 +95,31 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
         if (warehouseId == null) {
             return CommonResult.error().message("参数错误");
         }
+        if (warehouseId == 0) {
+            return CommonResult.ok().data("items", new Integer[]{});
+        }
         Warehouse warehouse = warehouseMapper.selectById(warehouseId);
-        int regionId = 0;
-        if (warehouse != null) {
-
-            regionId = warehouse.getRegionId();
+        if (warehouse == null) {
+            return CommonResult.ok().data("items", new Integer[]{});
         }
-        if (regionId == 0) {
-            return CommonResult.ok().data("items", new Integer[0]);
-        }
-        Integer[] ids = regionService.getRegionIdsById(regionId);
-        if (ids == null) {
-            return CommonResult.error().message("参数错误");
-        }
-        return CommonResult.ok().data("items", ids);
+        Integer regionId = warehouse.getRegionId();
+        Integer[] regionIdsById = regionService.getRegionIdsById(regionId);
+        return CommonResult.ok().data("items", regionIdsById);
     }
 
     @Override
-    public CommonResult getwarehouseIdByRegionId(Integer regionId) {
+    public CommonResult getWarehouseIdByRegionId(Integer regionId) {
         if (regionId == null) {
             return CommonResult.error().message("参数错误");
         }
-        Warehouse warehouse = warehouseMapper.selectOne(new QueryWrapper<Warehouse>().eq("region_id", regionId));
-        int id = 0;
-        if (warehouse != null) {
-            id = warehouse.getId();
+        if (regionId == 0) {
+            return CommonResult.ok().data("item", null);
         }
-        return CommonResult.ok().data("item", id);
+        Warehouse warehouse = warehouseMapper.selectOne(new QueryWrapper<Warehouse>().eq("region_id", regionId));
+        if (warehouse == null) {
+            return CommonResult.ok().data("item", null);
+        }
+        return CommonResult.ok().data("item", warehouse.getId());
     }
 
     @Override
@@ -131,7 +127,6 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
         if (id == null) {
             return CommonResult.error().message("参数错误");
         }
-        //TODO 库存的删除
         Instock instock = baseMapper.selectById(id);
         if (instock == null) {
             return CommonResult.error().message("参数错误");
@@ -179,7 +174,6 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
             inventory1.setId(null);
             inventoryMapper.insert(inventory1);
         }
-        //TODO 库存的更新
         int i = baseMapper.updateById(instock);
         if (i == 0) {
             return CommonResult.error().message("更新失败");
@@ -193,7 +187,6 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
         if (instock == null) {
             return CommonResult.error().message("参数错误");
         }
-        //TODO 库存的添加
         Inventory inventory = inventoryMapper.selectOne(new QueryWrapper<Inventory>().eq("warehouse_id", instock.getWarehouseId()).eq("product_id", instock.getProductId()));
         if (inventory == null) {
             Inventory inventory1 = new Inventory();
@@ -213,12 +206,14 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
     }
 
     private Integer getRegionIdByWarehouseId(Integer warehouseId) {
-        Warehouse warehouse = warehouseMapper.selectById(warehouseId);
-        int regionId = 0;
-        if (warehouse != null) {
-            regionId = warehouse.getRegionId();
+        if (warehouseId == 0) {
+            return 0;
         }
-        return regionId;
+        Warehouse warehouse = warehouseMapper.selectOne(new QueryWrapper<Warehouse>().eq("id", warehouseId));
+        if (warehouse == null) {
+            return 0;
+        }
+        return warehouse.getRegionId();
     }
 
 }

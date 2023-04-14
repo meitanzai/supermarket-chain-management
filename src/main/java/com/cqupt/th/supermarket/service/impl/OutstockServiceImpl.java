@@ -70,14 +70,13 @@ public class OutstockServiceImpl extends ServiceImpl<OutstockMapper, Outstock>
         baseMapper.selectPage(outstockPage, outstockQueryWrapper);
         long total = outstockPage.getTotal();
         List<Outstock> records = outstockPage.getRecords();
-        HashMap<Integer, String> productHashMap = new HashMap<>();
-        productMapper.selectList(null).stream().forEach(product -> {
+        List<Product> products = productMapper.selectList(null);
+        HashMap<Integer, String> productHashMap = new HashMap<>(products.size());
+        List<Region> regionList = regionService.list(null);
+        HashMap<Integer, Region> regionHashMap = new HashMap<>(regionList.size());
+        for (Product product : products) {
             productHashMap.put(product.getId(), product.getName());
-        });
-        HashMap<Integer, Region> regionHashMap = new HashMap<>();
-        regionService.list(null).stream().forEach(r -> {
-            regionHashMap.put(r.getId(), r);
-        });
+        }
         List<OutstockVo> rows = records.stream().map(r -> {
             OutstockVo outstockVo = new OutstockVo();
             BeanUtils.copyProperties(r, outstockVo);
@@ -89,16 +88,18 @@ public class OutstockServiceImpl extends ServiceImpl<OutstockMapper, Outstock>
     }
 
     @Override
-    public CommonResult getwarehouseIdByRegionId(Integer regionId) {
+    public CommonResult getWarehouseIdByRegionId(Integer regionId) {
         if (regionId == null) {
             return CommonResult.error().message("参数错误");
         }
-        Warehouse warehouse = warehouseMapper.selectOne(new QueryWrapper<Warehouse>().eq("region_id", regionId));
-        int id = 0;
-        if (warehouse != null) {
-            id = warehouse.getId();
+        if (regionId == 0) {
+            return CommonResult.ok().data("item", null);
         }
-        return CommonResult.ok().data("item", id);
+        Warehouse warehouse = warehouseMapper.selectOne(new QueryWrapper<Warehouse>().eq("region_id", regionId));
+        if (warehouse == null) {
+            return CommonResult.ok().data("item", null);
+        }
+        return CommonResult.ok().data("item", warehouse.getId());
     }
 
     @Override
@@ -106,7 +107,6 @@ public class OutstockServiceImpl extends ServiceImpl<OutstockMapper, Outstock>
         if (id == null) {
             return CommonResult.error().message("参数错误");
         }
-        //TODO 库存的删除
         Outstock outstock = baseMapper.selectById(id);
         if (outstock == null) {
             return CommonResult.error().message("参数错误");
@@ -139,7 +139,7 @@ public class OutstockServiceImpl extends ServiceImpl<OutstockMapper, Outstock>
         if (inventory == null) {
             return CommonResult.error().message("参数错误");
         }
-        if (outstock.getProductId() == inventory.getProductId() && outstock.getWarehouseId() == inventory.getWarehouseId()) {
+        if (outstock.getProductId().equals(inventory.getProductId()) && outstock.getWarehouseId().equals(inventory.getWarehouseId())) {
             inventory.setOutstockCount(inventory.getOutstockCount() - outstock1.getOutstockCount() + outstock.getOutstockCount());
             inventory.setInventoryCount(inventory.getInventoryCount() + outstock1.getOutstockCount() + outstock.getOutstockCount());
             inventoryMapper.updateById(inventory);
@@ -153,7 +153,6 @@ public class OutstockServiceImpl extends ServiceImpl<OutstockMapper, Outstock>
             inventory1.setId(null);
             inventoryMapper.insert(inventory1);
         }
-        //TODO 库存的更新
         int i = baseMapper.updateById(outstock);
         if (i == 0) {
             return CommonResult.error().message("更新失败");
@@ -166,7 +165,6 @@ public class OutstockServiceImpl extends ServiceImpl<OutstockMapper, Outstock>
         if (outstock == null) {
             return CommonResult.error().message("参数错误");
         }
-        //TODO 库存的添加
         Inventory inventory = inventoryMapper.selectOne(new QueryWrapper<Inventory>().eq("warehouse_id", outstock.getWarehouseId()).eq("product_id", outstock.getProductId()));
         if (inventory == null) {
             Inventory inventory1 = new Inventory();
@@ -186,54 +184,31 @@ public class OutstockServiceImpl extends ServiceImpl<OutstockMapper, Outstock>
     }
 
     @Override
-    public CommonResult getwarehouseRegionByWarehouseId(Integer warehouseId) {
-        if (warehouseId == null) {
-            return CommonResult.error().message("参数错误");
-        }
-        Warehouse warehouse = warehouseMapper.selectById(warehouseId);
-        int regionId = 0;
-        if (warehouse != null) {
-
-            regionId = warehouse.getRegionId();
-        }
-        if (regionId == 0) {
-            return CommonResult.ok().data("items", new Integer[0]);
-        }
-        Integer[] ids = regionService.getRegionIdsById(regionId);
-        if (ids == null) {
-            return CommonResult.error().message("参数错误");
-        }
-        return CommonResult.ok().data("items", ids);
-    }
-
-    @Override
     public CommonResult getOutstockRegionIds(Integer warehouseId) {
-
         if (warehouseId == null) {
             return CommonResult.error().message("参数错误");
         }
+        if (warehouseId == 0) {
+            return CommonResult.ok().data("items", new Integer[]{});
+        }
         Warehouse warehouse = warehouseMapper.selectById(warehouseId);
-        int regionId = 0;
-        if (warehouse != null) {
-            regionId = warehouse.getRegionId();
+        if (warehouse == null) {
+            return CommonResult.ok().data("items", new Integer[]{});
         }
-        if (regionId == 0) {
-            return CommonResult.ok().data("items", new Integer[0]);
-        }
-        Integer[] ids = regionService.getRegionIdsById(regionId);
-        if (ids == null) {
-            return CommonResult.error().message("参数错误");
-        }
-        return CommonResult.ok().data("items", ids);
+        Integer regionId = warehouse.getRegionId();
+        Integer[] regionIdsById = regionService.getRegionIdsById(regionId);
+        return CommonResult.ok().data("items", regionIdsById);
     }
 
     private Integer getRegionIdByWarehouseId(Integer warehouseId) {
-        Warehouse warehouse = warehouseMapper.selectById(warehouseId);
-        int regionId = 0;
-        if (warehouse != null) {
-            regionId = warehouse.getRegionId();
+        if (warehouseId == 0) {
+            return 0;
         }
-        return regionId;
+        Warehouse warehouse = warehouseMapper.selectOne(new QueryWrapper<Warehouse>().eq("id", warehouseId));
+        if (warehouse == null) {
+            return 0;
+        }
+        return warehouse.getRegionId();
     }
 }
 

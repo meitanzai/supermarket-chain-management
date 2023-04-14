@@ -14,15 +14,13 @@ public interface OutstockService extends IService<Outstock> {
 
     CommonResult getOutstockListPage(Integer currentPage, Integer pageSize, OutstockQuery outstockQuery);
 
-    CommonResult getwarehouseIdByRegionId(Integer regionId);
+    CommonResult getWarehouseIdByRegionId(Integer regionId);
 
     CommonResult deleteOutstockById(Integer id);
 
     CommonResult updateOutstockById(Integer id, Outstock outstock);
 
     CommonResult addOutstock(Outstock outstock);
-
-    CommonResult getwarehouseRegionByWarehouseId(Integer warehouseId);
 
     CommonResult getOutstockRegionIds(Integer warehouseId);
 }
