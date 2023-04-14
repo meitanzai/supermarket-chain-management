@@ -149,10 +149,10 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
                 if (store.getRegionId() != null) {
                     warehouse1.setRegionId(store.getRegionId());
                 }
-            }
-            int result1 = warehouseMapper.updateById(warehouse1);
-            if (result1 == 0) {
-                return CommonResult.error().message("更新失败");
+                int result1 = warehouseMapper.updateById(warehouse1);
+                if (result1 == 0) {
+                    return CommonResult.error().message("更新失败");
+                }
             }
         }
         if (store1.getRegionId() == 0 && store.getRegionId() != 0) {
