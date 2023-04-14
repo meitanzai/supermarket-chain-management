@@ -16,9 +16,7 @@ public interface SupplierService extends IService<Supplier> {
 
     CommonResult deleteSupplierBatch(Integer[] ids);
 
-    CommonResult updateSupplierIsUse(Integer id, Integer isUse);
-
-    CommonResult getSupplierRegionIds(Integer regionId);
+    CommonResult getSupplierRegionIdsByRegionId(Integer regionId);
 
     CommonResult deleteSupplier(Integer id);
 
@@ -28,7 +26,5 @@ public interface SupplierService extends IService<Supplier> {
 
     CommonResult getAllSupplier();
 
-    CommonResult getSupplierByName(Supplier supplier);
-
-    CommonResult getRegionByRegionId(Supplier supplier);
+    CommonResult isExistSupplierNameAndRegion(Supplier supplier);
 }

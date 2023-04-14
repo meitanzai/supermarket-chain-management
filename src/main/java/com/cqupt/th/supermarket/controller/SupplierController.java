@@ -31,14 +31,9 @@ public class SupplierController {
         return supplierService.deleteSupplierBatch(ids);
     }
 
-    @PutMapping("/{id}/{isUse}")
-    public CommonResult updateSupplierIsUse(@PathVariable("id") Integer id, @PathVariable("isUse") Integer isUse) {
-        return supplierService.updateSupplierIsUse(id, isUse);
-    }
-
-    @GetMapping("getSupplierRegionIds/{regionId}")
-    public CommonResult getSupplierRegionIds(@PathVariable("regionId") Integer regionId) {
-        return supplierService.getSupplierRegionIds(regionId);
+    @GetMapping("supplierRegionIdsByRegionId/{regionId}")
+    public CommonResult getSupplierRegionIdsByRegionId(@PathVariable("regionId") Integer regionId) {
+        return supplierService.getSupplierRegionIdsByRegionId(regionId);
     }
 
     @DeleteMapping("/{id}")
@@ -61,14 +56,9 @@ public class SupplierController {
         return supplierService.getAllSupplier();
     }
 
-    @PostMapping("supplierByName")
-    public CommonResult getSupplierByName(@RequestBody Supplier supplier) {
-        return supplierService.getSupplierByName(supplier);
-    }
-
-    @PostMapping("regionByRegionId")
-    public CommonResult getRegionByRegionId(@RequestBody Supplier supplier) {
-        return supplierService.getRegionByRegionId(supplier);
+    @PostMapping("isExistSupplierNameAndRegion")
+    public CommonResult isExistSupplierNameAndRegion(@RequestBody Supplier supplier) {
+        return supplierService.isExistSupplierNameAndRegion(supplier);
     }
 
 }
