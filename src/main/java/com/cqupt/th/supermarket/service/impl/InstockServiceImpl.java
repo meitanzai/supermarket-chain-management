@@ -32,8 +32,6 @@ public class InstockServiceImpl extends ServiceImpl<InstockMapper, Instock>
     @Qualifier("regionService")
     private RegionService regionService;
     @Resource
-    private SupplierMapper supplierMapper;
-    @Resource
     private ProductMapper productMapper;
     @Resource
     private WarehouseMapper warehouseMapper;

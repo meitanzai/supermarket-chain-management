@@ -131,7 +131,7 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
 
     @Override
     public String getRegionName(Integer id, HashMap<Integer, Region> map) {
-        if (id == 0) {
+        if (id == null || id == 0) {
             return "";
         }
         Region region = map.get(id);

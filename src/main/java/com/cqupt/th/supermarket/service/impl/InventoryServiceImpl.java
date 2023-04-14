@@ -70,20 +70,18 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
         baseMapper.selectPage(inventoryPage, inventoryQueryWrapper);
         long total = inventoryPage.getTotal();
         List<Inventory> records = inventoryPage.getRecords();
-        HashMap<Integer, String> productHashMap = new HashMap<>();
         List<Product> products = productMapper.selectList(null);
+        HashMap<Integer, String> productHashMap = new HashMap<>(products.size());
         products.stream().forEach(p -> {
             productHashMap.put(p.getId(), p.getName());
         });
-        HashMap<Integer, Region> regionHashMap = new HashMap<>();
         List<Region> regions = regionService.list(null);
+        HashMap<Integer, Region> regionHashMap = new HashMap<>(regions.size());
         regions.stream().forEach(r -> {
             regionHashMap.put(r.getId(), r);
         });
-        HashMap<Integer, Integer> regionIdHashMap = new HashMap<>();
-        warehouseMapper.selectList(null).stream().forEach(w -> {
-            regionIdHashMap.put(w.getId(), w.getRegionId());
-        });
+        List<Warehouse> warehouses = warehouseMapper.selectList(null);
+        HashMap<Integer, Integer> regionIdHashMap = new HashMap<>(warehouses.size());
         List<InventoryVo> rows = records.stream().map(r -> {
             InventoryVo inventoryVo = new InventoryVo();
             BeanUtils.copyProperties(r, inventoryVo);
