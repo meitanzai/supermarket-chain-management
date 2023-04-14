@@ -13,6 +13,7 @@ import java.util.Date;
 public class MemberPointVo implements Serializable {
     private Integer id;
     private Integer memberId;
+    private String cardNumber;
     private String memberName;
     private Integer point;
     private String remark;

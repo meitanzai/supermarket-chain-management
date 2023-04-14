@@ -49,8 +49,12 @@ public class MemberController {
     public CommonResult getMemberList() {
         return memberService.getMemberList();
     }
-    @PostMapping("isExistMemberName")
-    public CommonResult isExistMemberName(@RequestBody Member member) {
-        return memberService.isExistMemberName(member);
+    @PostMapping("isExistMemberCardNumber")
+    public CommonResult isExistMemberCardNumber(@RequestBody Member member) {
+        return memberService.isExistMemberCardNumber(member);
+    }
+    @GetMapping("name/{id}")
+    public CommonResult getMemberNameById(@PathVariable("id") Integer id) {
+        return memberService.getMemberNameById(id);
     }
 }

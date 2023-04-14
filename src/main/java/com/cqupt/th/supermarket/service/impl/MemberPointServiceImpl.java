@@ -18,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
@@ -89,14 +90,17 @@ public class MemberPointServiceImpl extends ServiceImpl<MemberPointMapper, Membe
         long total = memberPointPage.getTotal();
         List<MemberPoint> memberPointList = memberPointPage.getRecords();
         List<Member> members = memberMapper.selectList(null);
-        HashMap<Integer, String> map = new HashMap<>(members.size());
+        HashMap<Integer, Member> map = new HashMap<>(members.size());
         members.stream().forEach(member -> {
-            map.put(member.getId(), member.getName());
+            map.put(member.getId(), member);
         });
         List<MemberPointVo> collect = memberPointList.stream().map(m -> {
             MemberPointVo memberPointVo = new MemberPointVo();
             BeanUtils.copyProperties(m, memberPointVo);
-            memberPointVo.setMemberName(map.get(m.getMemberId()));
+            if (map.get(m.getMemberId()) != null) {
+                memberPointVo.setMemberName(map.get(m.getMemberId()).getName());
+                memberPointVo.setCardNumber(map.get(m.getMemberId()).getCardNumber());
+            }
             return memberPointVo;
         }).collect(Collectors.toList());
         return CommonResult.ok().data("rows", collect).data("total", total);

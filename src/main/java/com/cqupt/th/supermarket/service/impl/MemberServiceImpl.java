@@ -38,7 +38,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
         QueryWrapper<Member> memberQueryWrapper = new QueryWrapper<>();
         if (memberQuery != null) {
             if (StringUtils.hasText(memberQuery.getCardNumber())) {
-                memberQueryWrapper.like("card_number", memberQuery.getCardNumber());
+                memberQueryWrapper.eq("card_number", memberQuery.getCardNumber());
             }
             if (StringUtils.hasText(memberQuery.getName())) {
                 memberQueryWrapper.like("name", memberQuery.getName());
@@ -131,7 +131,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
     }
 
     @Override
-    public CommonResult isExistMemberName(Member member) {
+    public CommonResult isExistMemberCardNumber(Member member) {
         if (member == null) {
             return CommonResult.error().message("参数错误");
         }
@@ -140,15 +140,27 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
             if (member1 == null) {
                 return CommonResult.error().message("参数错误");
             }
-            if (member1.getName().equals(member.getName())) {
+            if (member1.getCardNumber().equals(member.getCardNumber())) {
                 return CommonResult.ok().data("item", false);
             }
         }
-        Member member1 = baseMapper.selectOne(new QueryWrapper<Member>().eq("name", member.getName()));
+        Member member1 = baseMapper.selectOne(new QueryWrapper<Member>().eq("card_number", member.getCardNumber()));
         if (member1 == null) {
             return CommonResult.ok().data("item", false);
         }
         return CommonResult.ok().data("item", true);
+    }
+
+    @Override
+    public CommonResult getMemberNameById(Integer id) {
+        if (id == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        Member member = baseMapper.selectById(id);
+        if (member == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        return CommonResult.ok().data("item", member.getName());
     }
 
 }
