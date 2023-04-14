@@ -41,9 +41,9 @@ public class PurchaseController {
     public CommonResult getPurchaseByPurchaseId(@PathVariable("purchaseId") Integer purchaseId) {
         return purchaseService.getPurchaseByPurchaseId(purchaseId);
     }
-    @GetMapping("supplierIdByPurchaseId/{purchaseId}")
-    public CommonResult getSupplierIdByPurchaseId(@PathVariable("purchaseId") Integer purchaseId) {
-        return purchaseService.getSupplierIdByPurchaseId(purchaseId);
+    @GetMapping("supplierIdBySupplierId/{supplierId}")
+    public CommonResult getSupplierIdBySupplierId(@PathVariable("supplierId") Integer supplierId) {
+        return purchaseService.getSupplierIdBySupplierId(supplierId);
     }
 //    @GetMapping("brandByPurchaseId/{purchaseId}")
 //    public CommonResult getBrandByPurchaseId(@PathVariable("purchaseId") Integer purchaseId) {

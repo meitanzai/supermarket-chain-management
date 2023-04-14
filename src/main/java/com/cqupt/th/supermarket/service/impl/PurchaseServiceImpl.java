@@ -3,10 +3,8 @@ package com.cqupt.th.supermarket.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cqupt.th.supermarket.entity.Product;
-import com.cqupt.th.supermarket.entity.Purchase;
-import com.cqupt.th.supermarket.entity.PurchaseOrder;
-import com.cqupt.th.supermarket.entity.Supplier;
+import com.cqupt.th.supermarket.constants.PurchaseOrderConstant;
+import com.cqupt.th.supermarket.entity.*;
 import com.cqupt.th.supermarket.mapper.ProductMapper;
 import com.cqupt.th.supermarket.mapper.PurchaseOrderMapper;
 import com.cqupt.th.supermarket.mapper.SupplierMapper;
@@ -81,12 +79,12 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
         long total = purchasePage.getTotal();
         List<Purchase> records = purchasePage.getRecords();
         List<Product> products = productMapper.selectList(null);
-        HashMap<Integer, String> productMap = new HashMap<>();
+        HashMap<Integer, String> productMap = new HashMap<>(products.size());
         products.forEach(p -> {
             productMap.put(p.getId(), p.getName());
         });
         List<Supplier> suppliers = supplierMapper.selectList(null);
-        HashMap<Integer, String> supplierMap = new HashMap<>();
+        HashMap<Integer, String> supplierMap = new HashMap<>(suppliers.size());
         suppliers.forEach(s -> {
             supplierMap.put(s.getId(), s.getName());
         });
@@ -105,7 +103,6 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
         if (id == null) {
             return CommonResult.error().message("id不能为空");
         }
-
         int result = purchaseOrderMapper.delete(new QueryWrapper<PurchaseOrder>().eq("purchase_id", id));
         int i = baseMapper.deleteById(id);
         if (i == 0 || result == 0) {
@@ -120,26 +117,18 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
         if (purchase == null) {
             return CommonResult.error().message("参数不能为空");
         }
-        BigDecimal purchasePrice = purchase.getPurchasePrice();
-        if (purchasePrice != null) {
-            productMapper.updatePurchasePrice(purchase.getProductId(), purchasePrice);
-        }
-        //TODO 生成订单
         long nextId = new SnowFlakeUtil(1, 1).getNextId();
         purchase.setPurchaseNumber(nextId);
         int id = baseMapper.insert(purchase);
-        if (id <= 0) {
-            return CommonResult.error().message("添加失败");
-        }
-        PurchaseOrder order = new PurchaseOrder();
 
+        PurchaseOrder order = new PurchaseOrder();
         order.setOrderNumber(nextId);
         order.setSupplierId(purchase.getSupplierId());
         order.setTotalPrice(purchase.getTotalPrice());
         order.setPurchaseId(purchase.getId());
-        order.setIsPay(2);
-        int insert1 = purchaseOrderMapper.insert(order);
-        if (insert1 <= 0) {
+        order.setIsPay(PurchaseOrderConstant.NOT_PAY.getCode());
+        int insert = purchaseOrderMapper.insert(order);
+        if (id == 0 || insert == 0) {
             return CommonResult.error().message("添加失败");
         }
         return CommonResult.ok().message("添加成功");
@@ -150,11 +139,6 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
         if (id == null || purchase == null) {
             return CommonResult.error().message("参数不能为空");
         }
-        BigDecimal purchasePrice = purchase.getPurchasePrice();
-        if (purchasePrice != null) {
-            productMapper.updatePurchasePrice(purchase.getProductId(), purchasePrice);
-        }
-        //TODO 修改订单
         PurchaseOrder order = purchaseOrderMapper.selectOne(new QueryWrapper<PurchaseOrder>().eq("order_number", purchase.getPurchaseNumber()));
         order.setSupplierId(purchase.getSupplierId());
         order.setTotalPrice(purchase.getTotalPrice());
@@ -173,36 +157,37 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
             return CommonResult.error().message("参数不能为空");
         }
         Purchase purchase = baseMapper.selectById(purchaseId);
+        if (purchase == null) {
+            return CommonResult.error().message("查询失败");
+        }
         PurchaseVo purchaseVo = new PurchaseVo();
         BeanUtils.copyProperties(purchase, purchaseVo);
         Product product = productMapper.selectById(purchase.getProductId());
-        purchaseVo.setProductName(product.getName());
+        if (product != null) {
+            purchaseVo.setProductName(product.getName());
+        }
         Supplier supplier = supplierMapper.selectById(purchase.getSupplierId());
-        purchaseVo.setSupplierName(supplier.getName());
-        if (purchase == null) {
-            return CommonResult.error().message("查询失败");
+        if (supplier != null) {
+            purchaseVo.setSupplierName(supplier.getName());
         }
         return CommonResult.ok().data("item", purchaseVo);
     }
 
     @Override
-    public CommonResult getSupplierIdByPurchaseId(Integer purchaseId) {
-        if (purchaseId == null) {
+    public CommonResult getSupplierIdBySupplierId(Integer supplierId) {
+        if (supplierId == null) {
             return CommonResult.error().message("参数不能为空");
         }
-        Purchase purchase = baseMapper.selectById(purchaseId);
-        if (purchase == null) {
-            return CommonResult.error().message("查询失败");
-        }
-        Integer supplierId = purchase.getSupplierId();
-        if (supplierId == null) {
+        if (supplierId == 0) {
             return CommonResult.ok().data("item", null);
         }
         Supplier supplier = supplierMapper.selectById(supplierId);
         if (supplier == null) {
             return CommonResult.ok().data("item", null);
+        } else {
+            return CommonResult.ok().data("item", supplier.getId());
         }
-        return CommonResult.ok().data("item", supplier.getId());
+
     }
 
     @Override

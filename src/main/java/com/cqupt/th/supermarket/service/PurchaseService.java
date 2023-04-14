@@ -22,7 +22,7 @@ public interface PurchaseService extends IService<Purchase> {
 
     CommonResult getPurchaseByPurchaseId(Integer purchaseId);
 
-    CommonResult getSupplierIdByPurchaseId(Integer purchaseId);
+    CommonResult getSupplierIdBySupplierId(Integer supplierId);
 
     CommonResult getBrandByPurchaseId(Integer purchaseId);
 }

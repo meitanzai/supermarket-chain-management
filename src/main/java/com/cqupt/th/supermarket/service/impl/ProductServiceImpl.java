@@ -171,7 +171,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
     }
 
     @Override
-    public CommonResult getProductByBrandIdAndCategoryId(Integer brandId, Integer categoryId) {
+    public CommonResult getProductListByBrandIdAndCategoryId(Integer brandId, Integer categoryId) {
         if (brandId == null || categoryId == null) {
             return CommonResult.error().message("参数不能为空");
         }
@@ -183,13 +183,20 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
     }
 
     @Override
-    public CommonResult getProductById(Integer id) {
+    public CommonResult getProductIdById(Integer id) {
 
         if (id == null) {
             return CommonResult.error().message("参数不能为空");
         }
+        if (id == 0) {
+            return CommonResult.ok().data("item", null);
+        }
         Product product = baseMapper.selectById(id);
-        return CommonResult.ok().data("item", product);
+        if (product == null) {
+            return CommonResult.ok().data("item", null);
+        } else {
+            return CommonResult.ok().data("item", product.getId());
+        }
     }
 
     @Override
@@ -211,6 +218,45 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
             return CommonResult.ok().data("item", false);
         }
         return CommonResult.ok().data("item", true);
+    }
+
+    @Override
+    public CommonResult getBrandIdById(Integer id) {
+        if (id == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        if (id == 0) {
+            return CommonResult.ok().data("item", null);
+        }
+        Product product = baseMapper.selectById(id);
+        if (product == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        Brand brand = brandMapper.selectById(product.getBrandId());
+        if (brand == null || brand.getId() == 0) {
+            return CommonResult.ok().data("item", null);
+        }
+
+        return CommonResult.ok().data("item", brand.getId());
+    }
+
+    @Override
+    public CommonResult getCategoryIdById(Integer id) {
+        if (id == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        if (id == 0) {
+            return CommonResult.ok().data("item", null);
+        }
+        Product product = baseMapper.selectById(id);
+        if (product == null) {
+            return CommonResult.error().message("参数错误");
+        }
+        Category category = categoryService.getOne(new QueryWrapper<Category>().eq("id", product.getCategoryId()));
+        if (category == null || category.getId() == 0) {
+            return CommonResult.ok().data("item", null);
+        }
+        return CommonResult.ok().data("item", category.getId());
     }
 
 

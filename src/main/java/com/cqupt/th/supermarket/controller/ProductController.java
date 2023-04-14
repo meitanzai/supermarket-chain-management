@@ -56,17 +56,26 @@ public class ProductController {
         return productService.getBrandIdByBrandId(brandId);
     }
     @GetMapping("brandId/{brandId}/categoryId/{categoryId}")
-    public CommonResult getProductByBrandIdAndCategoryId(@PathVariable("brandId") Integer brandId, @PathVariable("categoryId") Integer categoryId) {
-        return productService.getProductByBrandIdAndCategoryId(brandId, categoryId);
+    public CommonResult getProductListByBrandIdAndCategoryId(@PathVariable("brandId") Integer brandId, @PathVariable("categoryId") Integer categoryId) {
+        return productService.getProductListByBrandIdAndCategoryId(brandId, categoryId);
     }
     @GetMapping("{id}")
-    public CommonResult getProductById(@PathVariable("id") Integer id) {
-        return productService.getProductById(id);
+    public CommonResult getProductIdById(@PathVariable("id") Integer id) {
+        return productService.getProductIdById(id);
 
     }
     @PostMapping("isExistProductName")
     public CommonResult isExistProductName(@RequestBody Product product) {
         return productService.isExistProductName(product);
+    }
+
+    @GetMapping("brandId/{id}")
+    public CommonResult getBrandIdById(@PathVariable("id") Integer id) {
+        return productService.getBrandIdById(id);
+    }
+    @GetMapping("categoryId/{id}")
+    public CommonResult getCategoryIdById(@PathVariable("id") Integer id) {
+        return productService.getCategoryIdById(id);
     }
 }
 
