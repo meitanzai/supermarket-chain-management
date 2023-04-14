@@ -31,6 +31,6 @@ public interface StoreService extends IService<Store> {
     CommonResult getStoreRegionList();
 
     CommonResult getStoreIdByRegionId(Integer regionId);
-//
+
     CommonResult getRegionIdByStoreId(Integer storeId);
 }

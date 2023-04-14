@@ -45,12 +45,12 @@ public class EmployeeController {
         return employeeService.getEmployeeListPageByWarehouseId(currentPage, pageSize, warehouseId, employeeQuery);
     }
 
-    @GetMapping("getManagerList")
-    public CommonResult getManagerList() {
-        return employeeService.getManagerList();
+    @GetMapping("storeManagerList")
+    public CommonResult getStoreManagerList() {
+        return employeeService.getStoreManagerList();
     }
 
-    @GetMapping("getWarehouseManagerList")
+    @GetMapping("warehouseManagerList")
     public CommonResult getWarehouseManagerList() {
         return employeeService.getWarehouseManagerList();
     }
@@ -80,8 +80,8 @@ public class EmployeeController {
         return employeeService.addEmployee(employee);
     }
 
-    @PostMapping("workNumberByWorkNumber")
-    public CommonResult getWorkNumberByWorkNumber(@RequestBody Employee employee) {
-        return employeeService.getWorkNumberByWorkNumber(employee);
+    @PostMapping("isExistWorkNumber")
+    public CommonResult isExistWorkNumber(@RequestBody Employee employee) {
+        return employeeService.isExistWorkNumber(employee);
     }
 }

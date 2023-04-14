@@ -14,7 +14,7 @@ public interface EmployeeService extends IService<Employee> {
 
     CommonResult getEmployeeListPageByPositionId(Integer currentPage, Integer pageSize, Integer positionId, EmployeeQuery employeeQuery);
 
-    CommonResult getManagerList();
+    CommonResult getStoreManagerList();
 
     CommonResult getWarehouseManagerList();
 
@@ -32,5 +32,5 @@ public interface EmployeeService extends IService<Employee> {
 
     CommonResult getEmployeeListPageByWarehouseId(Integer currentPage, Integer pageSize, Integer warehouseId, EmployeeQuery employeeQuery);
 
-    CommonResult getWorkNumberByWorkNumber(Employee employee);
+    CommonResult isExistWorkNumber(Employee employee);
 }

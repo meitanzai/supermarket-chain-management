@@ -257,7 +257,6 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
         return CommonResult.ok().data("item", id);
     }
 
-    //
     @Override
     public CommonResult getRegionIdByStoreId(Integer storeId) {
 
