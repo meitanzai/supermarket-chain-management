@@ -42,6 +42,16 @@
         set warehouse_id = null
         where warehouse_id = #{warehouseId}
     </update>
+    <update id="updateWarehouseId">
+        update employee
+        set warehouse_id = #{warehouseId}
+        where id = #{managerId}
+    </update>
+    <update id="updateStoreId">
+        update employee
+        set store_id = #{storeId}
+        where id = #{managerId}
+    </update>
 
 
 </mapper>

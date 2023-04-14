@@ -27,4 +27,14 @@
             #{regionId}
         </foreach>
     </update>
+    <update id="updateManager">
+        UPDATE warehouse
+        SET manager_id = #{managerId}
+        WHERE id = #{warehouseId}
+    </update>
+    <update id="updateWarehouseManagerAll">
+        UPDATE warehouse
+        SET manager_id = 0
+        WHERE manager_id = #{managerId}
+    </update>
 </mapper>

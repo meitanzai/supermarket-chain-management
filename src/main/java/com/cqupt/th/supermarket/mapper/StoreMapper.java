@@ -16,6 +16,11 @@ import java.util.Set;
 public interface StoreMapper extends BaseMapper<Store> {
 
     void updateRegionIdByRegionIds(@Param("regionIds") Set<Integer> regionIds);
+
+    void updateManager(@Param("storeId") Integer storeId, @Param("managerId") Integer managerId);
+
+    void updateStoreManagerAll(@Param("managerId") Integer managerId);
+
 }
 
 

@@ -111,7 +111,13 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
         if (warehouse == null) {
             return CommonResult.error().message("参数错误");
         }
+        if (warehouse.getManagerId() != null) {
+            baseMapper.updateWarehouseManagerAll(warehouse.getManagerId());
+        }
         int insert = baseMapper.insert(warehouse);
+        if (warehouse.getManagerId() != null) {
+            employeeMapper.updateWarehouseId(warehouse.getManagerId(), warehouse.getId());
+        }
         if (insert == 0) {
             return CommonResult.error().message("添加失败");
         }
@@ -124,6 +130,8 @@ public class WarehouseServiceImpl extends ServiceImpl<WarehouseMapper, Warehouse
             return CommonResult.error().message("参数错误");
         }
         warehouse.setId(id);
+        baseMapper.updateWarehouseManagerAll(warehouse.getManagerId());
+        employeeMapper.updateWarehouseId(warehouse.getManagerId(), warehouse.getId());
         int i = baseMapper.updateById(warehouse);
         if (i == 0) {
             return CommonResult.error().message("修改失败");

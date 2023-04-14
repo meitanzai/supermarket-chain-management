@@ -177,6 +177,19 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
                 employee.setWarehouseId(0);
             }
         }
+        if (employee.getPositionId() != null) {
+            Position position = positionMapper.selectById(employee.getPositionId());
+            if (position != null) {
+                if (employee.getStoreId() != 0 && "超市经理".equals(position.getName())) {
+                    storeMapper.updateStoreManagerAll(employee.getId());
+                    storeMapper.updateManager(employee.getStoreId(), employee.getId());
+                }
+                if (employee.getWarehouseId() != 0 && "仓库经理".equals(position.getName())) {
+                    warehouseMapper.updateWarehouseManagerAll(employee.getId());
+                    warehouseMapper.updateManager(employee.getWarehouseId(), employee.getId());
+                }
+            }
+        }
         int result = baseMapper.updateById(employee);
         if (result > 0) {
             return CommonResult.ok();
@@ -192,6 +205,19 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
         }
         if (employee.getStatus() == null) {
             employee.setStatus(EmployeeConstant.ON_JOB.getCode());
+        }
+        if (employee.getPositionId() != null) {
+            Position position = positionMapper.selectById(employee.getPositionId());
+            if (position != null) {
+                if (employee.getStoreId() != 0 && "超市经理".equals(position.getName())) {
+                    storeMapper.updateStoreManagerAll(employee.getId());
+                    storeMapper.updateManager(employee.getStoreId(), employee.getId());
+                }
+                if (employee.getWarehouseId() != 0 && "仓库经理".equals(position.getName())) {
+                    warehouseMapper.updateWarehouseManagerAll(employee.getId());
+                    warehouseMapper.updateManager(employee.getWarehouseId(), employee.getId());
+                }
+            }
         }
         int result = baseMapper.insert(employee);
         if (result > 0) {

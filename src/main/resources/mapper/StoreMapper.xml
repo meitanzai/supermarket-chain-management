@@ -5,18 +5,19 @@
 <mapper namespace="com.cqupt.th.supermarket.mapper.StoreMapper">
 
     <resultMap id="BaseResultMap" type="com.cqupt.th.supermarket.entity.Store">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="regionId" column="region_id" jdbcType="INTEGER"/>
-            <result property="telephone" column="telephone" jdbcType="VARCHAR"/>
-            <result property="managerId" column="manager_id" jdbcType="INTEGER"/>
-            <result property="area" column="area" jdbcType="DOUBLE"/>
-            <result property="status" column="status" jdbcType="TINYINT"/>
-            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
-            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="regionId" column="region_id" jdbcType="INTEGER"/>
+        <result property="telephone" column="telephone" jdbcType="VARCHAR"/>
+        <result property="managerId" column="manager_id" jdbcType="INTEGER"/>
+        <result property="area" column="area" jdbcType="DOUBLE"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,region_id,telephone,
+        id
+        ,region_id,telephone,
         manager_id,area,status,
         gmt_create,gmt_modified
     </sql>
@@ -27,5 +28,15 @@
         <foreach collection="regionIds" item="regionId" open="(" separator="," close=")">
             #{regionId}
         </foreach>
+    </update>
+    <update id="updateManager">
+        UPDATE store
+        SET manager_id = #{managerId}
+        WHERE id = #{storeId}
+    </update>
+    <update id="updateStoreManagerAll">
+        UPDATE store
+        SET manager_id = 0
+        WHERE manager_id = #{managerId}
     </update>
 </mapper>

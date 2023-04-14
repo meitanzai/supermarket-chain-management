@@ -17,6 +17,11 @@ public interface EmployeeMapper extends BaseMapper<Employee> {
     void updateEmployeeByStoreIds(@Param("storeIds") Integer[] storeIds);
 
     void updateEmployeeByWarehouseId(@Param("warehouseId") Integer warehouseId);
+
+    void updateWarehouseId(@Param("managerId") Integer managerId, @Param("warehouseId") Integer warehouseId);
+
+    void updateStoreId(@Param("managerId")Integer managerId,@Param("storeId") Integer storeId);
+
 }
 
 

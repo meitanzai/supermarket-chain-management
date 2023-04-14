@@ -139,6 +139,7 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
         store.setId(id);
         Warehouse warehouse = new Warehouse();
         BeanUtils.copyProperties(store, warehouse);
+        baseMapper.updateStoreManagerAll(store.getManagerId());
         Store store1 = baseMapper.selectById(store);
         if (store1.getRegionId() != 0) {
             Warehouse warehouse1 = warehouseMapper.selectOne(new QueryWrapper<Warehouse>().eq("region_id", store1.getRegionId()));
@@ -163,6 +164,8 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
                 return CommonResult.error().message("添加失败");
             }
         }
+
+        employeeMapper.updateStoreId(store.getManagerId(), store.getId());
         int result = baseMapper.updateById(store);
         if (result == 0) {
             return CommonResult.error().message("更新失败");
@@ -175,6 +178,9 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
 
         if (store == null) {
             return CommonResult.error().message("参数错误");
+        }
+        if (store.getManagerId() != null) {
+            baseMapper.updateStoreManagerAll(store.getManagerId());
         }
         if (store.getRegionId() != null && store.getRegionId() != 0) {
             Warehouse warehouse = new Warehouse();
@@ -189,7 +195,11 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store>
         if (store.getStatus() == null) {
             store.setStatus(StoreConstant.CLOSE.getCode());
         }
+
         int result = baseMapper.insert(store);
+        if (store.getManagerId() != null) {
+            employeeMapper.updateWarehouseId(store.getManagerId(), store.getId());
+        }
         if (result == 0) {
             return CommonResult.error().message("添加失败");
         }
