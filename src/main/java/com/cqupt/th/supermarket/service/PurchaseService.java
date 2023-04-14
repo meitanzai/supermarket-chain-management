@@ -24,5 +24,4 @@ public interface PurchaseService extends IService<Purchase> {
 
     CommonResult getSupplierIdBySupplierId(Integer supplierId);
 
-    CommonResult getBrandByPurchaseId(Integer purchaseId);
 }

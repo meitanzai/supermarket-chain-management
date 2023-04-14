@@ -189,26 +189,6 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
         }
 
     }
-
-    @Override
-    public CommonResult getBrandByPurchaseId(Integer purchaseId) {
-        if (purchaseId == null) {
-            return CommonResult.error().message("参数不能为空");
-        }
-        Purchase purchase = baseMapper.selectById(purchaseId);
-        if (purchase == null) {
-            return CommonResult.error().message("查询失败");
-        }
-        if (purchase.getSupplierId() == 0) {
-            return CommonResult.ok().data("item", null);
-        } else {
-            Supplier supplier = supplierMapper.selectById(purchase.getSupplierId());
-            if (supplier == null) {
-                return CommonResult.ok().data("item", null);
-            }
-            return CommonResult.ok().data("item", supplier.getId());
-        }
-    }
 }
 
 
