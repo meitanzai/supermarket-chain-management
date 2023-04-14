@@ -24,7 +24,7 @@ public interface PositionService extends IService<Position> {
 
     CommonResult getPositionList();
 
-    CommonResult getPositionNameByName(String name);
+    CommonResult isExistPositionName(Position position);
 
     CommonResult getPositionIdById(Integer id);
 }

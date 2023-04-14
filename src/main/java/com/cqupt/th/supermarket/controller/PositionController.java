@@ -51,9 +51,9 @@ public class PositionController {
         return positionService.getPositionList();
     }
 
-    @GetMapping("positionNameByName/{name}")
-    public CommonResult getPositionNameByName(@PathVariable("name") String name) {
-        return positionService.getPositionNameByName(name);
+    @PostMapping("isExistPositionName")
+    public CommonResult isExistPositionName(@RequestBody Position position) {
+        return positionService.isExistPositionName(position);
     }
     @GetMapping("{id}")
     public CommonResult getPositionIdById(@PathVariable("id") Integer id) {

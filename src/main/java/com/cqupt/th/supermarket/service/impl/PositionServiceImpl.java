@@ -3,6 +3,7 @@ package com.cqupt.th.supermarket.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cqupt.th.supermarket.entity.Brand;
 import com.cqupt.th.supermarket.entity.Position;
 import com.cqupt.th.supermarket.query.PositionQuery;
 import com.cqupt.th.supermarket.service.PositionService;
@@ -81,7 +82,7 @@ public class PositionServiceImpl extends ServiceImpl<PositionMapper, Position>
             return CommonResult.error().message("参数错误");
         }
         int result = baseMapper.deleteBatchIds(Arrays.asList(ids));
-        if (result == ids.length) {
+        if (result > 0) {
             return CommonResult.ok();
         }
         return CommonResult.error().message("删除失败");
@@ -110,15 +111,24 @@ public class PositionServiceImpl extends ServiceImpl<PositionMapper, Position>
     }
 
     @Override
-    public CommonResult getPositionNameByName(String name) {
-        if (!StringUtils.hasText(name)) {
+    public CommonResult isExistPositionName(Position position) {
+        if (position == null) {
             return CommonResult.error().message("参数错误");
         }
-        Position name1 = baseMapper.selectOne(new QueryWrapper<Position>().eq("name", name));
-        if (name1 != null) {
-            return CommonResult.ok().data("item", name1.getName());
+        if (position.getId() != null) {
+            Position position1 = baseMapper.selectById(position.getId());
+            if (position1 == null) {
+                return CommonResult.error().message("参数错误");
+            }
+            if (position1.getName().equals(position.getName())) {
+                return CommonResult.ok().data("item", false);
+            }
         }
-        return CommonResult.ok().data("item", null);
+        Position position1 = baseMapper.selectOne(new QueryWrapper<Position>().eq("name", position.getName()));
+        if (position1 == null) {
+            return CommonResult.ok().data("item", false);
+        }
+        return CommonResult.ok().data("item", true);
 
     }
 
@@ -127,9 +137,9 @@ public class PositionServiceImpl extends ServiceImpl<PositionMapper, Position>
         if (id == null) {
             return CommonResult.error().message("参数错误");
         }
-        if (id == 0){
+        if (id == 0) {
             return CommonResult.ok().data("item", null);
-        }else {
+        } else {
             Position id1 = baseMapper.selectOne(new QueryWrapper<Position>().eq("id", id));
             if (id1 != null) {
                 return CommonResult.ok().data("item", id1.getId());
