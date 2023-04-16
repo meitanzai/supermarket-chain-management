@@ -9,7 +9,6 @@ spring:
     password: abc123
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      connection-test-query: SELECT 1
       minimum-idle: 10
       maximum-pool-size: 100
       idle-timeout: 30000
