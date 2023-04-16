@@ -67,6 +67,12 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseMapper, Purchase>
             if (purchaseQuery.getTotalPrice() != null) {
                 purchaseQueryWrapper.eq("total_price", purchaseQuery.getTotalPrice());
             }
+            if (purchaseQuery.getShelfLifeStart() != null) {
+                purchaseQueryWrapper.ge("shelf_life", purchaseQuery.getShelfLifeStart());
+            }
+            if (purchaseQuery.getShelfLifeEnd() != null) {
+                purchaseQueryWrapper.le("shelf_life", purchaseQuery.getShelfLifeEnd());
+            }
             if (purchaseQuery.getStartTime() != null) {
                 purchaseQueryWrapper.ge("gmt_create", purchaseQuery.getStartTime());
             }

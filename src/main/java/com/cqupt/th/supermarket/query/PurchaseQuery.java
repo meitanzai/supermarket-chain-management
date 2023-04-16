@@ -19,4 +19,6 @@ public class PurchaseQuery implements Serializable {
     private BigDecimal totalPrice;
     private Date startTime;
     private Date endTime;
+    private Date shelfLifeStart;
+    private Date shelfLifeEnd;
 }

@@ -26,6 +26,7 @@ public class PurchaseVo implements Serializable {
     private Integer quantity;
     private BigDecimal purchasePrice;
     private BigDecimal totalPrice;
+    private Date shelfLife;
     private Date gmtCreate;
     private Date gmtModified;
 }

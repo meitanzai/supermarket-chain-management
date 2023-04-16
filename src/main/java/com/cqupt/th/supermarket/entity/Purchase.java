@@ -45,7 +45,7 @@ public class Purchase implements Serializable {
      *
      */
     private BigDecimal totalPrice;
-
+    private Date shelfLife;
     /**
      *
      */

@@ -12,6 +12,7 @@
         <result property="quantity" column="quantity" jdbcType="INTEGER"/>
         <result property="purchasePrice" column="purchase_price" jdbcType="DECIMAL"/>
         <result property="totalPrice" column="total_price" jdbcType="DECIMAL"/>
+        <result property="shelfLife" column="shelf_life" jdbcType="TIMESTAMP"/>
         <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
         <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
     </resultMap>
@@ -19,7 +20,7 @@
     <sql id="Base_Column_List">
         id
         ,product_id,supplier_id,
-        quantity,purchase_price,total_price,
+        quantity,purchase_price,total_price,shelfLife
         gmt_create,gmt_modified
     </sql>
     <update id="updatePurchaseByProductId">
