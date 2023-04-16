@@ -1,5 +1,6 @@
 package com.cqupt.th.supermarket.service;
 
+import com.cqupt.th.supermarket.entity.Product;
 import com.cqupt.th.supermarket.utils.CommonResult;
 
 /**
@@ -8,6 +9,7 @@ import com.cqupt.th.supermarket.utils.CommonResult;
  */
 
 public interface StatisticsService {
-    CommonResult priceComparison();
+    CommonResult getPriceComparison(Product product);
 
+    CommonResult getSupplierPriceChange(Product product);
 }

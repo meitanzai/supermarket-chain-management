@@ -1,12 +1,11 @@
 package com.cqupt.th.supermarket.controller;
 
+import com.cqupt.th.supermarket.entity.Product;
 import com.cqupt.th.supermarket.service.StatisticsService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author th
@@ -19,8 +18,12 @@ public class StatisticsController {
     @Qualifier("statisticsService")
     private StatisticsService statisticsService;
 
-    @GetMapping("/priceComparison")
-    public CommonResult priceComparison() {
-        return statisticsService.priceComparison();
+    @PostMapping("/priceComparison")
+    public CommonResult getPriceComparison(@RequestBody(required = false) Product product) {
+        return statisticsService.getPriceComparison(product);
+    }
+    @PostMapping("supplierPriceChange")
+    public CommonResult getSupplierPriceChange(@RequestBody(required = false) Product product){
+        return statisticsService.getSupplierPriceChange(product);
     }
 }

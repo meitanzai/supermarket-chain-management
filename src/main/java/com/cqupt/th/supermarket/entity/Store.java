@@ -3,6 +3,7 @@ package com.cqupt.th.supermarket.entity;
 import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import lombok.Data;
 
@@ -18,7 +19,7 @@ import lombok.Data;
 @Data
 public class Store implements Serializable {
     /**
-     * 
+     *
      */
     @TableId(type = IdType.AUTO)
     private Integer id;
@@ -34,28 +35,29 @@ public class Store implements Serializable {
     private String telephone;
 
     /**
-     * 
+     *
      */
     private Integer managerId;
 
     /**
-     * 
+     *
      */
     private Double area;
 
     /**
-     * 
+     *
      */
+    private BigDecimal rent;
     private Integer status;
 
     /**
-     * 
+     *
      */
     @TableField(fill = FieldFill.INSERT)
     private Date gmtCreate;
 
     /**
-     * 
+     *
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date gmtModified;

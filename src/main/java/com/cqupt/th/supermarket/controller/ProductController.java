@@ -77,5 +77,9 @@ public class ProductController {
     public CommonResult getCategoryIdById(@PathVariable("id") Integer id) {
         return productService.getCategoryIdById(id);
     }
+    @GetMapping("/all")
+    public CommonResult getProductList() {
+        return productService.getProductList();
+    }
 }
 

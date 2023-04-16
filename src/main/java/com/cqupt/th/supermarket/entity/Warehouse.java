@@ -3,6 +3,7 @@ package com.cqupt.th.supermarket.entity;
 import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import lombok.Data;
@@ -40,6 +41,7 @@ public class Warehouse implements Serializable {
     /**
      *
      */
+    private BigDecimal rent;
     @TableField(fill = FieldFill.INSERT)
     private Date gmtCreate;
 

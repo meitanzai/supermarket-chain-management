@@ -3,6 +3,7 @@ package com.cqupt.th.supermarket.vo;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @author th
@@ -17,5 +18,6 @@ public class StoreVo implements Serializable{
     private Integer managerId;
     private String managerName;
     private Double area;
+    private BigDecimal rent;
     private Integer status;
 }

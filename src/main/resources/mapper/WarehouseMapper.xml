@@ -9,6 +9,7 @@
         <result property="regionId" column="region_id" jdbcType="INTEGER"/>
         <result property="managerId" column="manager_id" jdbcType="INTEGER"/>
         <result property="tel" column="tel" jdbcType="VARCHAR"/>
+        <result property="rent" column="rent" jdbcType="DECIMAL"/>
         <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
         <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
     </resultMap>

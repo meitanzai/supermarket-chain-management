@@ -259,6 +259,12 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
         return CommonResult.ok().data("item", category.getId());
     }
 
+    @Override
+    public CommonResult getProductList() {
+        List<Product> products = baseMapper.selectList(null);
+        return CommonResult.ok().data("items", products);
+    }
+
 
 }
 
