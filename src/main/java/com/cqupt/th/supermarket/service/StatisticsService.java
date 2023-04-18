@@ -12,4 +12,19 @@ public interface StatisticsService {
     CommonResult getPriceComparison(Product product);
 
     CommonResult getSupplierPriceChange(Product product);
+
+    CommonResult getExpenditure();
+
+    CommonResult getMemberRegister();
+
+    CommonResult getOrders();
+
+    CommonResult getIncome();
+
+    CommonResult getExpendse();
+
+    CommonResult getIncomeAndExpendse();
+
+    CommonResult getDailySales();
+
 }

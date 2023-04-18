@@ -33,6 +33,7 @@ public class Instock implements Serializable {
      *
      */
     private Integer instockCount;
+    private Integer type;
 
     /**
      *

@@ -3,16 +3,17 @@ package com.cqupt.th.supermarket.entity;
 import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
-
 import lombok.Data;
 
 /**
- * @TableName outstock
+ *
+ * @TableName income_expense
  */
-@TableName(value = "outstock")
+@TableName(value ="income_expense")
 @Data
-public class Outstock implements Serializable {
+public class IncomeExpense implements Serializable {
     /**
      *
      */
@@ -22,20 +23,16 @@ public class Outstock implements Serializable {
     /**
      *
      */
-    private Integer warehouseId;
+    private BigDecimal amount;
 
     /**
      *
      */
-    private Integer productId;
-
-    /**
-     *
-     */
-    private Integer outstockCount;
     private Integer type;
 
-
+    /**
+     *
+     */
     @TableField(fill = FieldFill.INSERT)
     private Date gmtCreate;
 

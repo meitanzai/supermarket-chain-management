@@ -2,14 +2,10 @@ package com.cqupt.th.supermarket.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cqupt.th.supermarket.constants.IncomeExpenseConstant;
 import com.cqupt.th.supermarket.constants.PurchaseOrderConstant;
-import com.cqupt.th.supermarket.entity.Product;
-import com.cqupt.th.supermarket.entity.Purchase;
-import com.cqupt.th.supermarket.entity.PurchaseOrder;
-import com.cqupt.th.supermarket.mapper.ProductMapper;
-import com.cqupt.th.supermarket.mapper.PurchaseMapper;
-import com.cqupt.th.supermarket.mapper.PurchaseOrderMapper;
-import com.cqupt.th.supermarket.mapper.SupplierMapper;
+import com.cqupt.th.supermarket.entity.*;
+import com.cqupt.th.supermarket.mapper.*;
 import com.cqupt.th.supermarket.service.StatisticsService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.stereotype.Service;
@@ -25,6 +21,7 @@ import java.util.stream.Collectors;
  * @date 2023/4/16 16:57
  */
 @Service("statisticsService")
+
 public class StatisticsServiceImpl implements StatisticsService {
     @Resource
     private PurchaseMapper purchaseMapper;
@@ -34,6 +31,16 @@ public class StatisticsServiceImpl implements StatisticsService {
     private ProductMapper productMapper;
     @Resource
     private SupplierMapper supplierMapper;
+    @Resource
+    private StoreMapper storeMapper;
+    @Resource
+    private WarehouseMapper warehouseMapper;
+    @Resource
+    private MemberMapper memberMapper;
+    @Resource
+    private IncomeExpenseMapper incomeExpenseMapper;
+    @Resource
+    private OutstockMapper outstockMapper;
 
     @Override
     public CommonResult getPriceComparison(Product product) {
@@ -101,5 +108,62 @@ public class StatisticsServiceImpl implements StatisticsService {
         jsonObject.put("list", list);
 
         return CommonResult.ok().data("items", jsonObject);
+    }
+
+    @Override
+    public CommonResult getExpenditure() {
+
+        return null;
+    }
+
+    @Override
+    public CommonResult getMemberRegister() {
+        //统计当月会员注册数量
+        Long aLong = memberMapper.selectCount(new QueryWrapper<Member>().last("where DATE_FORMAT(gmt_create,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')"));
+        return CommonResult.ok().data("items", aLong);
+    }
+
+    @Override
+    public CommonResult getOrders() {
+        //统计当月订单数量,排除未支付订单is_pay=3
+        Long aLong = purchaseOrderMapper.selectCount(new QueryWrapper<PurchaseOrder>().last("where is_pay <> 3 and DATE_FORMAT(gmt_create,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')"));
+        return CommonResult.ok().data("items", aLong);
+    }
+
+    @Override
+    public CommonResult getIncome() {
+        //查找当月的
+        IncomeExpense incomeExpense = incomeExpenseMapper.selectOne(new QueryWrapper<IncomeExpense>().last("where type = 1 and DATE_FORMAT(gmt_create,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')"));
+        return CommonResult.ok().data("items", incomeExpense.getAmount());
+    }
+
+    @Override
+    public CommonResult getExpendse() {
+        //查找当月的
+        IncomeExpense incomeExpense = incomeExpenseMapper.selectOne(new QueryWrapper<IncomeExpense>().last("where type = 0 and DATE_FORMAT(gmt_create,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')"));
+        return CommonResult.ok().data("items", incomeExpense.getAmount());
+    }
+
+    @Override
+    public CommonResult getIncomeAndExpendse() {
+        //查找每个月的收入和支出
+        List<IncomeExpense> incomeExpenses = incomeExpenseMapper.selectList(new QueryWrapper<IncomeExpense>().orderByAsc("gmt_create"));
+        ArrayList<BigDecimal> inCome = new ArrayList<>();
+        ArrayList<BigDecimal> expendse = new ArrayList<>();
+        incomeExpenses.stream().forEach(incomeExpense -> {
+            if (incomeExpense.getType().equals(IncomeExpenseConstant.INCOME.getCode())) {
+                inCome.add(incomeExpense.getAmount());
+            } else {
+                expendse.add(incomeExpense.getAmount());
+            }
+        });
+        return CommonResult.ok().data("income", inCome).data("expendse", expendse);
+    }
+
+    @Override
+    public CommonResult getDailySales() {
+        //查找当天的出库
+        List<Outstock> outstocks = outstockMapper.selectList(new QueryWrapper<Outstock>().last("where DATE_FORMAT(gmt_create,'%Y%m%d') = DATE_FORMAT(CURDATE(),'%Y%m%d')"));
+        return CommonResult.ok();
     }
 }

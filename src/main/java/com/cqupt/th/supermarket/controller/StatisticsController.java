@@ -22,8 +22,41 @@ public class StatisticsController {
     public CommonResult getPriceComparison(@RequestBody(required = false) Product product) {
         return statisticsService.getPriceComparison(product);
     }
+
     @PostMapping("supplierPriceChange")
-    public CommonResult getSupplierPriceChange(@RequestBody(required = false) Product product){
+    public CommonResult getSupplierPriceChange(@RequestBody(required = false) Product product) {
         return statisticsService.getSupplierPriceChange(product);
+    }
+
+    @GetMapping("memberRegister")
+    public CommonResult getMemberRegister() {
+        return statisticsService.getMemberRegister();
+    }
+
+    @GetMapping("expenditure")
+    public CommonResult getExpenditure() {
+        return statisticsService.getExpenditure();
+    }
+
+    @GetMapping("orders")
+    public CommonResult getOrders() {
+        return statisticsService.getOrders();
+    }
+
+    @GetMapping("income")
+    public CommonResult getIncome() {
+        return statisticsService.getIncome();
+    }
+    @GetMapping("expendse")
+    public CommonResult getExpendse() {
+        return statisticsService.getExpendse();
+    }
+    @GetMapping("incomeAndExpendse")
+    public CommonResult getIncomeAndExpendse() {
+        return statisticsService.getIncomeAndExpendse();
+    }
+    @GetMapping("dailySales")
+    public CommonResult getDailySales() {
+        return statisticsService.getDailySales();
     }
 }

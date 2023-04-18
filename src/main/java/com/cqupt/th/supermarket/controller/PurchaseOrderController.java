@@ -38,4 +38,8 @@ public class PurchaseOrderController {
     public CommonResult getPurchaseOrder(@PathVariable("purchaseId") Integer purchaseId) {
         return purchaseOrderService.getPurchaseOrder(purchaseId);
     }
+    @GetMapping
+    public CommonResult getPurchaseOrderList() {
+        return purchaseOrderService.getPurchaseOrderList();
+    }
 }

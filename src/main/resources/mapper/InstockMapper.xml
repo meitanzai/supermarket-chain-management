@@ -5,17 +5,19 @@
 <mapper namespace="com.cqupt.th.supermarket.mapper.InstockMapper">
 
     <resultMap id="BaseResultMap" type="com.cqupt.th.supermarket.entity.Instock">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="warehouseId" column="warehouse_id" jdbcType="INTEGER"/>
-            <result property="productId" column="product_id" jdbcType="INTEGER"/>
-            <result property="instockCount" column="instock_count" jdbcType="INTEGER"/>
-            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
-            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="warehouseId" column="warehouse_id" jdbcType="INTEGER"/>
+        <result property="productId" column="product_id" jdbcType="INTEGER"/>
+        <result property="instockCount" column="instock_count" jdbcType="INTEGER"/>
+        <result property="type" column="type" jdbcType="TINYINT"/>
+        <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,warehouse_id,product_id,
-        instock_count,
+        id
+        ,warehouse_id,product_id,
+        instock_count,type,
         gmt_create,gmt_modified
     </sql>
 </mapper>
