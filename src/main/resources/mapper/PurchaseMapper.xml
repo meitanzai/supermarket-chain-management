@@ -42,4 +42,9 @@
         set type = 1
         where id = #{purchaseId}
     </update>
+    <update id="updateTypeTo0ByPurchaseOrderId">
+        update purchase
+        set type = 0
+        where id = #{purchaseId}
+    </update>
 </mapper>

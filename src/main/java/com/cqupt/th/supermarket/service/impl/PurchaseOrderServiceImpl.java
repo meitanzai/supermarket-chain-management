@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cqupt.th.supermarket.constants.PurchaseOrderConstant;
+import com.cqupt.th.supermarket.entity.Purchase;
 import com.cqupt.th.supermarket.entity.PurchaseOrder;
 import com.cqupt.th.supermarket.mapper.PurchaseMapper;
 import com.cqupt.th.supermarket.mapper.SupplierMapper;
@@ -82,8 +83,14 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
             return CommonResult.error().message("参数错误");
         }
         purchaseOrder.setId(id);
+
         if (PurchaseOrderConstant.IS_CANCEL.getCode().equals(purchaseOrder.getIsPay())) {
             purchaseMapper.updateTypeByPurchaseOrderId(purchaseOrder.getPurchaseId());
+        } else {
+            PurchaseOrder purchaseOrder1 = baseMapper.selectById(id);
+            if (PurchaseOrderConstant.IS_CANCEL.getCode().equals(purchaseOrder1.getIsPay())) {
+                purchaseMapper.updateTypeTo0ByPurchaseOrderId(purchaseOrder.getPurchaseId());
+            }
         }
         int result = baseMapper.updateById(purchaseOrder);
         if (result > 0) {
