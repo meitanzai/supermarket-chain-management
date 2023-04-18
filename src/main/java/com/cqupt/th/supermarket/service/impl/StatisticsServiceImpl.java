@@ -129,15 +129,15 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public CommonResult getIncome() {
-        //查找当月的
-        IncomeExpense incomeExpense = incomeExpenseMapper.selectOne(new QueryWrapper<IncomeExpense>().last("where type = 1 and DATE_FORMAT(gmt_create,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')"));
+        //查找上月的收入
+        IncomeExpense incomeExpense = incomeExpenseMapper.selectOne(new QueryWrapper<IncomeExpense>().last("where type = 1 and DATE_FORMAT(gmt_create,'%Y%m') = DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH),'%Y%m')"));
         return CommonResult.ok().data("items", incomeExpense.getAmount());
     }
 
     @Override
     public CommonResult getExpendse() {
-        //查找当月的
-        IncomeExpense incomeExpense = incomeExpenseMapper.selectOne(new QueryWrapper<IncomeExpense>().last("where type = 0 and DATE_FORMAT(gmt_create,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')"));
+        //查找上月的支出
+        IncomeExpense incomeExpense = incomeExpenseMapper.selectOne(new QueryWrapper<IncomeExpense>().last("where type = 0 and DATE_FORMAT(gmt_create,'%Y%m') = DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH),'%Y%m')"));
         return CommonResult.ok().data("items", incomeExpense.getAmount());
     }
 
