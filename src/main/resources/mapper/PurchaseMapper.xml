@@ -13,6 +13,7 @@
         <result property="purchasePrice" column="purchase_price" jdbcType="DECIMAL"/>
         <result property="totalPrice" column="total_price" jdbcType="DECIMAL"/>
         <result property="shelfLife" column="shelf_life" jdbcType="TIMESTAMP"/>
+        <result property="type" column="type" jdbcType="TINYINT"/>
         <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
         <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
     </resultMap>
@@ -35,5 +36,10 @@
         <foreach collection="productIds" item="productId" open="(" separator="," close=")">
             #{productId}
         </foreach>
+    </update>
+    <update id="updateTypeByPurchaseOrderId">
+        update purchase
+        set type = 1
+        where id = #{purchaseId}
     </update>
 </mapper>

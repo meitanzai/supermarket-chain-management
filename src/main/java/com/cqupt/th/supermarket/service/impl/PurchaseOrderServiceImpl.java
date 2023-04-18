@@ -3,7 +3,9 @@ package com.cqupt.th.supermarket.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cqupt.th.supermarket.constants.PurchaseOrderConstant;
 import com.cqupt.th.supermarket.entity.PurchaseOrder;
+import com.cqupt.th.supermarket.mapper.PurchaseMapper;
 import com.cqupt.th.supermarket.mapper.SupplierMapper;
 import com.cqupt.th.supermarket.query.PurchaseOrderQuery;
 import com.cqupt.th.supermarket.service.PurchaseOrderService;
@@ -28,6 +30,8 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
         implements PurchaseOrderService {
     @Resource
     private SupplierMapper supplierMapper;
+    @Resource
+    private PurchaseMapper purchaseMapper;
 
     @Override
     public CommonResult getPurchaseOrderListPage(int currentPage, int pageSize, PurchaseOrderQuery purchaseOrderQuery) {
@@ -78,7 +82,9 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
             return CommonResult.error().message("参数错误");
         }
         purchaseOrder.setId(id);
-
+        if (PurchaseOrderConstant.IS_CANCEL.getCode().equals(purchaseOrder.getIsPay())) {
+            purchaseMapper.updateTypeByPurchaseOrderId(purchaseOrder.getPurchaseId());
+        }
         int result = baseMapper.updateById(purchaseOrder);
         if (result > 0) {
             return CommonResult.ok().message("修改成功");

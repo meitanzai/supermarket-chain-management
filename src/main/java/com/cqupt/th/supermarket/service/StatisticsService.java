@@ -27,4 +27,5 @@ public interface StatisticsService {
 
     CommonResult getProportionOfExpenditure();
 
+    CommonResult getShelflife(int day);
 }

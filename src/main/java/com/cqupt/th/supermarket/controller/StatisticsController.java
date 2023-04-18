@@ -58,4 +58,8 @@ public class StatisticsController {
     public CommonResult getProportionOfExpenditure() {
         return statisticsService.getProportionOfExpenditure();
     }
+    @GetMapping("shelflife")
+    public CommonResult getShelflife(@RequestParam("day") int day) {
+        return statisticsService.getShelflife(day);
+    }
 }

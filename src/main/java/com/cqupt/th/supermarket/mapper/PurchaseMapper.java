@@ -15,6 +15,8 @@ public interface PurchaseMapper extends BaseMapper<Purchase> {
     void updatePurchaseByProductId(@Param("productId") Integer productId);
 
     void updatePurchaseByProductIds(@Param("productIds") Integer[] productIds);
+
+    void updateTypeByPurchaseOrderId(@Param("purchaseId") Integer purchaseId);
 }
 
 

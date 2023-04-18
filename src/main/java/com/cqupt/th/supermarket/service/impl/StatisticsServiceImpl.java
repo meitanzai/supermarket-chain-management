@@ -219,4 +219,24 @@ public class StatisticsServiceImpl implements StatisticsService {
         return CommonResult.ok().data("items", jsonObjects).data("total", sum4);
 
     }
+
+    @Override
+    public CommonResult getShelflife(int day) {
+    //获取进货purchase的shelf_life-now <= day的进货
+        //获取未取消的订单
+        List<Purchase> purchases = purchaseMapper.selectList(new QueryWrapper<Purchase>().last("where shelf_life - now() <= " + day));
+        //获取进货的商品id
+        ArrayList<Integer> list = new ArrayList<>();
+        purchases.stream().forEach(purchase -> {
+            list.add(purchase.getProductId());
+        });
+        //获取商品的名字
+        ArrayList<String> list1 = new ArrayList<>();
+        list.stream().forEach(integer -> {
+            list1.add(productMapper.selectById(integer).getName());
+        });
+        return CommonResult.ok().data("items", list1);
+
+
+    }
 }
