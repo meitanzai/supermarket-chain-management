@@ -2,6 +2,7 @@ package com.cqupt.th.supermarket.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cqupt.th.supermarket.constants.EmployeeConstant;
 import com.cqupt.th.supermarket.constants.IncomeExpenseConstant;
 import com.cqupt.th.supermarket.constants.PurchaseOrderConstant;
 import com.cqupt.th.supermarket.entity.*;
@@ -40,6 +41,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     private IncomeExpenseMapper incomeExpenseMapper;
     @Resource
     private OutstockMapper outstockMapper;
+    @Resource
+    private EmployeeMapper employeeMapper;
 
     @Override
     public CommonResult getPriceComparison(Product product) {
@@ -110,12 +113,6 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public CommonResult getExpenditure() {
-
-        return null;
-    }
-
-    @Override
     public CommonResult getMemberRegister() {
         //统计当月会员注册数量
         Long aLong = memberMapper.selectCount(new QueryWrapper<Member>().last("where DATE_FORMAT(gmt_create,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')"));
@@ -178,6 +175,48 @@ public class StatisticsServiceImpl implements StatisticsService {
         ArrayList<Integer> list1 = new ArrayList<>();
         collect2.values().stream().forEach(list1::add);
         return CommonResult.ok().data("name", list).data("data", list1);
+
+    }
+
+    @Override
+    public CommonResult getProportionOfExpenditure() {
+        //计算在职员工的薪资总额
+        List<Employee> employees = employeeMapper.selectList(new QueryWrapper<Employee>().eq("status", EmployeeConstant.ON_JOB.getCode()));
+        BigDecimal sum = employees.stream().map(Employee::getSalary).reduce(BigDecimal.ZERO, BigDecimal::add);
+        //计算门店的租金总和
+        List<Store> stores = storeMapper.selectList(null);
+        BigDecimal sum1 = stores.stream().map(Store::getRent).reduce(BigDecimal.ZERO, BigDecimal::add);
+        //计算仓库的租金总和
+        List<Warehouse> warehouses = warehouseMapper.selectList(null);
+        BigDecimal sum2 = warehouses.stream().map(Warehouse::getRent).reduce(BigDecimal.ZERO, BigDecimal::add);
+        //计算上个月除了取消的订单的总金额
+        List<PurchaseOrder> purchaseOrders = purchaseOrderMapper.selectList(new QueryWrapper<PurchaseOrder>().last("where is_pay = 1 AND DATE_FORMAT(gmt_create,'%Y%m') = DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH),'%Y%m')"));
+        BigDecimal sum3 = purchaseOrders.stream().map(PurchaseOrder::getTotalPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+        //其他
+        ArrayList<JSONObject> jsonObjects = new ArrayList<>();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", "员工薪资");
+        jsonObject.put("value", sum);
+        jsonObjects.add(jsonObject);
+        JSONObject jsonObject1 = new JSONObject();
+        jsonObject1.put("name", "门店租金");
+        jsonObject1.put("value", sum1);
+        jsonObjects.add(jsonObject1);
+        JSONObject jsonObject2 = new JSONObject();
+        jsonObject2.put("name", "仓库租金");
+        jsonObject2.put("value", sum2);
+        jsonObjects.add(jsonObject2);
+        JSONObject jsonObject3 = new JSONObject();
+        jsonObject3.put("name", "采购支出");
+        jsonObject3.put("value", sum3);
+        jsonObjects.add(jsonObject3);
+        JSONObject jsonObject4 = new JSONObject();
+        jsonObject4.put("name", "其他");
+        jsonObject4.put("value", new BigDecimal(15000));
+        jsonObjects.add(jsonObject4);
+        //总支出
+        BigDecimal sum4 = sum.add(sum1).add(sum2).add(sum3).add(new BigDecimal(15000));
+        return CommonResult.ok().data("items", jsonObjects).data("total", sum4);
 
     }
 }

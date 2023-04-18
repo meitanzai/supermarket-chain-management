@@ -112,7 +112,7 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
 
     @Override
     public CommonResult getPurchaseOrderList() {
-        List<PurchaseOrder> purchaseOrders = baseMapper.selectList(new QueryWrapper<PurchaseOrder>().orderByDesc("gmt_modified").eq("is_pay", 2).last("limit 10"));
+        List<PurchaseOrder> purchaseOrders = baseMapper.selectList(new QueryWrapper<PurchaseOrder>().orderByDesc("gmt_modified").eq("is_pay", 2));
         List<Object> collect = purchaseOrders.stream().map(p -> {
             PurchaseOrderVo purchaseOrderVo = new PurchaseOrderVo();
             BeanUtils.copyProperties(p, purchaseOrderVo);

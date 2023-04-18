@@ -33,11 +33,6 @@ public class StatisticsController {
         return statisticsService.getMemberRegister();
     }
 
-    @GetMapping("expenditure")
-    public CommonResult getExpenditure() {
-        return statisticsService.getExpenditure();
-    }
-
     @GetMapping("orders")
     public CommonResult getOrders() {
         return statisticsService.getOrders();
@@ -58,5 +53,9 @@ public class StatisticsController {
     @GetMapping("dailySales")
     public CommonResult getDailySales() {
         return statisticsService.getDailySales();
+    }
+    @GetMapping("proportionOfExpenditure")
+    public CommonResult getProportionOfExpenditure() {
+        return statisticsService.getProportionOfExpenditure();
     }
 }

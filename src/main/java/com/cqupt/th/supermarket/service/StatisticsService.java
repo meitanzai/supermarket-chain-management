@@ -13,8 +13,6 @@ public interface StatisticsService {
 
     CommonResult getSupplierPriceChange(Product product);
 
-    CommonResult getExpenditure();
-
     CommonResult getMemberRegister();
 
     CommonResult getOrders();
@@ -26,5 +24,7 @@ public interface StatisticsService {
     CommonResult getIncomeAndExpendse();
 
     CommonResult getDailySales();
+
+    CommonResult getProportionOfExpenditure();
 
 }
