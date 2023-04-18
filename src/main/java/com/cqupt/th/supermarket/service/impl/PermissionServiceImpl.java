@@ -48,24 +48,19 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     }
 
     @Override
-    public CommonResult getPermissionListPage(Integer currentPage, Integer pageSize, Permission permission) {
-        if (currentPage == null || pageSize == null) {
-            return CommonResult.error().message("参数错误");
-        }
+    public CommonResult getPermissionListPage(Permission permission) {
+
         QueryWrapper<Permission> permissionQueryWrapper = new QueryWrapper<>();
         if (permission != null) {
             if (StringUtils.hasText(permission.getName())) {
                 permissionQueryWrapper.like("name", permission.getName());
             }
         }
-        Page<Permission> permissionPage = new Page<>(currentPage, pageSize);
-        baseMapper.selectPage(permissionPage, permissionQueryWrapper);
-        long total = permissionPage.getTotal();
-        List<Permission> records = permissionPage.getRecords();
-        List<PermissionVo> rows = records.stream().filter(e -> e.getPid() == 0).map(e -> {
+        List<Permission> permissions = baseMapper.selectList(permissionQueryWrapper);
+        List<PermissionVo> rows = permissions.stream().filter(e -> e.getPid() == 0).map(e -> {
             PermissionVo permissionVo = new PermissionVo();
             BeanUtils.copyProperties(e, permissionVo);
-            List<PermissionVo> children = getChildren(e.getId(), records);
+            List<PermissionVo> children = getChildren(e.getId(), permissions);
             if (children != null && children.size() > 0) {
                 permissionVo.setChildren(children);
             } else {
@@ -73,7 +68,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             }
             return permissionVo;
         }).collect(Collectors.toList());
-        return CommonResult.ok().data("total", total).data("rows", rows);
+        return CommonResult.ok().data("rows", rows);
     }
 
     @Override

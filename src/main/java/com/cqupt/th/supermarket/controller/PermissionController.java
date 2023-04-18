@@ -20,9 +20,9 @@ public class PermissionController {
     @Qualifier("permissionService")
     private PermissionService permissionService;
 
-    @PostMapping("{currentPage}/{pageSize}")
-    public CommonResult getPermissionListPage(@PathVariable("currentPage") Integer currentPage, @PathVariable("pageSize") Integer pageSize, @RequestBody(required = false) Permission permission) {
-        return permissionService.getPermissionListPage(currentPage, pageSize, permission);
+    @PostMapping()
+    public CommonResult getPermissionListPage( @RequestBody(required = false) Permission permission) {
+        return permissionService.getPermissionListPage( permission);
     }
     @GetMapping("all")
     public CommonResult getAllPermission() {

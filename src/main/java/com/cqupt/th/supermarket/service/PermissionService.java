@@ -18,7 +18,7 @@ public interface PermissionService extends IService<Permission> {
 
     List<PermissionVo> selectPermissionVosByRoles(List<Role> roles);
 
-    CommonResult getPermissionListPage(Integer currentPage, Integer pageSize, Permission permission);
+    CommonResult getPermissionListPage( Permission permission);
 
     CommonResult getAllPermission();
 
