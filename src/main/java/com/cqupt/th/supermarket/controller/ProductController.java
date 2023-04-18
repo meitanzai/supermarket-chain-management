@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 /**
  * @author th
  * @date 2023/3/26 19:57
@@ -80,6 +82,10 @@ public class ProductController {
     @GetMapping("/all")
     public CommonResult getProductList() {
         return productService.getProductList();
+    }
+    @PutMapping("promotionalPrice/{id}/{promotionalPrice}")
+    public CommonResult updatePromotionPriceById(@PathVariable("id") Integer id, @PathVariable("promotionalPrice") BigDecimal promotionalPrice) {
+        return productService.updatePromotionPriceById(id, promotionalPrice);
     }
 }
 

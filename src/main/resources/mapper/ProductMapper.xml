@@ -10,6 +10,8 @@
         <result property="categoryId" column="category_id" jdbcType="INTEGER"/>
         <result property="brandId" column="brand_id" jdbcType="INTEGER"/>
         <result property="sellPrice" column="sell_price" jdbcType="DECIMAL"/>
+        <result property="promotionalPrice" column="promotional_price" jdbcType="DECIMAL"/>
+
         <result property="unit" column="unit" jdbcType="VARCHAR"/>
         <result property="isShow" column="is_show" jdbcType="TINYINT"/>
         <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
@@ -46,5 +48,10 @@
         UPDATE product
         SET purchase_price = #{purchasePrice}
         WHERE id = #{productId}
+    </update>
+    <update id="updatePromotionPriceById">
+        UPDATE product
+        SET promotional_price = #{promotionalPrice}
+        WHERE id = #{id}
     </update>
 </mapper>

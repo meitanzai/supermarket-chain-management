@@ -21,6 +21,7 @@ public class ProductVo implements Serializable {
     private Integer brandId;
     private String brandName;
     private BigDecimal sellPrice;
+    private BigDecimal promotionalPrice;
     private String unit;
     private Integer isShow;
     private Date gmtCreate;

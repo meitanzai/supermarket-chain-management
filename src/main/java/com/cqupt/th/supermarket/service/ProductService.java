@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cqupt.th.supermarket.query.ProductQuery;
 import com.cqupt.th.supermarket.utils.CommonResult;
 
+import java.math.BigDecimal;
+
 /**
 * @author 16075
 * @description 针对表【product】的数据库操作Service
@@ -37,5 +39,7 @@ public interface ProductService extends IService<Product> {
     CommonResult getCategoryIdById(Integer id);
 
     CommonResult getProductList();
+
+    CommonResult updatePromotionPriceById(Integer id, BigDecimal promotionalPrice);
 
 }

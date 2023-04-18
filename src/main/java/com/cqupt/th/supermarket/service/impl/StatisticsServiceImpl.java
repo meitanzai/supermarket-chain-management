@@ -10,6 +10,7 @@ import com.cqupt.th.supermarket.mapper.*;
 import com.cqupt.th.supermarket.service.StatisticsService;
 import com.cqupt.th.supermarket.utils.CommonResult;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -221,14 +222,26 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public CommonResult getShelflife(int day) {
+    public CommonResult getShelflife(JSONObject query) {
         //获取进货purchase的shelf_life-now <= day的进货
+        QueryWrapper<Purchase> purchaseQueryWrapper = new QueryWrapper<>();
+        if (query != null) {
+            if (query.get("startTime") != null && StringUtils.hasText(query.get("startTime").toString())) {
+                purchaseQueryWrapper.ge("shelf_life", query.get("startTime"));
+            }
+            if (query.get("endTime") != null && StringUtils.hasText(query.get("endTime").toString())) {
+                purchaseQueryWrapper.le("shelf_life", query.get("endTime"));
+            }
+        }
+        purchaseQueryWrapper.eq("type", 0).orderByAsc("shelf_life");
         //获取未取消的订单
-        List<Purchase> purchases = purchaseMapper.selectList(new QueryWrapper<Purchase>().last("where shelf_life - now() <= " + day));
+        List<Purchase> purchases = purchaseMapper.selectList(purchaseQueryWrapper);
         //获取进货的商品id
         ArrayList<JSONObject> jsonObjects = new ArrayList<>();
         purchases.stream().forEach(purchase -> {
             JSONObject jsonObject = new JSONObject();
+            jsonObject.put("productId", purchase.getProductId());
+            jsonObject.put("promotionalPrice", productMapper.selectById(purchase.getProductId()).getPromotionalPrice());
             jsonObject.put("name", productMapper.selectById(purchase.getProductId()).getName());
             jsonObject.put("sellPrice", productMapper.selectById(purchase.getProductId()).getSellPrice());
             jsonObject.put("shelfLife", purchase.getShelfLife());

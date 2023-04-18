@@ -1,5 +1,6 @@
 package com.cqupt.th.supermarket.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cqupt.th.supermarket.entity.Product;
 import com.cqupt.th.supermarket.service.StatisticsService;
 import com.cqupt.th.supermarket.utils.CommonResult;
@@ -42,24 +43,29 @@ public class StatisticsController {
     public CommonResult getIncome() {
         return statisticsService.getIncome();
     }
+
     @GetMapping("expendse")
     public CommonResult getExpendse() {
         return statisticsService.getExpendse();
     }
+
     @GetMapping("incomeAndExpendse")
     public CommonResult getIncomeAndExpendse() {
         return statisticsService.getIncomeAndExpendse();
     }
+
     @GetMapping("dailySales")
     public CommonResult getDailySales() {
         return statisticsService.getDailySales();
     }
+
     @GetMapping("proportionOfExpenditure")
     public CommonResult getProportionOfExpenditure() {
         return statisticsService.getProportionOfExpenditure();
     }
-    @GetMapping("shelflife")
-    public CommonResult getShelflife(@RequestParam("day") int day) {
-        return statisticsService.getShelflife(day);
+
+    @PostMapping("shelflife")
+    public CommonResult getShelflife(@RequestBody(required = false) JSONObject query) {
+        return statisticsService.getShelflife(query);
     }
 }

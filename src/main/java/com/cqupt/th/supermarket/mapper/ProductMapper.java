@@ -23,6 +23,8 @@ public interface ProductMapper extends BaseMapper<Product> {
 
     void updatePurchasePrice(@Param("productId") Integer productId, @Param("purchasePrice") BigDecimal purchasePrice);
 
+    void updatePromotionPriceById(@Param("id") Integer id,@Param("promotionalPrice") BigDecimal promotionalPrice);
+
 }
 
 

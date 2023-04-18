@@ -43,6 +43,7 @@ public class Product implements Serializable {
      * 售价
      */
     private BigDecimal sellPrice;
+    private BigDecimal promotionalPrice;
 
     /**
      *

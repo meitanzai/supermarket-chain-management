@@ -1,5 +1,6 @@
 package com.cqupt.th.supermarket.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cqupt.th.supermarket.entity.Product;
 import com.cqupt.th.supermarket.utils.CommonResult;
 
@@ -27,5 +28,5 @@ public interface StatisticsService {
 
     CommonResult getProportionOfExpenditure();
 
-    CommonResult getShelflife(int day);
+    CommonResult getShelflife(JSONObject query);
 }

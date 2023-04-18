@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -263,6 +264,12 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
     public CommonResult getProductList() {
         List<Product> products = baseMapper.selectList(null);
         return CommonResult.ok().data("items", products);
+    }
+
+    @Override
+    public CommonResult updatePromotionPriceById(Integer id, BigDecimal promotionalPrice) {
+        baseMapper.updatePromotionPriceById(id, promotionalPrice);
+        return CommonResult.ok().message("修改成功");
     }
 
 
