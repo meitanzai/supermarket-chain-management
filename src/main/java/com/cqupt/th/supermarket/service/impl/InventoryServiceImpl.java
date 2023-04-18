@@ -82,6 +82,9 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
         });
         List<Warehouse> warehouses = warehouseMapper.selectList(null);
         HashMap<Integer, Integer> regionIdHashMap = new HashMap<>(warehouses.size());
+        warehouses.stream().forEach(w -> {
+            regionIdHashMap.put(w.getId(), w.getRegionId());
+        });
         List<InventoryVo> rows = records.stream().map(r -> {
             InventoryVo inventoryVo = new InventoryVo();
             BeanUtils.copyProperties(r, inventoryVo);

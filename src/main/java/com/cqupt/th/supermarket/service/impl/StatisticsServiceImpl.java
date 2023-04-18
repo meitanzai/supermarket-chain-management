@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -163,7 +162,22 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public CommonResult getDailySales() {
         //查找当天的出库
-        List<Outstock> outstocks = outstockMapper.selectList(new QueryWrapper<Outstock>().last("where DATE_FORMAT(gmt_create,'%Y%m%d') = DATE_FORMAT(CURDATE(),'%Y%m%d')"));
-        return CommonResult.ok();
+        List<Outstock> outstocks = outstockMapper.selectList(new QueryWrapper<Outstock>().last("where type = 1 AND DATE_FORMAT(gmt_create,'%Y%m%d') = DATE_FORMAT(CURDATE(),'%Y%m%d')"));
+        //把商品id相同的数量相加
+        Map<Integer, Integer> collect = outstocks.stream().collect(Collectors.groupingBy(Outstock::getProductId, Collectors.summingInt(Outstock::getOutstockCount)));
+        //数量从大到小排序
+        Map<Integer, Integer> collect1 = collect.entrySet().stream().sorted(Map.Entry.<Integer, Integer>comparingByValue()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        //取前十
+        Map<Integer, Integer> collect2 = collect1.entrySet().stream().limit(10).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        //取商品名
+        ArrayList<String> list = new ArrayList<>();
+        collect2.keySet().stream().forEach(integer -> {
+            list.add(productMapper.selectById(integer).getName());
+        });
+        //取数量
+        ArrayList<Integer> list1 = new ArrayList<>();
+        collect2.values().stream().forEach(list1::add);
+        return CommonResult.ok().data("name", list).data("data", list1);
+
     }
 }

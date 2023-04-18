@@ -74,6 +74,9 @@ public class OutstockServiceImpl extends ServiceImpl<OutstockMapper, Outstock>
         HashMap<Integer, String> productHashMap = new HashMap<>(products.size());
         List<Region> regionList = regionService.list(null);
         HashMap<Integer, Region> regionHashMap = new HashMap<>(regionList.size());
+        for (Region region : regionList) {
+            regionHashMap.put(region.getId(), region);
+        }
         for (Product product : products) {
             productHashMap.put(product.getId(), product.getName());
         }
