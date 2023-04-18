@@ -1,6 +1,5 @@
 package com.cqupt.th.supermarket.security;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.cqupt.th.supermarket.entity.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,6 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author th
@@ -34,8 +32,8 @@ public class SecurityUser implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        for(String permission : permissions) {
-            if(StringUtils.isEmpty(permission)){
+        for (String permission : permissions) {
+            if (StringUtils.isEmpty(permission)) {
                 continue;
             }
             SimpleGrantedAuthority authority = new SimpleGrantedAuthority(permission);

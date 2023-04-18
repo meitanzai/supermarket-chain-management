@@ -88,7 +88,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return CommonResult.error().message("未分配权限");
         }
         List<JSONObject> result = MemuHelper.bulid(permissionVoList);
-        return CommonResult.ok().data("name", user.getUsername()).data("roles", roles).data("menus", result);
+        return CommonResult.ok().data("name", user.getUsername()).data("roles", roles).data("menus", result).data("userId", user.getId());
     }
 
     @Override
