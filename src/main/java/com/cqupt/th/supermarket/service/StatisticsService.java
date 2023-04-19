@@ -33,4 +33,6 @@ public interface StatisticsService {
     CommonResult getUserBrowse(Integer userId,Integer type);
 
     CommonResult getNewOrderNoticeNum(Integer userId);
+
+    CommonResult getNewShelfLifeNoticeNum(Integer userId);
 }

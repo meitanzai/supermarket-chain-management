@@ -76,4 +76,8 @@ public class StatisticsController {
     public CommonResult getNewOrderNoticeNum(@PathVariable("userId") Integer userId) {
         return statisticsService.getNewOrderNoticeNum(userId);
     }
+    @GetMapping("newShelfLifeNoticeNum/{userId}")
+    public CommonResult getNewShelfLifeNoticeNum(@PathVariable("userId") Integer userId) {
+        return statisticsService.getNewShelfLifeNoticeNum(userId);
+    }
 }

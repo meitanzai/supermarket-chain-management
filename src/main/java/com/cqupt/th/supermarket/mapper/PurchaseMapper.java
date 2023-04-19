@@ -4,6 +4,9 @@ import com.cqupt.th.supermarket.entity.Purchase;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
+import java.util.List;
+
 /**
 * @author 16075
 * @description 针对表【purchase】的数据库操作Mapper
@@ -19,6 +22,9 @@ public interface PurchaseMapper extends BaseMapper<Purchase> {
     void updateTypeByPurchaseOrderId(@Param("purchaseId") Integer purchaseId);
 
     void updateTypeTo0ByPurchaseOrderId(@Param("purchaseId") Integer purchaseId);
+
+
+    List<Purchase> selectListShelfLifeFor30();
 }
 
 

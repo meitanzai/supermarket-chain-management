@@ -34,8 +34,7 @@ class SupermarketChainManagementApplicationTests {
 
     @Test
     void contextLoads() {
-        List<Outstock> outstockList = outstockService.selectSumRecent7Days();
-        outstockList.stream().forEach(System.out::println);
+
     }
 
 

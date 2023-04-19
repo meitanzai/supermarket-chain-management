@@ -290,4 +290,23 @@ public class StatisticsServiceImpl implements StatisticsService {
         }).collect(Collectors.toList());
         return CommonResult.ok().data("rows", rows).data("total", purchaseOrders.size());
     }
+
+    @Override
+    public CommonResult getNewShelfLifeNoticeNum(Integer userId) {
+            //shelf_life还剩一个月的商品
+        List<Purchase> purchases = purchaseMapper.selectListShelfLifeFor30();
+        if (purchases == null || purchases.size() == 0) {
+            return CommonResult.ok().data("rows", purchases).data("total", 0);
+        }
+        List<PurchaseVo> rows = purchases.stream().map(p -> {
+            PurchaseVo purchaseVo = new PurchaseVo();
+            BeanUtils.copyProperties(p, purchaseVo);
+            Product product = productMapper.selectById(p.getProductId());
+            if (product != null) {
+                purchaseVo.setProductName(product.getName());
+            }
+            return purchaseVo;
+        }).collect(Collectors.toList());
+        return CommonResult.ok().data("rows", rows).data("total", purchases.size());
+    }
 }

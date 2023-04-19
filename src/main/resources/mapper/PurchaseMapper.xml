@@ -20,8 +20,9 @@
 
     <sql id="Base_Column_List">
         id
+        ,purchase_number
         ,product_id,supplier_id,
-        quantity,purchase_price,total_price,shelfLife
+        quantity,purchase_price,total_price,shelf_life,type,
         gmt_create,gmt_modified
     </sql>
     <update id="updatePurchaseByProductId">
@@ -47,4 +48,11 @@
         set type = 0
         where id = #{purchaseId}
     </update>
+    <select id="selectListShelfLifeFor30" resultType="com.cqupt.th.supermarket.entity.Purchase">
+        select
+        <include refid="Base_Column_List"/>
+        from purchase
+        where shelf_life &lt;= DATE_ADD(NOW(), INTERVAL 7 DAY) and shelf_life > NOW() and type = 0
+        order by shelf_life
+    </select>
 </mapper>
