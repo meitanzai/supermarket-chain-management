@@ -7,11 +7,16 @@ import com.cqupt.th.supermarket.constants.IncomeExpenseConstant;
 import com.cqupt.th.supermarket.constants.PurchaseOrderConstant;
 import com.cqupt.th.supermarket.entity.*;
 import com.cqupt.th.supermarket.mapper.*;
+import com.cqupt.th.supermarket.service.RegionService;
 import com.cqupt.th.supermarket.service.StatisticsService;
+import com.cqupt.th.supermarket.service.WarehouseService;
 import com.cqupt.th.supermarket.utils.CommonResult;
+import com.cqupt.th.supermarket.vo.InventoryVo;
 import com.cqupt.th.supermarket.vo.PurchaseOrderVo;
 import com.cqupt.th.supermarket.vo.PurchaseVo;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -36,8 +41,12 @@ public class StatisticsServiceImpl implements StatisticsService {
     private SupplierMapper supplierMapper;
     @Resource
     private StoreMapper storeMapper;
-    @Resource
-    private WarehouseMapper warehouseMapper;
+    @Autowired
+    @Qualifier("warehouseService")
+    private WarehouseService warehouseService;
+    @Autowired
+    @Qualifier("regionService")
+    private RegionService regionService;
     @Resource
     private MemberMapper memberMapper;
     @Resource
@@ -48,6 +57,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     private EmployeeMapper employeeMapper;
     @Resource
     private UserBrowsingHistoryMapper userBrowsingHistoryMapper;
+    @Resource
+    private InventoryMapper inventoryMapper;
 
     @Override
     public CommonResult getPriceComparison(Product product) {
@@ -192,7 +203,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<Store> stores = storeMapper.selectList(null);
         BigDecimal sum1 = stores.stream().map(Store::getRent).reduce(BigDecimal.ZERO, BigDecimal::add);
         //计算仓库的租金总和
-        List<Warehouse> warehouses = warehouseMapper.selectList(null);
+        List<Warehouse> warehouses = warehouseService.list(null);
         BigDecimal sum2 = warehouses.stream().map(Warehouse::getRent).reduce(BigDecimal.ZERO, BigDecimal::add);
         //计算上个月除了取消的订单的总金额
         List<PurchaseOrder> purchaseOrders = purchaseOrderMapper.selectList(new QueryWrapper<PurchaseOrder>().last("where is_pay = 1 AND DATE_FORMAT(gmt_create,'%Y%m') = DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH),'%Y%m')"));
@@ -293,7 +304,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public CommonResult getNewShelfLifeNoticeNum(Integer userId) {
-            //shelf_life还剩一个月的商品
+        //shelf_life还剩一个月的商品
         List<Purchase> purchases = purchaseMapper.selectListShelfLifeFor30();
         if (purchases == null || purchases.size() == 0) {
             return CommonResult.ok().data("rows", purchases).data("total", 0);
@@ -308,5 +319,49 @@ public class StatisticsServiceImpl implements StatisticsService {
             return purchaseVo;
         }).collect(Collectors.toList());
         return CommonResult.ok().data("rows", rows).data("total", purchases.size());
+    }
+
+    @Override
+    public CommonResult getNewInventoryCountNoticeNum(Integer userId) {
+        List<Outstock> outstockList = outstockMapper.selectSumRecent7Days();
+        //查询warehouseId和productId相同的仓库的库存数小于outstockList的出库数的30%的库存
+        ArrayList<Inventory> inventories = new ArrayList<>();
+        for (Outstock outstock : outstockList) {
+            QueryWrapper<Inventory> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("warehouse_id", outstock.getWarehouseId());
+            queryWrapper.eq("product_id", outstock.getProductId());
+            queryWrapper.le("inventory_count", outstock.getOutstockCount() * 0.3);
+            Inventory one = inventoryMapper.selectOne(queryWrapper);
+            if (one != null) {
+                inventories.add(one);
+            }
+        }
+        List<InventoryVo> collect = null;
+        UserBrowsingHistory userBrowsingHistory = userBrowsingHistoryMapper.selectOne(new QueryWrapper<UserBrowsingHistory>().eq("user_id", userId).eq("type", 2).orderByDesc("gmt_create").last("limit 1"));
+
+        if (inventories != null && inventories.size() > 0) {
+            collect = inventories.stream().map(i -> {
+                InventoryVo inventoryVo = new InventoryVo();
+                BeanUtils.copyProperties(i, inventoryVo);
+                Product product = productMapper.selectOne(new QueryWrapper<Product>().eq("id", i.getProductId()));
+                if (product != null) {
+                    inventoryVo.setProductName(product.getName());
+                }
+                Warehouse warehouse = warehouseService.getOne(new QueryWrapper<Warehouse>().eq("id", i.getWarehouseId()));
+                if (warehouse != null) {
+                    CommonResult commonResult = warehouseService.warehouseRegionIdsByRegionId(warehouse.getRegionId());
+                    Integer[] items = (Integer[]) commonResult.getData().get("items");
+                    List<Region> regionList = regionService.listByIds(Arrays.asList(items));
+                    //组装名字
+                    String name = regionList.stream().map(Region::getName).collect(Collectors.joining("-"));
+                    inventoryVo.setWarehouseRegion(name);
+                }
+                return inventoryVo;
+            }).collect(Collectors.toList());
+            if (userBrowsingHistory != null) {
+                collect = collect.stream().filter(i -> i.getGmtModified().getTime() > userBrowsingHistory.getGmtCreate().getTime()).collect(Collectors.toList());
+            }
+        }
+        return CommonResult.ok().data("rows", collect).data("total", collect == null ? 0 : collect.size());
     }
 }

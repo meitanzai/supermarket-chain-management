@@ -67,7 +67,8 @@ public class SupermarketScheduleTask {
     }
 
 
-    @Scheduled(cron = "0 0/30 * * * ?")
+
+    @Scheduled(cron = "0 0 */2 * * ?")
     public void getInventoryCountNotice() {
         //查询7天内不同商品的出库数
         CopyOnWriteArraySet<WebSocketServer> webSocketSet = WebSocketServer.getWebSocketSet();

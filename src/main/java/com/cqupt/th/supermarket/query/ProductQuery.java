@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -17,6 +18,8 @@ public class ProductQuery implements Serializable {
     private Integer categoryId;
     private Integer brandId;
     private Integer isShow;
+    private BigDecimal sellPrice;
+    private BigDecimal promotionalPrice;
     private Date startTime;
     private Date endTime;
 

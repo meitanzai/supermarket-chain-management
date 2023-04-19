@@ -35,4 +35,6 @@ public interface StatisticsService {
     CommonResult getNewOrderNoticeNum(Integer userId);
 
     CommonResult getNewShelfLifeNoticeNum(Integer userId);
+
+    CommonResult getNewInventoryCountNoticeNum(Integer userId);
 }

@@ -64,6 +64,12 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
             if (productQuery.getEndTime() != null) {
                 productQueryWrapper.le("gmt_create", productQuery.getEndTime());
             }
+            if (productQuery.getSellPrice() != null) {
+                productQueryWrapper.ge("sell_price", productQuery.getSellPrice());
+            }
+            if (productQuery.getPromotionalPrice() != null) {
+                productQueryWrapper.ge("promotional_price", productQuery.getPromotionalPrice());
+            }
         }
         productQueryWrapper.orderByDesc("gmt_modified");
         Page<Product> productPage = new Page<>(currentPage, size);

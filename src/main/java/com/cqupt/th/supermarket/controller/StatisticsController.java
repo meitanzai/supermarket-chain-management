@@ -80,4 +80,8 @@ public class StatisticsController {
     public CommonResult getNewShelfLifeNoticeNum(@PathVariable("userId") Integer userId) {
         return statisticsService.getNewShelfLifeNoticeNum(userId);
     }
+    @GetMapping("newInventoryCountNoticeNum/{userId}")
+    public CommonResult getNewInventoryCountNoticeNum(@PathVariable("userId") Integer userId) {
+        return statisticsService.getNewInventoryCountNoticeNum(userId);
+    }
 }
