@@ -29,4 +29,8 @@ public interface StatisticsService {
     CommonResult getProportionOfExpenditure();
 
     CommonResult getShelflife(JSONObject query);
+
+    CommonResult getUserBrowse(Integer userId,Integer type);
+
+    CommonResult getNewOrderNoticeNum(Integer userId);
 }

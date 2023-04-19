@@ -20,4 +20,10 @@
         outstock_count,type ,gmt_create,
         gmt_modified
     </sql>
+    <select id="selectSumRecent7Days" resultType="com.cqupt.th.supermarket.entity.Outstock">
+        select id, warehouse_id, product_id, SUM(outstock_count) AS outstock_count, type, gmt_create, gmt_modified
+        from outstock
+        where gmt_create >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        group by product_id,warehouse_id
+    </select>
 </mapper>

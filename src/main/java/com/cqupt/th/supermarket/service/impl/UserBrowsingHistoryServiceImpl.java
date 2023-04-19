@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 * @description 针对表【user_browsing_history】的数据库操作Service实现
 * @createDate 2023-04-18 16:32:39
 */
-@Service
+@Service("userBrowsingHistoryService")
 public class UserBrowsingHistoryServiceImpl extends ServiceImpl<UserBrowsingHistoryMapper, UserBrowsingHistory>
     implements UserBrowsingHistoryService{
 

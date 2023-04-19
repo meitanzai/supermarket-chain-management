@@ -9,6 +9,9 @@ import com.cqupt.th.supermarket.entity.*;
 import com.cqupt.th.supermarket.mapper.*;
 import com.cqupt.th.supermarket.service.StatisticsService;
 import com.cqupt.th.supermarket.utils.CommonResult;
+import com.cqupt.th.supermarket.vo.PurchaseOrderVo;
+import com.cqupt.th.supermarket.vo.PurchaseVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -22,7 +25,6 @@ import java.util.stream.Collectors;
  * @date 2023/4/16 16:57
  */
 @Service("statisticsService")
-
 public class StatisticsServiceImpl implements StatisticsService {
     @Resource
     private PurchaseMapper purchaseMapper;
@@ -44,6 +46,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     private OutstockMapper outstockMapper;
     @Resource
     private EmployeeMapper employeeMapper;
+    @Resource
+    private UserBrowsingHistoryMapper userBrowsingHistoryMapper;
 
     @Override
     public CommonResult getPriceComparison(Product product) {
@@ -250,6 +254,40 @@ public class StatisticsServiceImpl implements StatisticsService {
         });
         return CommonResult.ok().data("items", jsonObjects);
 
+    }
 
+    @Override
+    public CommonResult getUserBrowse(Integer userId, Integer type) {
+        UserBrowsingHistory userBrowsingHistory = new UserBrowsingHistory();
+        userBrowsingHistory.setUserId(userId);
+        userBrowsingHistory.setType(type);
+        userBrowsingHistoryMapper.insert(userBrowsingHistory);
+        return CommonResult.ok();
+    }
+
+    @Override
+    public CommonResult getNewOrderNoticeNum(Integer userId) {
+        //查找最新的浏览记录
+        UserBrowsingHistory userBrowsingHistory = userBrowsingHistoryMapper.selectOne(new QueryWrapper<UserBrowsingHistory>().eq("user_id", userId).eq("type", 1).orderByDesc("gmt_create").last("limit 1"));
+        //查找最新的订单
+        List<PurchaseOrder> purchaseOrders = null;
+        if (userBrowsingHistory != null) {
+            purchaseOrders = purchaseOrderMapper.selectList(new QueryWrapper<PurchaseOrder>().gt("gmt_create", userBrowsingHistory.getGmtCreate()).orderByDesc("gmt_create"));
+        } else {
+            purchaseOrders = purchaseOrderMapper.selectList(new QueryWrapper<PurchaseOrder>().orderByDesc("gmt_create"));
+        }
+        if (purchaseOrders == null || purchaseOrders.size() == 0) {
+            return CommonResult.ok().data("rows", purchaseOrders).data("total", 0);
+        }
+        List<PurchaseOrderVo> rows = purchaseOrders.stream().map(p -> {
+            PurchaseOrderVo purchaseOrderVo = new PurchaseOrderVo();
+            BeanUtils.copyProperties(p, purchaseOrderVo);
+            Supplier supplier = supplierMapper.selectById(p.getSupplierId());
+            if (supplier != null) {
+                purchaseOrderVo.setSupplierName(supplier.getName());
+            }
+            return purchaseOrderVo;
+        }).collect(Collectors.toList());
+        return CommonResult.ok().data("rows", rows).data("total", purchaseOrders.size());
     }
 }

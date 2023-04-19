@@ -203,6 +203,11 @@ public class OutstockServiceImpl extends ServiceImpl<OutstockMapper, Outstock>
         return CommonResult.ok().data("items", regionIdsById);
     }
 
+    @Override
+    public List<Outstock> selectSumRecent7Days() {
+        return baseMapper.selectSumRecent7Days();
+    }
+
     private Integer getRegionIdByWarehouseId(Integer warehouseId) {
         if (warehouseId == 0) {
             return 0;

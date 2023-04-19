@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 * @description 针对表【income_expense】的数据库操作Service实现
 * @createDate 2023-04-17 09:29:06
 */
-@Service
+@Service("incomeExpenseService")
 public class IncomeExpenseServiceImpl extends ServiceImpl<IncomeExpenseMapper, IncomeExpense>
     implements IncomeExpenseService{
 

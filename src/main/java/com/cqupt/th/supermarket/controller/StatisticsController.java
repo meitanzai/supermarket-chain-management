@@ -68,4 +68,12 @@ public class StatisticsController {
     public CommonResult getShelflife(@RequestBody(required = false) JSONObject query) {
         return statisticsService.getShelflife(query);
     }
+    @GetMapping("userBrowse/{userId}/{type}")
+    public CommonResult getUserBrowse(@PathVariable("userId") Integer userId,@PathVariable("type") Integer type) {
+        return statisticsService.getUserBrowse(userId,type);
+    }
+    @GetMapping("newOrderNoticeNum/{userId}")
+    public CommonResult getNewOrderNoticeNum(@PathVariable("userId") Integer userId) {
+        return statisticsService.getNewOrderNoticeNum(userId);
+    }
 }
