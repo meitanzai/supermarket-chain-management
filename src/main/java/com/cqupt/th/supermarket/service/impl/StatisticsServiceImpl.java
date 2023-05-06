@@ -64,6 +64,9 @@ public class StatisticsServiceImpl implements StatisticsService {
     public CommonResult getPriceComparison(Product product) {
         List<PurchaseOrder> purchaseOrders = purchaseOrderMapper.selectList(new QueryWrapper<PurchaseOrder>().ne("is_pay", PurchaseOrderConstant.IS_CANCEL.getCode()));
         List<Integer> ids = purchaseOrders.stream().map(PurchaseOrder::getPurchaseId).collect(Collectors.toList());
+        if (ids == null || ids.size() == 0) {
+            return CommonResult.ok();
+        }
         QueryWrapper<Purchase> purchaseQueryWrapper = new QueryWrapper<Purchase>().in("id", ids).orderByDesc("gmt_modified");
         if (product != null) {
             if (product.getId() != null) {
@@ -96,6 +99,9 @@ public class StatisticsServiceImpl implements StatisticsService {
     public CommonResult getSupplierPriceChange(Product product) {
         List<PurchaseOrder> purchaseOrders = purchaseOrderMapper.selectList(new QueryWrapper<PurchaseOrder>().ne("is_pay", PurchaseOrderConstant.IS_CANCEL.getCode()));
         List<Integer> ids = purchaseOrders.stream().map(PurchaseOrder::getPurchaseId).collect(Collectors.toList());
+        if (ids == null || ids.size() == 0) {
+            return CommonResult.ok();
+        }
         QueryWrapper<Purchase> purchaseQueryWrapper = new QueryWrapper<Purchase>().in("id", ids).orderByDesc("gmt_modified");
         if (product != null) {
             if (product.getId() != null) {
@@ -146,14 +152,14 @@ public class StatisticsServiceImpl implements StatisticsService {
     public CommonResult getIncome() {
         //查找上月的收入
         IncomeExpense incomeExpense = incomeExpenseMapper.selectOne(new QueryWrapper<IncomeExpense>().last("where type = 1 and DATE_FORMAT(gmt_create,'%Y%m') = DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH),'%Y%m')"));
-        return CommonResult.ok().data("items", incomeExpense.getAmount());
+        return CommonResult.ok().data("items", incomeExpense == null ? null : incomeExpense.getAmount());
     }
 
     @Override
     public CommonResult getExpendse() {
         //查找上月的支出
         IncomeExpense incomeExpense = incomeExpenseMapper.selectOne(new QueryWrapper<IncomeExpense>().last("where type = 0 and DATE_FORMAT(gmt_create,'%Y%m') = DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH),'%Y%m')"));
-        return CommonResult.ok().data("items", incomeExpense.getAmount());
+        return CommonResult.ok().data("items", incomeExpense == null ? null : incomeExpense.getAmount());
     }
 
     @Override
