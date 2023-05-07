@@ -28,8 +28,8 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
 
     @Override
     public CommonResult getRegionAll() {
-        HashMap<Integer, Region> regionMap = new HashMap<>();
         List<Region> regions = baseMapper.selectList(new QueryWrapper<Region>().orderByDesc("gmt_modified"));
+        HashMap<Integer, Region> regionMap = new HashMap<>(regions.size());
         List<RegionVo> collect = regions.stream().map(region -> {
             regionMap.put(region.getId(), region);
             RegionVo regionVo = new RegionVo();
