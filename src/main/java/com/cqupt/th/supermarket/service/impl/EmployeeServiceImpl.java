@@ -57,7 +57,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
                 employeeQueryWrapper.like("work_number", employeeQuery.getWorkNumber());
             }
         }
-        Page<Employee> employeePage = new Page<>();
+        Page<Employee> employeePage = new Page<>(currentPage,pageSize);
         baseMapper.selectPage(employeePage, employeeQueryWrapper);
         long total = employeePage.getTotal();
         List<Employee> records = employeePage.getRecords();
@@ -209,11 +209,11 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
         if (employee.getPositionId() != null) {
             Position position = positionMapper.selectById(employee.getPositionId());
             if (position != null) {
-                if (employee.getStoreId() != 0 && "超市经理".equals(position.getName())) {
+                if (employee.getStoreId() != null && employee.getStoreId() != 0 && "超市经理".equals(position.getName())) {
                     storeMapper.updateStoreManagerAll(employee.getId());
                     storeMapper.updateManager(employee.getStoreId(), employee.getId());
                 }
-                if (employee.getWarehouseId() != 0 && "仓库经理".equals(position.getName())) {
+                if (employee.getWarehouseId() != null && employee.getWarehouseId() != 0 && "仓库经理".equals(position.getName())) {
                     warehouseMapper.updateWarehouseManagerAll(employee.getId());
                     warehouseMapper.updateManager(employee.getWarehouseId(), employee.getId());
                 }
@@ -245,7 +245,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
                 employeeQueryWrapper.le("gmt_create", employeeQuery.getEndTime());
             }
         }
-        Page<Employee> employeePage = new Page<>();
+        Page<Employee> employeePage = new Page<>(currentPage,pageSize);
         baseMapper.selectPage(employeePage, employeeQueryWrapper);
         long total = employeePage.getTotal();
         List<Employee> records = employeePage.getRecords();

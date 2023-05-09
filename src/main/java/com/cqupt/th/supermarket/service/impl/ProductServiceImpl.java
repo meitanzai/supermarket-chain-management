@@ -141,6 +141,9 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
             return CommonResult.error().message("参数不能为空");
         }
         product.setIsShow(ProductConstant.HIDE.getCode());
+        if (product.getSellPrice() != null){
+            product.setPromotionalPrice(product.getSellPrice());
+        }
         int i = baseMapper.insert(product);
         if (i > 0) {
             return CommonResult.ok().message("添加成功");
